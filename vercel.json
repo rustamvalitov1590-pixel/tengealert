@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "name": "tengealert",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "website/**,specs/**,legal/**",
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.js" }
+  ]
+}

@@ -14,7 +14,7 @@ const path = require('path');
 const crypto = require('crypto');
 const https = require('https');
 
-const CACHE_DIR = path.join(__dirname, 'data', 'tts_cache');
+const CACHE_DIR = process.env.VERCEL ? path.join('/tmp', 'tts_cache') : path.join(__dirname, 'data', 'tts_cache');
 if (!fs.existsSync(CACHE_DIR)) {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
 }

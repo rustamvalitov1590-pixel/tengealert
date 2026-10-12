@@ -122,8 +122,8 @@ function getSessionUser(req) {
   return db.findUserById(userId);
 }
 
-// HTTP Server
-const server = http.createServer(async (req, res) => {
+// HTTP Request Handler
+async function handleRequest(req, res) {
   // Global Security Headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -1689,7 +1689,10 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Not found' }));
   }
-});
+}
+
+// HTTP Server
+const server = http.createServer(handleRequest);
 
 // WebSocket Upgrade
 server.on('upgrade', (req, socket, head) => {
@@ -1758,4 +1761,12 @@ function startServer(portToTry) {
   });
 }
 
-startServer(PORT);
+if (require.main === module) {
+  startServer(PORT);
+}
+
+module.exports = {
+  server,
+  handleRequest,
+  startServer
+};

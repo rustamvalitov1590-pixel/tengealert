@@ -1,0 +1,24 @@
+{
+  "name": "tengealert",
+  "version": "1.0.0",
+  "description": "TengeAlert - Kazakhstani Donation Streaming Platform (Kaspi QR / Halyk, 0% commission)",
+  "main": "website/server/server.js",
+  "scripts": {
+    "start": "node website/server/server.js",
+    "dev": "node website/server/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "streaming",
+    "donations",
+    "obs",
+    "kaspi",
+    "halyk",
+    "kazakhstan"
+  ],
+  "author": "TengeAlert",
+  "license": "UNLICENSED",
+  "private": true
+}
