@@ -1312,8 +1312,15 @@ async function handleRequest(req, res) {
       }
     }
 
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Release file not found on server' }));
+    // In serverless/cloud environments (e.g. Vercel) where large binaries are hosted on GitHub Releases:
+    const releaseFallbackUrl = target === 'android' || target === 'apk'
+      ? 'https://github.com/rustamvalitov1590-pixel/tengealert/releases/download/v1.0.0/TengeAlert-Companion-v1.1.4.apk'
+      : 'https://github.com/rustamvalitov1590-pixel/tengealert/releases/download/v1.0.0/TengeAlert-Setup.exe';
+
+    res.writeHead(302, {
+      'Location': releaseFallbackUrl
+    });
+    res.end();
     return;
   }
 
