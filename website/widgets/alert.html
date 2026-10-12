@@ -844,6 +844,16 @@
       }
     });
 
+    eventSource.addEventListener('skip_tts', () => {
+      if (currentTtsAudio) {
+        try { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; } catch (e) {}
+        currentTtsAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    });
+
     eventSource.addEventListener('skip_alert', () => {
       hideCurrentAlert(true);
     });

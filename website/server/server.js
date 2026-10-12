@@ -871,9 +871,18 @@ async function handleRequest(req, res) {
     return;
   }
 
-  // Streamer Control Deck: Skip, Clear, Replay
+  // Streamer Control Deck: Skip TTS (Mute speech), Skip Alert, Clear, Replay
+  if (pathname === '/api/streamer/skip-tts' && req.method === 'POST') {
+    const token = req.headers['x-tengealert-key'] || parsedUrl.searchParams.get('token');
+    const user = (token ? db.findUserByToken(token) : getSessionUser(req)) || defaultUser;
+    broadcastEvent('skip_tts', { timestamp: new Date().toISOString() }, user.id);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Озвучка TTS заглушена' }));
+    return;
+  }
+
   if (pathname === '/api/streamer/skip-alert' && req.method === 'POST') {
-    const token = parsedUrl.searchParams.get('token');
+    const token = req.headers['x-tengealert-key'] || parsedUrl.searchParams.get('token');
     const user = (token ? db.findUserByToken(token) : getSessionUser(req)) || defaultUser;
     broadcastEvent('skip_alert', { timestamp: new Date().toISOString() }, user.id);
     res.writeHead(200, { 'Content-Type': 'application/json' });

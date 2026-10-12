@@ -12,13 +12,19 @@ namespace TengeAlert.Windows.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ConcurrentQueue<DonationEvent> _offlineQueue = new();
-        public string ServerUrl { get; set; } = "http://localhost:3000";
+        public string ServerUrl { get; set; } = "https://tengealert.kz";
         public string ApiKey { get; set; } = string.Empty;
         public event Action<string>? OnStatus;
 
         public TengeAlertApiClient()
         {
             _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+            // Auto-fallback to local development server if running locally
+            string? envUrl = Environment.GetEnvironmentVariable("TENGE_SERVER_URL");
+            if (!string.IsNullOrWhiteSpace(envUrl))
+            {
+                ServerUrl = envUrl.TrimEnd('/');
+            }
         }
 
         public async Task<bool> SendDonationAsync(DonationEvent donation)
@@ -66,6 +72,46 @@ namespace TengeAlert.Windows.Services
             {
                 OnStatus?.Invoke($"[API Offline] Ошибка связи ({ex.Message}). Донат сохранен в оффлайн-очередь.");
                 _offlineQueue.Enqueue(donation);
+                return false;
+            }
+        }
+
+        public async Task<bool> SkipTtsAsync()
+        {
+            return await PostControlCommandAsync("/api/streamer/skip-tts", "Озвучка TTS заглушена");
+        }
+
+        public async Task<bool> SkipAlertAsync()
+        {
+            return await PostControlCommandAsync("/api/streamer/skip-alert", "Текущий алерт пропущен");
+        }
+
+        public async Task<bool> ClearScreenAsync()
+        {
+            return await PostControlCommandAsync("/api/streamer/clear-screen", "Экран OBS очищен");
+        }
+
+        private async Task<bool> PostControlCommandAsync(string endpoint, string successMessage)
+        {
+            string url = $"{ServerUrl.TrimEnd('/')}{endpoint}";
+            try
+            {
+                var req = new HttpRequestMessage(HttpMethod.Post, url);
+                if (!string.IsNullOrWhiteSpace(ApiKey))
+                {
+                    req.Headers.Add("X-TengeAlert-Key", ApiKey);
+                }
+                var resp = await _httpClient.SendAsync(req);
+                if (resp.IsSuccessStatusCode)
+                {
+                    OnStatus?.Invoke($"[OBS Control] {successMessage}");
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                OnStatus?.Invoke($"[OBS Error] Ошибка команды: {ex.Message}");
                 return false;
             }
         }
