@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TengeAlert</string>
+    <string name="service_running">Служба активна: мониторинг банковских переводов</string>
+    <string name="permission_required">Необходимо предоставить доступ к уведомлениям для перехвата донатов</string>
+</resources>

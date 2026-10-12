@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Политика конфиденциальности и защиты данных — TengeAlert</title>
+  <meta name="description" content="Политика конфиденциальности TengeAlert. Соблюдение Закона Республики Казахстан № 94-V «О персональных данных и их защите». Принцип Privacy-by-Design.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/legal/legal.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>Tenge<span>Alert</span></div>
+      </a>
+      <div class="nav-actions">
+        <a href="/" class="btn btn-secondary">← На главную</a>
+        <a href="/auth/login.html" class="btn btn-primary">Вход в студию</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Document Tabs Bar -->
+  <div class="doc-tabs-bar">
+    <div class="container doc-tabs-inner">
+      <a href="/legal/terms.html" class="doc-tab">Пользовательское соглашение</a>
+      <a href="/legal/privacy.html" class="doc-tab active">Политика конфиденциальности</a>
+      <a href="/legal/taxes.html" class="doc-tab">Налоговый комплаенс РК</a>
+      <a href="/legal/disclaimer.html" class="doc-tab">Отказ от ответственности</a>
+    </div>
+  </div>
+
+  <!-- Document Hero -->
+  <section class="doc-hero">
+    <div class="container">
+      <div class="doc-badge">Закон РК № 94-V • Действует с 14 сентября 2026 г.</div>
+      <h1 class="doc-title">Политика конфиденциальности и защиты данных</h1>
+      <div class="doc-meta">
+        <span>Применимое право: Закон РК «О персональных данных и их защите»</span>
+        <span>•</span>
+        <span>Архитектура: Privacy-by-Design (Локальная обработка)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Document Layout -->
+  <main class="container doc-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="doc-sidebar">
+      <div class="toc-title">Содержание документа</div>
+      <nav class="toc-nav">
+        <a href="#intro" class="toc-link active">Вводные положения</a>
+        <a href="#section-1" class="toc-link">1. Принцип Privacy-by-Design</a>
+        <a href="#section-2" class="toc-link">2. Категории данных и фильтрация</a>
+        <a href="#section-3" class="toc-link">3. Права субъекта данных</a>
+        <a href="#section-4" class="toc-link">4. Безопасность передачи</a>
+        <a href="#section-5" class="toc-link">5. Контакты и обращения</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <article class="doc-article">
+      
+      <div id="intro" class="doc-section">
+        <p>
+          Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей программного комплекса <strong>TengeAlert</strong> (далее — «Сервис» / «ПО») в соответствии с требованиями Закона Республики Казахстан от 21 мая 2013 года № 94-V <strong>«О персональных данных и их защите»</strong>.
+        </p>
+
+        <div class="callout callout-cyan">
+          <div class="callout-title">Базовый постулат безопасности</div>
+          Сервис не запрашивает и не хранит пароли от банковских приложений, логины личных кабинетов, полные номера платежных карт или CVC/CVV-коды. Платформа оперирует исключительно публичными метаданными экранных уведомлений.
+        </div>
+      </div>
+
+      <div id="section-1" class="doc-section">
+        <h2>1. Архитектурный принцип: Privacy-by-Design</h2>
+        <p>Сервис TengeAlert спроектирован по принципу локальной изоляции (Local-First / On-Premise):</p>
+        <ol>
+          <li>
+            <strong>Локальная обработка данных:</strong> Все процессы анализа уведомлений, парсинга текста и передачи в OBS происходят непосредственно на устройствах пользователя (локальный компьютер стримера и смартфон).
+          </li>
+          <li>
+            <strong>Отсутствие удаленного сбора:</strong> Разработчик <strong>НЕ собирает, НЕ передает на внешние облачные серверы и НЕ хранит</strong> персональные данные, тексты push-уведомлений, имена донатеров, суммы или историю транзакций стримера.
+          </li>
+          <li>
+            <strong>Отсутствие сторонних трекеров:</strong> В коде TengeAlert отсутствуют рекламные трекеры, внешние шпионские SDK и несанкционированные средства слежения.
+          </li>
+        </ol>
+      </div>
+
+      <div id="section-2" class="doc-section">
+        <h2>2. Категории обрабатываемых данных и их фильтрация</h2>
+        
+        <h3>А. Данные, которые ОБРАБАТЫВАЮТСЯ локально:</h3>
+        <ul>
+          <li>Имя или псевдоним отправителя добровольного перевода (например, <em>«Азамат Б.»</em>);</li>
+          <li>Сумма поступившего перевода в тенге (<code>₸</code>);</li>
+          <li>Текст комментария к переводу, оставленный зрителем (при наличии).</li>
+        </ul>
+
+        <h3>Б. Данные, которые КАТЕГОРИЧЕСКИ НЕ ОБРАБАТЫВАЮТСЯ (Автоматический сброс):</h3>
+        <p>
+          Программный комплекс оснащен встроенным модулем <code>SecuritySanitizer</code>, который автоматически блокирует и безвозвратно стирает из оперативной памяти следующие типы уведомлений:
+        </p>
+        <ul>
+          <li><strong>Коды двухфакторной аутентификации (2FA):</strong> SMS-коды, 3D Secure, одноразовые пароли подтверждения входа или банковских операций;</li>
+          <li><strong>Банковская тайна:</strong> остатки на счетах (<em>«Остаток: ...»</em>, <em>«Доступно: ...»</em>, <em>«Баланс: ...»</em>);</li>
+          <li><strong>Платежные реквизиты:</strong> полные номера банковских карт, CVC/CVV-коды, PIN-коды;</li>
+          <li><strong>Идентификационные данные:</strong> ИИН (индивидуальные идентификационные номера), полные паспортные данные, номера договоров.</li>
+        </ul>
+
+        <div class="callout callout-emerald">
+          <div class="callout-title">Защитный шлюз SecuritySanitizer</div>
+          Любое входящее уведомление, содержащее цифровые коды подтверждения или слова «пароль / код / остаток / баланс», немедленно уничтожается в памяти приложения и никогда не отображается на стриме.
+        </div>
+      </div>
+
+      <div id="section-3" class="doc-section">
+        <h2>3. Права пользователя и управление данными</h2>
+        <p>В соответствии со статьей 24 Закона РК «О персональных данных и их защите», пользователь имеет полный суверенный контроль над данными:</p>
+        <ol>
+          <li>
+            <strong>Право на удаление данных:</strong> Пользователь в любой момент может очистить всю историю полученных донатов через панель управления (кнопка <em>«Очистить историю»</em>) либо удалив локальный файл хранилища <code>donations.json</code>.
+          </li>
+          <li>
+            <strong>Право на отзыв разрешений:</strong> Пользователь может в любой момент отозвать разрешение на доступ к уведомлениям в настройках операционной системы Android (<em>«Доступ к уведомлениям»</em>) или Windows (<em>«Связь с телефоном»</em>).
+          </li>
+        </ol>
+      </div>
+
+      <div id="section-4" class="doc-section">
+        <h2>4. Безопасность передачи данных внутри локальной сети</h2>
+        <ul>
+          <li>Передача данных между мобильным приложением и компьютером со стримом защищается настраиваемым секретным токеном авторизации (<code>X-TengeAlert-Key</code>).</li>
+          <li>Рекомендуется использовать защищенную домашнюю сеть Wi-Fi для исключения перехвата локального трафика третьими лицами.</li>
+        </ul>
+      </div>
+
+      <div id="section-5" class="doc-section">
+        <h2>5. Контакты и обращения по вопросам конфиденциальности</h2>
+        <p>
+          По любым вопросам, касающимся архитектуры безопасности или конфиденциальности TengeAlert, вы можете обратиться через официальный канал технической поддержки в Telegram или через панель управления студией.
+        </p>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 TengeAlert Platform. Все права защищены. Республика Казахстан.</div>
+      <div class="footer-links">
+        <a href="/legal/terms.html">Соглашение</a>
+        <a href="/legal/privacy.html">Конфиденциальность</a>
+        <a href="/legal/taxes.html">Налоги в РК</a>
+        <a href="/legal/disclaimer.html">Отказ от ответственности</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const sections = document.querySelectorAll('.doc-section');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 160;
+        if (window.pageYOffset >= top) {
+          current = sec.getAttribute('id');
+        }
+      });
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Overlay Widget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Geist+Mono:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #sparks-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .alert-wrapper {
+      position: relative;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      max-width: 540px;
+      width: 92%;
+      z-index: 10;
+    }
+
+    .alert-wrapper.show {
+      display: flex;
+      animation: alertIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .alert-wrapper.hide {
+      animation: alertOut 0.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
+
+    @keyframes alertIn {
+      0% { opacity: 0; transform: translateY(40px) scale(0.92); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes alertOut {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-30px) scale(0.96); }
+    }
+
+    /* ------------------------------------------------------------- */
+    /* 1. THEME: NEO-NOMAD (Культурный нео-футуризм)                 */
+    /* ------------------------------------------------------------- */
+    .theme-neo_nomad, .theme-royal_gold {
+      --primary-color: #e5a93c;
+      --secondary-color: #22d3ee;
+    }
+
+    .theme-neo_nomad .nomad-card,
+    .theme-royal_gold .nomad-card {
+      display: block;
+      position: relative;
+      width: 100%;
+      background: linear-gradient(145deg, #090e1a 0%, #050811 100%);
+      border: 1px solid rgba(229, 169, 60, 0.45);
+      border-radius: 20px;
+      padding: 26px 30px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.85), 0 0 35px rgba(34, 211, 238, 0.18);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nomad-ornament {
+      position: absolute;
+      top: -18px;
+      right: 28px;
+      background: linear-gradient(135deg, #e5a93c 0%, #b88220 100%);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(229, 169, 60, 0.4);
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #060813;
+      font-size: 18px;
+    }
+
+    .nomad-badge {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #22d3ee;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nomad-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22d3ee;
+    }
+
+    .nomad-donor {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .nomad-amount {
+      font-family: 'Geist Mono', monospace;
+      font-size: 36px;
+      font-weight: 800;
+      color: #e5a93c;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      text-shadow: 0 0 25px rgba(229, 169, 60, 0.35);
+    }
+
+    .nomad-amount span { color: #22d3ee; }
+
+    .nomad-message {
+      font-size: 14px;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid #e5a93c;
+      padding: 10px 14px;
+      border-radius: 0 10px 10px 0;
+      line-height: 1.5;
+    }
+
+    /* ------------------------------------------------------------- */
+    /* 2. THEME: ESPORTS HUD (Турнирный киберспорт)                  */
+    /* ------------------------------------------------------------- */
+    .theme-esports_hud {
+      --primary-color: #d4ff00;
+    }
+
+    .theme-esports_hud .esports-card {
+      display: block;
+      position: relative;
+      width: 100%;
+      background: #0d0f14;
+      border-left: 5px solid #d4ff00;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      padding: 22px 28px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.92), 0 0 30px rgba(212, 255, 0, 0.2);
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .esports-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .esports-tag {
+      background: #d4ff00;
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+
+    .esports-telemetry {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      letter-spacing: 0.05em;
+    }
+
+    .esports-donor {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .esports-amount {
+      font-size: 38px;
+      font-weight: 800;
+      color: #d4ff00;
+      letter-spacing: -0.01em;
+      margin: 4px 0 12px;
+      text-shadow: 0 0 25px rgba(212, 255, 0, 0.45);
+    }
+
+    .esports-msg {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #e2e8f0;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+      padding-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* ------------------------------------------------------------- */
+    /* 3. THEME: INDUSTRIAL AUDIO (Teenage Engineering)              */
+    /* ------------------------------------------------------------- */
+    .theme-industrial {
+      --primary-color: #ff5722;
+    }
+
+    .theme-industrial .industrial-card {
+      display: block;
+      width: 100%;
+      background: #18191c;
+      border: 1px solid #2e3038;
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'Space Mono', monospace;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.85);
+      position: relative;
+    }
+
+    .industrial-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #ff5722;
+      border-bottom: 1px solid #2e3038;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      letter-spacing: 0.06em;
+    }
+
+    .industrial-screen {
+      background: #0b0c0e;
+      border: 1px solid #262830;
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .industrial-dot-amount {
+      font-size: 30px;
+      font-weight: 700;
+      color: #ff5722;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 16px rgba(255, 87, 34, 0.55);
+    }
+
+    .industrial-donor {
+      font-size: 13px;
+      color: #d1d5db;
+      margin-bottom: 8px;
+    }
+
+    .industrial-msg {
+      font-size: 13px;
+      color: #9ca3af;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    /* ------------------------------------------------------------- */
+    /* 4. THEME: LIQUID GLASS (VisionOS Luxury)                      */
+    /* ------------------------------------------------------------- */
+    .theme-liquid_glass, .theme-cyber_emerald, .theme-minimal_glass, .theme-qazaq_neon {
+      --primary-color: #00f5a0;
+    }
+
+    .theme-liquid_glass .liquid-card,
+    .theme-cyber_emerald .liquid-card,
+    .theme-minimal_glass .liquid-card,
+    .theme-qazaq_neon .liquid-card {
+      display: block;
+      position: relative;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(30px) saturate(190%);
+      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 26px;
+      padding: 28px 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.75), inset 0 1px 1px rgba(255,255,255,0.35);
+      position: relative;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .liquid-coin {
+      position: absolute;
+      top: -20px;
+      left: -16px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+      border: 2px solid rgba(255,255,255,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .liquid-tag {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #00f5a0;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .liquid-donor {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .liquid-amount {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 900;
+      color: #f8fafc;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .liquid-amount span { color: #00f5a0; }
+
+    .liquid-msg {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* Hide unused theme containers by default */
+    .nomad-card, .esports-card, .industrial-card, .liquid-card {
+      display: none;
+    }
+  </style>
+</head>
+<body class="theme-neo_nomad">
+
+  <canvas id="sparks-canvas"></canvas>
+
+  <div id="alert-box" class="alert-wrapper">
+    
+    <!-- 1. NEO-NOMAD CONTAINER -->
+    <div class="nomad-card" id="theme-view-nomad">
+      <div class="nomad-ornament">₸</div>
+      <div class="nomad-badge">TENGEALERT &bull; ТАБЫС</div>
+      <div class="nomad-donor" id="donor-nomad">Азамат Б.</div>
+      <div class="nomad-amount" id="amount-nomad">7 500 <span>₸</span></div>
+      <div class="nomad-message" id="msg-nomad">Тащи турнир, Алматы с тобой! Алға!</div>
+    </div>
+
+    <!-- 2. ESPORTS HUD CONTAINER -->
+    <div class="esports-card" id="theme-view-esports">
+      <div class="esports-top">
+        <span class="esports-tag">DONATION HIT</span>
+        <span class="esports-telemetry">LATENCY: 4.2ms &bull; 60 FPS</span>
+      </div>
+      <div class="esports-donor" id="donor-esports">CyberWarrior_99</div>
+      <div class="esports-amount" id="amount-esports">15 000 ₸</div>
+      <div class="esports-msg" id="msg-esports">РАЗДАВИ ИХ В КАТКЕ! ТОПОВЫЙ СНАЙПЕР!</div>
+    </div>
+
+    <!-- 3. INDUSTRIAL AUDIO CONTAINER -->
+    <div class="industrial-card" id="theme-view-industrial">
+      <div class="industrial-header">
+        <span>TENGEALERT // MOD-01</span>
+        <span>LIVE: STREAM-READY</span>
+      </div>
+      <div class="industrial-screen">
+        <div class="industrial-dot-amount" id="amount-industrial">5 000 KZT</div>
+      </div>
+      <div class="industrial-donor" id="donor-industrial">SOURCE: Данияр К.</div>
+      <div class="industrial-msg" id="msg-industrial">Отличный звук на стриме! Держи на кофе.</div>
+    </div>
+
+    <!-- 4. LIQUID GLASS CONTAINER -->
+    <div class="liquid-card" id="theme-view-liquid">
+      <div class="liquid-coin">₸</div>
+      <div class="liquid-tag">TENGEALERT &bull; PREMIER</div>
+      <div class="liquid-donor" id="donor-liquid">Аружан С.</div>
+      <div class="liquid-amount" id="amount-liquid">10 000 <span>₸</span></div>
+      <div class="liquid-msg" id="msg-liquid">Прекрасного стрима и побед в турнире!</div>
+    </div>
+
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let streamerToken = urlParams.get('token') || '';
+    let currentTheme = urlParams.get('theme') || '';
+    const customDuration = parseInt(urlParams.get('duration'), 10) || 5500;
+
+    // Normalize theme name
+    function normalizeTheme(t) {
+      if (!t) return 'neo_nomad';
+      if (t === 'nomad' || t === 'royal_gold') return 'neo_nomad';
+      if (t === 'esports') return 'esports_hud';
+      if (t === 'audio') return 'industrial';
+      if (t === 'liquid' || t === 'cyber_emerald' || t === 'minimal_glass' || t === 'qazaq_neon') return 'liquid_glass';
+      return t;
+    }
+
+    function applyTheme(themeName) {
+      const normalized = normalizeTheme(themeName);
+      document.body.className = `theme-${normalized}`;
+      currentTheme = normalized;
+    }
+
+    if (currentTheme) {
+      applyTheme(currentTheme);
+    } else {
+      // Fetch default theme from server if token provided
+      if (streamerToken) {
+        fetch(`/api/user/settings?token=${encodeURIComponent(streamerToken)}`)
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.settings && d.settings.theme) {
+              applyTheme(d.settings.theme);
+            } else {
+              applyTheme('neo_nomad');
+            }
+          })
+          .catch(() => applyTheme('neo_nomad'));
+      } else {
+        applyTheme('neo_nomad');
+      }
+    }
+
+    // Sparks Canvas
+    const canvas = document.getElementById('sparks-canvas');
+    const ctx = canvas.getContext('2d');
+    let sparks = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function getSparkPalette() {
+      if (currentTheme === 'esports_hud') return ['#d4ff00', '#ffffff', '#7c3aed'];
+      if (currentTheme === 'industrial') return ['#ff5722', '#f97316', '#ffedd5'];
+      if (currentTheme === 'liquid_glass') return ['#00f5a0', '#00d9f5', '#ffffff'];
+      return ['#e5a93c', '#22d3ee', '#fef3c7'];
+    }
+
+    class Spark {
+      constructor(x, y) {
+        this.x = x + (Math.random() - 0.5) * 100;
+        this.y = y + (Math.random() - 0.5) * 30;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 2.5;
+        this.size = Math.random() * 2.8 + 1.2;
+        this.opacity = 1;
+        const palette = getSparkPalette();
+        this.color = palette[Math.floor(Math.random() * palette.length)];
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.09;
+        this.opacity -= 0.016;
+      }
+      draw(c) {
+        c.save();
+        c.globalAlpha = Math.max(0, this.opacity);
+        c.fillStyle = this.color;
+        c.shadowBlur = 8;
+        c.shadowColor = this.color;
+        c.beginPath();
+        c.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
+    }
+
+    function triggerSparks() {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2 - 20;
+      for (let i = 0; i < 45; i++) {
+        sparks.push(new Spark(cx, cy));
+      }
+    }
+
+    function renderSparks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.update();
+        s.draw(ctx);
+        if (s.opacity <= 0) sparks.splice(i, 1);
+      }
+      requestAnimationFrame(renderSparks);
+    }
+    renderSparks();
+
+    // Web Audio Synthesizer for all 4 Themes
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playThemeSound(theme) {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const t = normalizeTheme(theme || currentTheme);
+
+        if (t === 'neo_nomad') {
+          // Ethnic warm harmonic chime
+          [440, 659.25, 880, 1318.51].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now + i * 0.08);
+            g.gain.setValueAtTime(0, now + i * 0.08);
+            g.gain.linearRampToValueAtTime(0.3, now + i * 0.08 + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 1.2);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 1.3);
+          });
+        } else if (t === 'esports_hud') {
+          // Tournament impact sub-bass & cyber drop
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(80, now + 0.28);
+          g.gain.setValueAtTime(0.35, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.55);
+        } else if (t === 'industrial') {
+          // Tactile mechanical relay clicks
+          [800, 1200, 950].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(f, now + i * 0.05);
+            g.gain.setValueAtTime(0.18, now + i * 0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.04);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now + i * 0.05);
+            osc.stop(now + i * 0.05 + 0.05);
+          });
+        } else {
+          // Liquid Glass Crystalline Shimmer
+          [587.33, 880, 1174.66, 1760].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, now + i * 0.06);
+            g.gain.setValueAtTime(0.25, now + i * 0.06);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.9);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 1.0);
+          });
+        }
+      } catch (e) {
+        console.error('Audio synth error:', e);
+      }
+    }
+
+    // =============================================================
+    // DUAL-LANGUAGE NATURAL TTS ENGINE (kk-KZ & ru-RU)
+    // =============================================================
+    let availableVoices = [];
+    let streamerSettings = {
+      tts_enabled: true,
+      tts_min_amount: 0,
+      tts_voice_kz: 'auto',
+      tts_voice_ru: 'auto',
+      tts_rate: 1.0,
+      tts_pitch: 1.0
+    };
+
+    function loadVoices() {
+      if (!('speechSynthesis' in window)) return;
+      availableVoices = window.speechSynthesis.getVoices() || [];
+    }
+    if ('speechSynthesis' in window) {
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Fetch initial streamer settings
+    fetch(`/api/user/settings${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.settings) {
+          streamerSettings = { ...streamerSettings, ...d.settings };
+          if (!urlParams.get('theme') && d.settings.theme) {
+            applyTheme(d.settings.theme);
+          }
+        }
+      })
+      .catch(() => {});
+
+    function pickBestVoice(lang, preferredVoiceName) {
+      if (!availableVoices.length) loadVoices();
+
+      // Check if user specifically requested a named voice
+      if (preferredVoiceName && preferredVoiceName !== 'auto') {
+        const found = availableVoices.find(v => v.name.toLowerCase().includes(preferredVoiceName.toLowerCase()));
+        if (found) return found;
+      }
+
+      const isKazakh = lang === 'kk-KZ' || lang === 'kk';
+
+      if (isKazakh) {
+        // Look for Kazakh voices
+        const kzVoice = availableVoices.find(v => 
+          v.lang.toLowerCase().startsWith('kk') || 
+          v.name.toLowerCase().includes('kazakh') || 
+          v.name.toLowerCase().includes('қазақ') ||
+          v.name.toLowerCase().includes('daulet') ||
+          v.name.toLowerCase().includes('aigul')
+        );
+        if (kzVoice) return kzVoice;
+
+        // Fallback for Kazakh: Turkish or Natural Russian voice
+        const trVoice = availableVoices.find(v => v.lang.toLowerCase().startsWith('tr'));
+        if (trVoice) return trVoice;
+      }
+
+      // Best Russian Voice (Dmitry, Svetlana, Elena, Google русский)
+      const ruPriority = ['dmitry', 'svetlana', 'elena', 'yandex', 'google', 'russian', 'ru'];
+      for (const p of ruPriority) {
+        const found = availableVoices.find(v => 
+          (v.lang.toLowerCase().startsWith('ru') || v.lang.toLowerCase().startsWith('rus')) && 
+          v.name.toLowerCase().includes(p)
+        );
+        if (found) return found;
+      }
+
+      const anyRu = availableVoices.find(v => v.lang.toLowerCase().startsWith('ru'));
+      if (anyRu) return anyRu;
+
+      return availableVoices[0] || null;
+    }
+
+    let currentTtsAudio = null;
+
+    function speakDonation(donation) {
+      if (!streamerSettings.tts_enabled) return 0;
+
+      const amount = donation.amount || 0;
+      if (amount < (streamerSettings.tts_min_amount || 0)) {
+        return 0; // Filtered by minimum amount threshold
+      }
+
+      const ttsData = donation.tts || {};
+      const speechText = ttsData.speechText || 
+        `${donation.sender || 'Аноним'} задонатил ${amount} тенге. ${donation.message || ''}`;
+      const lang = ttsData.lang || (/[әіңғүұқөһ]/i.test(speechText) ? 'kk-KZ' : 'ru-RU');
+
+      // Stop any currently playing audio
+      if (currentTtsAudio) {
+        try { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; } catch (e) {}
+        currentTtsAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      const estimatedSeconds = Math.max(3.5, Math.min(22, (speechText.length / 13) + 2));
+
+      // Ducking: Wait 1.1s for theme audio chime to finish, then play studio neural MP3
+      setTimeout(() => {
+        const audioUrl = donation.tts_audio_url || `/api/tts/audio?id=${encodeURIComponent(donation.id || '')}`;
+        const audio = new Audio(audioUrl);
+        currentTtsAudio = audio;
+        audio.volume = 1.0;
+
+        audio.play().catch(err => {
+          console.warn('[Alert] Neural audio stream error, falling back to browser synthesis:', err);
+          // Fallback to browser SpeechSynthesis if audio element is blocked
+          if ('speechSynthesis' in window) {
+            try {
+              const utterance = new SpeechSynthesisUtterance(speechText);
+              utterance.lang = lang;
+              utterance.rate = streamerSettings.tts_rate || 1.0;
+              const preferredName = lang === 'kk-KZ' ? streamerSettings.tts_voice_kz : streamerSettings.tts_voice_ru;
+              const voice = pickBestVoice(lang, preferredName);
+              if (voice) utterance.voice = voice;
+              window.speechSynthesis.speak(utterance);
+            } catch (e) {}
+          }
+        });
+      }, 1100);
+
+      return estimatedSeconds;
+    }
+
+    // Queue system for alerts
+    const alertQueue = [];
+    let isShowing = false;
+
+    function showAlert(donation) {
+      const alertBox = document.getElementById('alert-box');
+      const activeT = normalizeTheme(donation.theme || currentTheme);
+      applyTheme(activeT);
+
+      const sender = donation.sender || 'Аноним';
+      const amount = donation.amount || 0;
+      const formattedAmount = formatNumber(amount);
+      const message = donation.message || '';
+
+      // Populate Nomad
+      document.getElementById('donor-nomad').textContent = sender;
+      document.getElementById('amount-nomad').innerHTML = `${formattedAmount} <span>₸</span>`;
+      document.getElementById('msg-nomad').textContent = message || 'Благодарю за стрим!';
+      document.getElementById('msg-nomad').style.display = message ? 'block' : 'none';
+
+      // Populate Esports
+      document.getElementById('donor-esports').textContent = sender;
+      document.getElementById('amount-esports').textContent = `${formattedAmount} ₸`;
+      document.getElementById('msg-esports').textContent = message || 'Турнирный донат!';
+      document.getElementById('msg-esports').style.display = message ? 'block' : 'none';
+
+      // Populate Industrial
+      document.getElementById('donor-industrial').textContent = `SOURCE: ${sender}`;
+      document.getElementById('amount-industrial').textContent = `${formattedAmount} KZT`;
+      document.getElementById('msg-industrial').textContent = message || 'SIGNAL RECEIVED.';
+      document.getElementById('msg-industrial').style.display = message ? 'block' : 'none';
+
+      // Populate Liquid
+      document.getElementById('donor-liquid').textContent = sender;
+      document.getElementById('amount-liquid').innerHTML = `${formattedAmount} <span>₸</span>`;
+      document.getElementById('msg-liquid').textContent = message || 'Спасибо за поддержку!';
+      document.getElementById('msg-liquid').style.display = message ? 'block' : 'none';
+
+      playThemeSound(activeT);
+      triggerSparks();
+
+      alertBox.classList.remove('hide');
+      alertBox.classList.add('show');
+
+      // Speak with Natural Dual-Language Studio Neural TTS
+      const spokenSeconds = speakDonation(donation);
+      const activeDuration = Math.max(customDuration, Math.min(25000, spokenSeconds * 1000 + 1500));
+      lastProcessedDonation = donation;
+
+      clearTimeout(alertTimeout);
+      alertTimeout = setTimeout(() => {
+        hideCurrentAlert(true);
+      }, activeDuration);
+    }
+
+    let alertTimeout = null;
+    let lastProcessedDonation = null;
+
+    function hideCurrentAlert(andProcessNext = true) {
+      if (currentTtsAudio) {
+        try { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; } catch (e) {}
+        currentTtsAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      clearTimeout(alertTimeout);
+      const alertBox = document.getElementById('alert-box');
+      alertBox.classList.remove('show');
+      alertBox.classList.add('hide');
+      setTimeout(() => {
+        isShowing = false;
+        if (andProcessNext) processQueue();
+      }, 350);
+    }
+
+    function processQueue() {
+      if (isShowing || alertQueue.length === 0) return;
+      isShowing = true;
+      const next = alertQueue.shift();
+      showAlert(next);
+    }
+
+    // Connect to Server SSE
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const eventSource = new EventSource(sseUrl);
+
+    eventSource.addEventListener('donation', (e) => {
+      try {
+        const donation = JSON.parse(e.data);
+        alertQueue.push(donation);
+        processQueue();
+      } catch (err) {
+        console.error('SSE donation error:', err);
+      }
+    });
+
+    eventSource.addEventListener('skip_alert', () => {
+      hideCurrentAlert(true);
+    });
+
+    eventSource.addEventListener('clear_screen', () => {
+      alertQueue.length = 0;
+      hideCurrentAlert(false);
+    });
+
+    eventSource.addEventListener('replay_last', (e) => {
+      try {
+        const donation = JSON.parse(e.data) || lastProcessedDonation;
+        if (donation) {
+          alertQueue.unshift(donation);
+          if (!isShowing) {
+            processQueue();
+          } else {
+            hideCurrentAlert(true);
+          }
+        }
+      } catch (err) {}
+    });
+
+    eventSource.addEventListener('theme_updated', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (!urlParams.get('theme') && data.theme) {
+          applyTheme(data.theme);
+        }
+        if (data.settings) {
+          streamerSettings = { ...streamerSettings, ...data.settings };
+        }
+      } catch (err) {}
+    });
+
+    eventSource.addEventListener('tts_settings_updated', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.settings) {
+          streamerSettings = { ...streamerSettings, ...data.settings };
+        }
+      } catch (err) {}
+    });
+
+    // Interaction to unlock AudioContext and Speech on user click
+    window.addEventListener('click', () => {
+      getAudioContext();
+      if ('speechSynthesis' in window) {
+        loadVoices();
+      }
+    });
+  </script>
+</body>
+</html>

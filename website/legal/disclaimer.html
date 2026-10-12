@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отказ от ответственности и правовой статус — TengeAlert</title>
+  <meta name="description" content="Официальный отказ от ответственности TengeAlert: Clean Room разработка, отсутствие аффилированности с банками РК (Kaspi, Halyk), статус независимого наэкранного визуализатора.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/legal/legal.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>Tenge<span>Alert</span></div>
+      </a>
+      <div class="nav-actions">
+        <a href="/" class="btn btn-secondary">← На главную</a>
+        <a href="/auth/login.html" class="btn btn-primary">Вход в студию</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Document Tabs Bar -->
+  <div class="doc-tabs-bar">
+    <div class="container doc-tabs-inner">
+      <a href="/legal/terms.html" class="doc-tab">Пользовательское соглашение</a>
+      <a href="/legal/privacy.html" class="doc-tab">Политика конфиденциальности</a>
+      <a href="/legal/taxes.html" class="doc-tab">Налоговый комплаенс РК</a>
+      <a href="/legal/disclaimer.html" class="doc-tab active">Отказ от ответственности</a>
+    </div>
+  </div>
+
+  <!-- Document Hero -->
+  <section class="doc-hero">
+    <div class="container">
+      <div class="doc-badge">Правовой статус • Clean Room Architecture</div>
+      <h1 class="doc-title">Официальный отказ от ответственности (Disclaimer)</h1>
+      <div class="doc-meta">
+        <span>Программный комплекс: TengeAlert Engine</span>
+        <span>•</span>
+        <span>Назначение: Screen Overlay Visualization Utility</span>
+        <span>•</span>
+        <span>Юрисдикция: Республика Казахстан</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Document Layout -->
+  <main class="container doc-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="doc-sidebar">
+      <div class="toc-title">Содержание документа</div>
+      <nav class="toc-nav">
+        <a href="#section-1" class="toc-link active">1. Юридическая независимость</a>
+        <a href="#section-2" class="toc-link">2. Отказ от финансовых функций</a>
+        <a href="#section-3" class="toc-link">3. Ограничение («КАК ЕСТЬ»)</a>
+        <a href="#section-4" class="toc-link">4. Согласие пользователя</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <article class="doc-article">
+      
+      <div id="section-1" class="doc-section">
+        <h2>1. Юридическая независимость и Clean Room статус</h2>
+        <ol>
+          <li>
+            <strong>Отсутствие аффилированности:</strong>
+            TengeAlert является полностью независимым программным продуктом. Программа и её разработчики <strong>НЕ аффилированы, НЕ спонсируются, НЕ ассоциированы и НЕ имеют официальных соглашений</strong> с АО «Kaspi Bank», АО «Народный Банк Казахстана» (Halyk Bank), АО «Банк Фридом Финанс Казахстан», АО «First Heartland Jusan Bank» или любыми другими банками и финансовыми институтами Республики Казахстан либо зарубежных стран.
+          </li>
+          <li>
+            <strong>Товарные знаки:</strong>
+            Все упомянутые наименования банков, торговые знаки, логотипы и коммерческие обозначения являются собственностью их соответствующих правообладателей. Их упоминание в документации и интерфейсе носит исключительно описательный (информационный) характер для указания совместимости системных экранных уведомлений.
+          </li>
+          <li>
+            <strong>Отсутствие реверс-инжиниринга и взлома:</strong>
+            Программа разработана методом Clean Room («чистая комната»). TengeAlert <strong>не осуществляет декомпиляцию, деобфускацию, реверс-инжиниринг закрытых банковских протоколов, не перехватывает защищенный сетевой SSL/TLS-трафик банковских серверов и не использует недокументированные внутренние API банков</strong>. Вся работа осуществляется строго через документированные общедоступные API операционных систем:
+            <ul>
+              <li>Android: <code>android.service.notification.NotificationListenerService</code>;</li>
+              <li>Windows 10/11: <code>Windows.UI.Notifications.Management.UserNotificationListener</code>.</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="callout callout-cyan">
+          <div class="callout-title">Чистая архитектура (Clean Room)</div>
+          TengeAlert никогда не внедряется в память сторонних программ и не обходит защиту операционных систем. Программа работает строго в рамках официальных пользовательских прав операционной системы.
+        </div>
+      </div>
+
+      <div id="section-2" class="doc-section">
+        <h2>2. Отказ от финансовых и платежных функций</h2>
+        <ol>
+          <li>
+            <strong>Не является платежной организацией:</strong>
+            TengeAlert <strong>НЕ является платежным агентом, платежной организацией, банковским платежным агентом, оператором электронных денег или финансовым посредником</strong> в соответствии с Законом РК «О платежах и платежных системах» № 11-VI ЗРК.
+          </li>
+          <li>
+            <strong>Нулевой доступ к денежным средствам:</strong>
+            Программа не принимает, не удерживает, не аккумулирует, не депонирует, не конвертирует и не переводит денежные средства. Все финансовые транзакции и переводы осуществляются исключительно пользователями и отправителями напрямую внутри официальных банковских приложений в рамках договоров банковского обслуживания.
+          </li>
+          <li>
+            <strong>Отсутствие доступа к учетным записям:</strong>
+            Программа не запрашивает, не хранит и не имеет технического доступа к логинам, паролям, PIN-кодам, CVV/CVC-кодам, данным банковских карт либо сессиям интернет-банкинга.
+          </li>
+        </ol>
+      </div>
+
+      <div id="section-3" class="doc-section">
+        <h2>3. Ограничение ответственности («КАК ЕСТЬ» / AS IS)</h2>
+        <ol>
+          <li>
+            Программное обеспечение предоставляется на условиях <strong>«КАК ЕСТЬ» («AS IS»)</strong>, без каких-либо явных или подразумеваемых гарантий, включая (но не ограничиваясь) гарантии коммерческой ценности, пригодности для конкретной цели, непрерывности работы или безошибочности.
+          </li>
+          <li>
+            <strong>Разработчик ни при каких обстоятельствах не несет ответственности перед пользователем или третьими лицами за:</strong>
+            <ul>
+              <li>Любые прямые, косвенные, случайные, штрафные или последующие убытки, включая упущенную выгоду, потерю дохода, недополученные донаты;</li>
+              <li>Задержки или сбои в доставке push-уведомлений, вызванные изменениями в работе операционных систем, прошивках смартфонов (агрессивное энергосбережение MIUI/OneUI), сбоями операторов связи или сети Интернет;</li>
+              <li>Ограничения, предупреждения, блокировки или претензии со стороны банковских организаций, служб безопасности банков или финансовых регуляторов в отношении счетов пользователя;</li>
+              <li>Налоговые, административные или финансовые последствия использования пользователем банковских счетов для получения переводов.</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="callout callout-gold">
+          <div class="callout-title">Автономия стримера</div>
+          Стример самостоятельно принимает решение об использовании банковских карт и сервисов переводов для сбора пожертвований и лично регулирует отношения со своим обслуживающим банком.
+        </div>
+      </div>
+
+      <div id="section-4" class="doc-section">
+        <h2>4. Согласие пользователя</h2>
+        <p>
+          Использование любого компонента TengeAlert (веб-платформы, Windows-приложения или Android-приложения) означает безоговорочное согласие пользователя со всеми положениями настоящего Отказа от ответственности. Если пользователь не согласен с данными условиями, он обязан немедленно прекратить использование ПО и удалить его со своих устройств.
+        </p>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 TengeAlert Platform. Все права защищены. Республика Казахстан.</div>
+      <div class="footer-links">
+        <a href="/legal/terms.html">Соглашение</a>
+        <a href="/legal/privacy.html">Конфиденциальность</a>
+        <a href="/legal/taxes.html">Налоги в РК</a>
+        <a href="/legal/disclaimer.html">Отказ от ответственности</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const sections = document.querySelectorAll('.doc-section');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 160;
+        if (window.pageYOffset >= top) {
+          current = sec.getAttribute('id');
+        }
+      });
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>

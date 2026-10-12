@@ -1,0 +1,248 @@
+{
+  "usr_ae9f1762c31e": {
+    "active_id": "goal_556260ac",
+    "list": [
+      {
+        "id": "goal_556260ac",
+        "user_id": "usr_ae9f1762c31e",
+        "title": "На развитие стрима",
+        "target": 500000,
+        "current": 0,
+        "deadline": null,
+        "is_active": true,
+        "created_at": "2026-10-12T06:25:17.510Z",
+        "updated_at": "2026-10-12T06:25:17.510Z"
+      }
+    ],
+    "current": 0,
+    "updated_at": "2026-10-12T06:24:45.541Z"
+  },
+  "usr_eaeba90460e0": {
+    "id": "goal_26914d07",
+    "user_id": "usr_eaeba90460e0",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 0,
+    "updated_at": "2026-09-14T07:52:09.429Z"
+  },
+  "usr_ba7b8418c239": {
+    "id": "goal_7da4f19a",
+    "user_id": "usr_ba7b8418c239",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 0,
+    "updated_at": "2026-09-14T07:52:09.419Z"
+  },
+  "usr_aa0e5c67566d": {
+    "id": "goal_13832633",
+    "user_id": "usr_aa0e5c67566d",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 7000,
+    "updated_at": "2026-09-14T07:53:30.275Z"
+  },
+  "usr_d05f1cea6732": {
+    "id": "goal_7374fbbf",
+    "user_id": "usr_d05f1cea6732",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 12000,
+    "updated_at": "2026-09-14T07:53:30.283Z"
+  },
+  "usr_b50b060e7aad": {
+    "id": "goal_f2fd11dc",
+    "user_id": "usr_b50b060e7aad",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 7000,
+    "updated_at": "2026-09-14T07:53:48.679Z"
+  },
+  "usr_d80d050f15b6": {
+    "id": "goal_fda47301",
+    "user_id": "usr_d80d050f15b6",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 12000,
+    "updated_at": "2026-09-14T07:53:48.686Z"
+  },
+  "usr_aa8e46ca2bf0": {
+    "id": "goal_77fb4c45",
+    "user_id": "usr_aa8e46ca2bf0",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 0,
+    "updated_at": "2026-09-14T17:15:53.328Z"
+  },
+  "usr_163dd4d599e2": {
+    "id": "goal_54f11875",
+    "user_id": "usr_163dd4d599e2",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 325000,
+    "updated_at": "2026-09-22T19:01:37.540Z"
+  },
+  "usr_3e37532cf223": {
+    "id": "goal_a027f7d3",
+    "user_id": "usr_3e37532cf223",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 50000,
+    "updated_at": "2026-09-14T16:18:32.962Z"
+  },
+  "usr_95f5f8d2384c": {
+    "id": "goal_09f42272",
+    "user_id": "usr_95f5f8d2384c",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 7000,
+    "updated_at": "2026-09-22T18:29:54.270Z"
+  },
+  "usr_3171272382a1": {
+    "id": "goal_a83b3544",
+    "user_id": "usr_3171272382a1",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 12000,
+    "updated_at": "2026-09-22T18:29:54.282Z"
+  },
+  "usr_5439f6cd22b3": {
+    "id": "goal_dc87e5ba",
+    "user_id": "usr_5439f6cd22b3",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 235000,
+    "updated_at": "2026-09-22T18:57:54.182Z"
+  },
+  "usr_454963942e16": {
+    "id": "goal_d60326d3",
+    "user_id": "usr_454963942e16",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 7000,
+    "updated_at": "2026-09-22T18:58:14.095Z"
+  },
+  "usr_6b6547469808": {
+    "id": "goal_8cd2cf8b",
+    "user_id": "usr_6b6547469808",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 12000,
+    "updated_at": "2026-09-22T18:58:14.111Z"
+  },
+  "usr_ce65342a925a": {
+    "id": "goal_d2b2ccf7",
+    "user_id": "usr_ce65342a925a",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 235000,
+    "updated_at": "2026-09-22T19:00:55.732Z"
+  },
+  "usr_0ca464986e77": {
+    "id": "goal_8af58c15",
+    "user_id": "usr_0ca464986e77",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 7000,
+    "updated_at": "2026-09-22T19:01:13.517Z"
+  },
+  "usr_ad24ed4f84d0": {
+    "id": "goal_9a55dd7e",
+    "user_id": "usr_ad24ed4f84d0",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 12000,
+    "updated_at": "2026-09-22T19:01:13.534Z"
+  },
+  "usr_4deb041e4765": {
+    "id": "goal_c0427626",
+    "user_id": "usr_4deb041e4765",
+    "title": "На развитие стрима и микрофон",
+    "target": 500000,
+    "current": 0,
+    "updated_at": "2026-09-22T19:11:18.208Z"
+  },
+  "usr_test_streamer": {
+    "active_id": "goal_61465aee",
+    "list": [
+      {
+        "id": "goal_1272580d",
+        "user_id": "usr_test_streamer",
+        "title": "На развитие стрима",
+        "target": 500000,
+        "current": 0,
+        "is_active": false,
+        "created_at": "2026-10-04T19:46:14.290Z",
+        "updated_at": "2026-10-04T19:46:14.295Z"
+      },
+      {
+        "id": "goal_61465aee",
+        "user_id": "usr_test_streamer",
+        "title": "Кастомный микрофон Shure SM7B",
+        "target": 250000,
+        "current": 35000,
+        "deadline": "2026-11-01",
+        "is_active": true,
+        "created_at": "2026-10-04T19:46:14.298Z",
+        "updated_at": "2026-10-04T19:46:14.307Z"
+      },
+      {
+        "id": "goal_fefc54b0",
+        "user_id": "usr_test_streamer",
+        "title": "Кастомный микрофон Shure SM7B",
+        "target": 250000,
+        "current": 15000,
+        "deadline": "2026-11-01",
+        "is_active": false,
+        "created_at": "2026-10-12T05:41:27.236Z",
+        "updated_at": "2026-10-12T05:41:27.238Z"
+      }
+    ],
+    "current": 0,
+    "updated_at": "2026-10-04T19:46:22.581Z"
+  },
+  "usr_dedup_test_1791785916102": {
+    "active_id": "goal_5d579094",
+    "list": [
+      {
+        "id": "goal_5d579094",
+        "user_id": "usr_dedup_test_1791785916102",
+        "title": "На развитие стрима",
+        "target": 500000,
+        "current": 6500,
+        "is_active": true,
+        "created_at": "2026-10-12T06:18:36.108Z",
+        "updated_at": "2026-10-12T06:18:36.120Z"
+      }
+    ]
+  },
+  "usr_dedup_test_1791786056416": {
+    "active_id": "goal_036e108d",
+    "list": [
+      {
+        "id": "goal_036e108d",
+        "user_id": "usr_dedup_test_1791786056416",
+        "title": "На развитие стрима",
+        "target": 500000,
+        "current": 6500,
+        "is_active": true,
+        "created_at": "2026-10-12T06:20:56.425Z",
+        "updated_at": "2026-10-12T06:20:56.439Z"
+      }
+    ]
+  },
+  "usr_dedup_test_1791786105499": {
+    "active_id": "goal_26d249b9",
+    "list": [
+      {
+        "id": "goal_26d249b9",
+        "user_id": "usr_dedup_test_1791786105499",
+        "title": "На развитие стрима",
+        "target": 500000,
+        "current": 6500,
+        "is_active": true,
+        "created_at": "2026-10-12T06:21:45.506Z",
+        "updated_at": "2026-10-12T06:21:45.517Z"
+      }
+    ]
+  }
+}

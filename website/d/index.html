@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Поддержать стримера ₸ | TengeAlert</title>
+  <meta name="description" content="Прямая поддержка стримера в Казахстане без посредников и комиссий. Kaspi QR, Kaspi Перевод, Halyk Bank.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Slash Design System (Midnight Vault & Gilded Ledger Lines) */
+      --bg-primary: #08080a;
+      --bg-secondary: #040406;
+      --bg-card: #0b0c10;
+      --bg-card-subtle: #121317;
+      --bg-input: #121317;
+      --border-hairline: #1c1d22;
+      --border-hover: #2e3038;
+      --border-focus: #e5a93c;
+      
+      --accent-gold: #e5a93c;
+      --accent-gold-hover: #f3be56;
+      --accent-gold-bg: rgba(229, 169, 60, 0.12);
+      --accent-copper: #cc9166;
+      --accent-emerald: #10b981;
+      --accent-emerald-bg: rgba(16, 185, 129, 0.12);
+      --accent-kaspi: #f5222d;
+      --accent-halyk: #00875a;
+      
+      --text-primary: #ffffff;
+      --text-body: #e2e3e9;
+      --text-secondary: #9194a1;
+      --text-muted: #5e616e;
+      
+      --radius-xl: 10px;
+      --radius-lg: 10px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --radius-pill: 9999px;
+      
+      --shadow-card: none;
+      --shadow-button: none;
+      --transition-smooth: 0.15s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 64px 16px;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(ellipse 60% 40% at 50% -10%, rgba(229, 169, 60, 0.06), transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 100%, rgba(16, 185, 129, 0.04), transparent 70%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Top Utility Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 2px 8px 2px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-gold);
+    }
+
+    .share-btn {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      border-radius: 100px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-smooth);
+    }
+
+    .share-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+
+    /* Streamer Bio Card (DaLink Style) */
+    .profile-card {
+      text-align: center;
+      padding: 28px 24px 22px 24px;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 16px auto;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background-color: var(--bg-secondary);
+    }
+
+    .avatar-initials {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(135deg, #1C2333, #0F131D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 100px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .status-dot-emerald {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-emerald);
+    }
+
+    .streamer-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .streamer-name {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .verified-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--accent-gold);
+      flex-shrink: 0;
+    }
+
+    .streamer-bio {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 440px;
+      margin: 0 auto 18px auto;
+    }
+
+    /* Social / Multi-links list (DaLink Style) */
+    .links-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .social-btn {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-smooth);
+    }
+
+    .social-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    .social-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+
+    .custom-links-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .custom-link-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all var(--transition-smooth);
+    }
+
+    .custom-link-item:hover {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .custom-link-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .custom-link-item svg.arrow {
+      width: 14px;
+      height: 14px;
+      color: var(--text-muted);
+      transition: transform var(--transition-smooth);
+    }
+
+    .custom-link-item:hover svg.arrow {
+      transform: translateX(2px);
+      color: var(--text-primary);
+    }
+
+    /* Goal Bar Card (Donatty Style) */
+    .goal-card {
+      padding: 20px 24px;
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .goal-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .goal-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .goal-percent-badge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #E5A93C, #F3C367);
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .goal-numbers {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .goal-numbers .current {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    /* Main Donation Form Card */
+    .form-card {
+      padding: 24px;
+    }
+
+    .form-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .anon-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .anon-toggle input[type="checkbox"] {
+      accent-color: var(--accent-gold);
+      cursor: pointer;
+    }
+
+    .input-box {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      transition: border-color var(--transition-smooth);
+      outline: none;
+    }
+
+    .input-box:focus {
+      border-color: var(--border-focus);
+    }
+
+    .input-box::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Amount Input & Preset Chips */
+    .amount-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .amount-input-box {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 14px 44px 14px 16px;
+      color: var(--text-primary);
+      font-family: 'Geist Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      transition: border-color var(--transition-smooth);
+      outline: none;
+    }
+
+    .amount-input-box:focus {
+      border-color: var(--border-focus);
+    }
+
+    .currency-suffix {
+      position: absolute;
+      right: 16px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      pointer-events: none;
+    }
+
+    .preset-chips-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .preset-chip {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      padding: 9px 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-smooth);
+      user-select: none;
+    }
+
+    .preset-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .preset-chip.active {
+      background: var(--accent-gold-bg);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Message & TTS status */
+    .textarea-box {
+      width: 100%;
+      min-height: 84px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.45;
+      resize: vertical;
+      transition: border-color var(--transition-smooth);
+      outline: none;
+    }
+
+    .textarea-box:focus {
+      border-color: var(--border-focus);
+    }
+
+    .textarea-box::placeholder {
+      color: var(--text-muted);
+    }
+
+    .textarea-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .tts-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .tts-badge.active {
+      color: var(--accent-emerald);
+      font-weight: 500;
+    }
+
+    .tts-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .char-counter {
+      color: var(--text-muted);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    /* Payment Method Tabs (Fintech Style) */
+    .payment-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      background: var(--bg-input);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-hairline);
+      margin-bottom: 14px;
+    }
+
+    .payment-tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--transition-smooth);
+    }
+
+    .payment-tab-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bank-pill-kaspi {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-kaspi);
+    }
+
+    .bank-pill-halyk {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-halyk);
+    }
+
+    .bank-pill-card {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #3B82F6;
+    }
+
+    /* Payment Details Box */
+    .payment-details-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .requisites-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    .requisites-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .requisites-row .label {
+      color: var(--text-muted);
+    }
+
+    .requisites-row .value-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .requisites-row .val {
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .copy-pill-btn {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      border-radius: 4px;
+      padding: 3px 7px;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all var(--transition-smooth);
+    }
+
+    .copy-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    /* QR Code Display in Card */
+    .qr-preview-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0 6px 0;
+    }
+
+    .qr-canvas-holder {
+      background: #FFFFFF;
+      padding: 12px;
+      border-radius: var(--radius-lg);
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .qr-canvas-holder canvas {
+      display: block;
+      width: 160px;
+      height: 160px;
+    }
+
+    .qr-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 320px;
+    }
+
+    .mobile-kaspi-btn {
+      display: none;
+      width: 100%;
+      background: var(--accent-kaspi);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      text-align: center;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .mobile-kaspi-btn {
+        display: block;
+      }
+    }
+
+    /* Submit Button (Fintech Style) */
+    .submit-btn {
+      width: 100%;
+      background: var(--accent-gold);
+      color: #090A0F;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--shadow-button);
+      transition: all var(--transition-smooth);
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-gold-hover);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .submit-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* Security Guarantee Note */
+    .security-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .security-note svg {
+      width: 13px;
+      height: 13px;
+      color: var(--accent-emerald);
+    }
+
+    /* Top Donors Section */
+    .top-donors-card {
+      padding: 20px 24px;
+    }
+
+    .top-donors-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .top-donors-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-donors-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .donors-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .donor-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+
+    .donor-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .donor-rank {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 20px;
+    }
+
+    .donor-row:first-child .donor-rank {
+      color: var(--accent-gold);
+    }
+
+    .donor-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .donor-amount {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .empty-donors-note {
+      text-align: center;
+      padding: 16px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Confirmation Modal / Payment Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 440px;
+      background: #0D111A;
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      padding: 28px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-ref-badge {
+      display: inline-block;
+      font-family: 'Geist Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: var(--accent-gold-bg);
+      border: 1px dashed var(--accent-gold);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      margin: 12px 0 16px 0;
+      letter-spacing: 0.05em;
+    }
+
+    .modal-steps-list {
+      text-align: left;
+      margin: 16px 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-step-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.1);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .modal-action-btn {
+      width: 100%;
+      background: var(--accent-gold);
+      color: #090A0F;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background var(--transition-smooth);
+    }
+
+    .modal-action-btn:hover {
+      background: var(--accent-gold-hover);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #141A28;
+      border: 1px solid var(--border-hairline);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 24px 0 12px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition-smooth);
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Utility Bar -->
+    <header class="top-bar">
+      <div class="brand-tag">
+        <span class="brand-dot"></span>
+        <span>TengeAlert P2P</span>
+      </div>
+      <button class="share-btn" onclick="copyCurrentLink()" id="btn-share-profile">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        <span>Поделиться</span>
+      </button>
+    </header>
+
+    <!-- Streamer Bio Card (DaLink Style) -->
+    <section class="card profile-card">
+      <div class="avatar-wrapper" id="profile-avatar-container">
+        <div class="avatar-initials" id="profile-avatar-initials">AS</div>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot-emerald"></span>
+        <span>Прямой прием • 0% комиссии</span>
+      </div>
+      <div class="streamer-title-row">
+        <h1 class="streamer-name" id="streamer-display-name">Asset Streamer</h1>
+        <svg class="verified-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.41 14.88L6.7 13.01l1.41-1.41 2.48 2.47 6.07-6.07 1.41 1.41-7.48 7.47z"/>
+        </svg>
+      </div>
+      <p class="streamer-bio" id="streamer-bio">Стример из Казахстана. Спасибо за поддержку трансляции и контента!</p>
+
+      <!-- Channels & Social Media (DaLink Links) -->
+      <div class="links-grid" id="social-links-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Custom Links (Merch, Setup, Schedule) -->
+      <div class="custom-links-container" id="custom-links-container" style="display: none;">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Live Goal Bar Card (Donatty Style) -->
+    <section class="card goal-card" id="goal-card-section" style="display: none;">
+      <div class="goal-header">
+        <div>
+          <div class="goal-tag">Цель сбора</div>
+          <div class="goal-title" id="goal-title">На развитие стрима</div>
+        </div>
+        <div class="goal-percent-badge" id="goal-percent">0%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar-fill" id="goal-progress-fill"></div>
+      </div>
+      <div class="goal-numbers">
+        <div>Собрано: <span class="current" id="goal-current">0 ₸</span></div>
+        <div>Цель: <span id="goal-target">500 000 ₸</span></div>
+      </div>
+    </section>
+
+    <!-- Donation Form Card (Donatty + CloudTips Core) -->
+    <section class="card form-card">
+      <form id="donation-form" onsubmit="handleFormSubmit(event)">
+        
+        <!-- Nickname -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="donor-name-input">Имя или никнейм</label>
+            <label class="anon-toggle">
+              <input type="checkbox" id="anon-checkbox" onchange="toggleAnonMode(this)">
+              <span>Анонимно</span>
+            </label>
+          </div>
+          <input type="text" id="donor-name-input" class="input-box" placeholder="Например: Данияр или Спектатор" maxlength="32">
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="amount-input">Сумма поддержки</label>
+            <span style="font-size: 11px; color: var(--text-muted);" id="min-amount-label">Минимум 100 ₸</span>
+          </div>
+          <div class="amount-input-wrapper">
+            <input type="number" id="amount-input" class="amount-input-box" value="1000" min="50" step="50" oninput="handleAmountChange()">
+            <span class="currency-suffix">₸</span>
+          </div>
+
+          <!-- Preset Chips -->
+          <div class="preset-chips-row" id="preset-chips-container">
+            <button type="button" class="preset-chip" onclick="setPreset(500)">500 ₸</button>
+            <button type="button" class="preset-chip active" onclick="setPreset(1000)">1 000 ₸</button>
+            <button type="button" class="preset-chip" onclick="setPreset(2500)">2 500 ₸</button>
+            <button type="button" class="preset-chip" onclick="setPreset(5000)">5 000 ₸</button>
+            <button type="button" class="preset-chip" onclick="setPreset(10000)">10 000 ₸</button>
+            <button type="button" class="preset-chip" onclick="setPreset(25000)">25 000 ₸</button>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="donor-message-input">Сообщение на стрим</label>
+          </div>
+          <textarea id="donor-message-input" class="textarea-box" placeholder="Текст сообщения появится на экране эфира..." maxlength="300" oninput="updateCharCount()"></textarea>
+          <div class="textarea-bottom-row">
+            <div class="tts-badge" id="tts-indicator">
+              <svg class="tts-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              <span id="tts-text-hint">Озвучивается на стриме</span>
+            </div>
+            <div class="char-counter" id="char-counter">0 / 300</div>
+          </div>
+        </div>
+
+        <!-- Payment Method Tabs -->
+        <div class="form-group">
+          <div class="form-section-title">Способ прямого перевода P2P (0% комиссии)</div>
+          <div class="payment-tabs">
+            <button type="button" class="payment-tab-btn active" id="tab-kaspi" onclick="switchBankTab('kaspi')">
+              <span class="bank-pill-kaspi"></span>
+              <span>Kaspi QR</span>
+            </button>
+            <button type="button" class="payment-tab-btn" id="tab-halyk" onclick="switchBankTab('halyk')">
+              <span class="bank-pill-halyk"></span>
+              <span>Halyk Bank</span>
+            </button>
+            <button type="button" class="payment-tab-btn" id="tab-card" onclick="switchBankTab('card')">
+              <span class="bank-pill-card"></span>
+              <span>Карта KZ</span>
+            </button>
+          </div>
+
+          <!-- Requisites Box -->
+          <div class="payment-details-box">
+            <!-- Kaspi Tab Content -->
+            <div id="content-kaspi">
+              <div class="requisites-row">
+                <span class="label">Номер получателя (Kaspi):</span>
+                <div class="value-group">
+                  <span class="val" id="val-kaspi-phone">+7 (777) 123-45-67</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-kaspi-phone')">Копировать</button>
+                </div>
+              </div>
+              <div class="requisites-row">
+                <span class="label">Имя получателя:</span>
+                <span class="val" id="val-kaspi-name">Рустам М.</span>
+              </div>
+              <div class="requisites-row">
+                <span class="label">Код перевода (в коммент):</span>
+                <div class="value-group">
+                  <span class="val" id="val-ref-code">TA-7842</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-ref-code')">Код</button>
+                </div>
+              </div>
+
+              <!-- Dynamic QR Code Canvas -->
+              <div class="qr-preview-box">
+                <div class="qr-canvas-holder">
+                  <canvas id="kaspi-qr-canvas" width="160" height="160"></canvas>
+                </div>
+                <div class="qr-caption">Наведите камеру в приложении Kaspi.kz или отсканируйте QR для оплаты без ввода реквизитов</div>
+                <a href="https://kaspi.kz" target="_blank" class="mobile-kaspi-btn" id="mobile-kaspi-link">Открыть приложение Kaspi.kz</a>
+              </div>
+            </div>
+
+            <!-- Halyk Tab Content -->
+            <div id="content-halyk" style="display: none;">
+              <div class="requisites-row">
+                <span class="label">Номер карты Halyk:</span>
+                <div class="value-group">
+                  <span class="val" id="val-halyk-card">4400 0000 0000 0000</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-halyk-card')">Копировать</button>
+                </div>
+              </div>
+              <div class="requisites-row">
+                <span class="label">Код перевода:</span>
+                <div class="value-group">
+                  <span class="val" id="val-halyk-ref">TA-7842</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-halyk-ref')">Код</button>
+                </div>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;">
+                Переведите указанную сумму в приложении Halyk Homebank по номеру карты и укажите контрольный код в сообщении.
+              </p>
+            </div>
+
+            <!-- General Card Content -->
+            <div id="content-card" style="display: none;">
+              <div class="requisites-row">
+                <span class="label">Номер карты:</span>
+                <div class="value-group">
+                  <span class="val" id="val-general-card">4400 0000 0000 0000</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-general-card')">Копировать</button>
+                </div>
+              </div>
+              <div class="requisites-row">
+                <span class="label">Код в комментарии:</span>
+                <div class="value-group">
+                  <span class="val" id="val-card-ref">TA-7842</span>
+                  <button type="button" class="copy-pill-btn" onclick="copyText('val-card-ref')">Код</button>
+                </div>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;">
+                Перевод с любых карт казахстанских банков (Kaspi, Halyk, Jusan, Freedom, Forte).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" id="btn-submit-donation">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          <span id="btn-submit-text">Поддержать стримера • 1 000 ₸</span>
+        </button>
+
+        <div class="security-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Прямой банковский P2P перевод. Никаких подписок и автосписаний.</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Top Donors (Leaderboard) -->
+    <section class="card top-donors-card">
+      <div class="top-donors-title-row">
+        <div class="top-donors-title">Топ спонсоров трансляции</div>
+        <div class="top-donors-sub">За все время</div>
+      </div>
+      <div class="donors-list" id="donors-list-container">
+        <div class="empty-donors-note">Будьте первым, кто поддержит стримера!</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div>TengeAlert • Независимый стриминговый шлюз P2P без посредников</div>
+      <div class="footer-links">
+        <a href="/legal/terms.html" target="_blank">Условия сервиса</a>
+        <span>•</span>
+        <a href="/legal/privacy.html" target="_blank">Конфиденциальность</a>
+        <span>•</span>
+        <a href="/dashboard/" target="_blank">Студия стримера</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Confirmation Modal / Step Dialog -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.05em; text-transform: uppercase;">
+        Завершение перевода
+      </div>
+      <h2 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; margin: 6px 0 2px 0;">
+        Подтверждение доната
+      </h2>
+      <p style="font-size: 13px; color: var(--text-secondary);">
+        Сумма к переводу: <strong id="modal-amount-display" style="color: var(--text-primary); font-family: 'Geist Mono', monospace;">1 000 ₸</strong>
+      </p>
+
+      <div class="modal-ref-badge" id="modal-ref-code">TA-7842</div>
+
+      <div class="modal-steps-list">
+        <div class="modal-step-item">
+          <div class="step-number">1</div>
+          <div>Откройте Kaspi.kz или Halyk и переведите сумму по реквизитам стримера.</div>
+        </div>
+        <div class="modal-step-item">
+          <div class="step-number">2</div>
+          <div>Укажите в сообщении перевода контрольный код <strong id="modal-code-inline" style="color: var(--accent-gold);">TA-7842</strong>.</div>
+        </div>
+        <div class="modal-step-item">
+          <div class="step-number">3</div>
+          <div>Нажмите кнопку подтверждения ниже — ваш алерт моментально появится в прямом эфире!</div>
+        </div>
+      </div>
+
+      <button type="button" class="modal-action-btn" id="modal-confirm-btn" onclick="sendDonationToServer()">
+        Я перевел(а) — показать на стриме
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast-notification">
+    <span class="toast-dot"></span>
+    <span id="toast-message">Ссылка скопирована в буфер</span>
+  </div>
+
+  <!-- Pure Zero-Dependency QR Generator Script -->
+  <script src="/widgets/qr-gen.js"></script>
+
+  <script>
+    // State
+    let streamerData = null;
+    let selectedBank = 'kaspi';
+    let currentRefCode = 'TA-' + Math.floor(1000 + Math.random() * 9000);
+    let sseSource = null;
+
+    // Detect slug from URL path (e.g., /d/streamerkz or /d/)
+    function getSlugFromUrl() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      // Handles /d/:slug or /donate/:slug
+      if (parts.length >= 2 && (parts[0] === 'd' || parts[0] === 'donate' || parts[0] === 'pay')) {
+        return parts[1];
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('slug') || urlParams.get('streamer') || '';
+    }
+
+    // Format currency
+    function formatKzt(amount) {
+      return (Number(amount) || 0).toLocaleString('ru-RU') + ' ₸';
+    }
+
+    // Show Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notification');
+      const text = document.getElementById('toast-message');
+      text.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Copy Text to Clipboard
+    function copyText(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const text = el.innerText || el.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Скопировано: ' + text);
+      }).catch(() => {
+        showToast('Скопировано');
+      });
+    }
+
+    function copyCurrentLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Ссылка на страницу доната скопирована');
+      });
+    }
+
+    // Toggle anonymous mode
+    function toggleAnonMode(checkbox) {
+      const nameInput = document.getElementById('donor-name-input');
+      if (checkbox.checked) {
+        nameInput.value = 'Аноним';
+        nameInput.disabled = true;
+      } else {
+        nameInput.value = '';
+        nameInput.disabled = false;
+        nameInput.focus();
+      }
+    }
+
+    // Preset amount buttons
+    function setPreset(amount) {
+      const amountInput = document.getElementById('amount-input');
+      amountInput.value = amount;
+      
+      const chips = document.querySelectorAll('.preset-chip');
+      chips.forEach(chip => {
+        const val = parseInt(chip.innerText.replace(/[^0-9]/g, ''), 10);
+        if (val === amount) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+      handleAmountChange();
+    }
+
+    // Handle Amount Change
+    function handleAmountChange() {
+      const amountInput = document.getElementById('amount-input');
+      const rawVal = parseInt(amountInput.value, 10) || 0;
+      const submitBtnText = document.getElementById('btn-submit-text');
+      
+      const btnBaseText = (streamerData && streamerData.settings && streamerData.settings.button_text) 
+        ? streamerData.settings.button_text 
+        : 'Поддержать стримера';
+      
+      submitBtnText.innerText = `${btnBaseText} • ${formatKzt(rawVal)}`;
+
+      // Update TTS badge indicator
+      const ttsMin = (streamerData && streamerData.settings && streamerData.settings.tts_min_amount !== undefined)
+        ? streamerData.settings.tts_min_amount
+        : 500;
+      const ttsEnabled = (streamerData && streamerData.settings && streamerData.settings.tts_enabled !== false);
+      const ttsBadge = document.getElementById('tts-indicator');
+      const ttsText = document.getElementById('tts-text-hint');
+
+      if (!ttsEnabled) {
+        ttsBadge.classList.remove('active');
+        ttsText.innerText = 'Озвучка отключена стримером';
+      } else if (rawVal >= ttsMin) {
+        ttsBadge.classList.add('active');
+        ttsText.innerText = `Озвучивается на стриме (от ${formatKzt(ttsMin)})`;
+      } else {
+        ttsBadge.classList.remove('active');
+        ttsText.innerText = `Без озвучки (доступна от ${formatKzt(ttsMin)})`;
+      }
+
+      // Re-render QR code with new amount if available
+      renderKaspiQR();
+    }
+
+    // Character Counter
+    function updateCharCount() {
+      const msgInput = document.getElementById('donor-message-input');
+      const counter = document.getElementById('char-counter');
+      counter.innerText = `${msgInput.value.length} / 300`;
+    }
+
+    // Switch payment tabs
+    function switchBankTab(tab) {
+      selectedBank = tab;
+      document.getElementById('tab-kaspi').classList.toggle('active', tab === 'kaspi');
+      document.getElementById('tab-halyk').classList.toggle('active', tab === 'halyk');
+      document.getElementById('tab-card').classList.toggle('active', tab === 'card');
+
+      document.getElementById('content-kaspi').style.display = tab === 'kaspi' ? 'block' : 'none';
+      document.getElementById('content-halyk').style.display = tab === 'halyk' ? 'block' : 'none';
+      document.getElementById('content-card').style.display = tab === 'card' ? 'block' : 'none';
+    }
+
+    // Generate Kaspi QR using pure Zero-Dependency QRGen
+    function renderKaspiQR() {
+      const canvas = document.getElementById('kaspi-qr-canvas');
+      if (!canvas || typeof QRGen === 'undefined') return;
+
+      const reqs = streamerData ? streamerData.requisites : {};
+      const amount = parseInt(document.getElementById('amount-input').value, 10) || 1000;
+      
+      // Kaspi Pay Link or Standard Kaspi Transfer Payload
+      let qrPayload = reqs?.kaspi_pay_link;
+      if (!qrPayload) {
+        const phone = (reqs?.kaspi_phone || '+77078305815').replace(/[^0-9]/g, '');
+        qrPayload = `https://kaspi.kz/pay/transfer?phone=${phone}&amount=${amount}&comment=${currentRefCode}`;
+      }
+
+      QRGen.renderToCanvas(canvas, qrPayload, {
+        scale: 5,
+        margin: 2,
+        darkColor: '#090A0F',
+        lightColor: '#FFFFFF',
+        rounded: true,
+        centerBadge: true,
+        badgeColor: '#F14635',
+        badgeSymbol: 'K'
+      });
+
+      // Update mobile button
+      const mobileBtn = document.getElementById('mobile-kaspi-link');
+      if (mobileBtn) {
+        mobileBtn.href = qrPayload;
+      }
+    }
+
+    // Render Streamer Profile
+    function renderProfile(data) {
+      streamerData = data;
+      const s = data;
+
+      // Titles & Bio
+      document.title = `${s.display_name} — Поддержать стримера ₸ | TengeAlert`;
+      document.getElementById('streamer-display-name').innerText = s.display_name;
+      document.getElementById('streamer-bio').innerText = s.bio || 'Стример из Казахстана. Спасибо за поддержку эфиров!';
+
+      // Avatar
+      const avatarContainer = document.getElementById('profile-avatar-container');
+      if (s.avatar_url) {
+        avatarContainer.innerHTML = `<img src="${s.avatar_url}" alt="${s.display_name}" class="avatar-img">`;
+      } else {
+        const initials = s.display_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'TA';
+        avatarContainer.innerHTML = `<div class="avatar-initials">${initials}</div>`;
+      }
+
+      // Requisites
+      const r = s.requisites || {};
+      const phoneDisplay = r.kaspi_phone || 'Номер не указан';
+      const nameDisplay = r.kaspi_name || s.display_name;
+      document.getElementById('val-kaspi-phone').innerText = phoneDisplay;
+      document.getElementById('val-kaspi-name').innerText = nameDisplay;
+      
+      const cardDisplay = r.halyk_card || r.jusan_card || '4400 **** **** 1234';
+      document.getElementById('val-halyk-card').innerText = cardDisplay;
+      document.getElementById('val-general-card').innerText = cardDisplay;
+
+      document.getElementById('val-ref-code').innerText = currentRefCode;
+      document.getElementById('val-halyk-ref').innerText = currentRefCode;
+      document.getElementById('val-card-ref').innerText = currentRefCode;
+
+      // Min amount
+      const minAmount = s.settings?.min_donation_amount || 100;
+      document.getElementById('min-amount-label').innerText = `Минимум ${formatKzt(minAmount)}`;
+      document.getElementById('amount-input').min = minAmount;
+
+      // Custom Amount Presets
+      if (Array.isArray(s.amount_presets) && s.amount_presets.length > 0) {
+        const container = document.getElementById('preset-chips-container');
+        container.innerHTML = s.amount_presets.map(p => `
+          <button type="button" class="preset-chip ${p === 1000 ? 'active' : ''}" onclick="setPreset(${p})">${formatKzt(p)}</button>
+        `).join('');
+      }
+
+      // Socials (DaLink Style)
+      renderSocials(s.socials || {});
+
+      // Custom links
+      renderCustomLinks(s.custom_links || []);
+
+      // Goal
+      renderGoal(s.goal);
+
+      // Top Donors
+      renderTopDonors(s.top_donors || []);
+
+      // QR render
+      renderKaspiQR();
+      handleAmountChange();
+    }
+
+    function renderSocials(socials) {
+      const container = document.getElementById('social-links-grid');
+      const icons = {
+        twitch: '<svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>',
+        youtube: '<svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+        tiktok: '<svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>',
+        telegram: '<svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>',
+        discord: '<svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>',
+        kick: '<svg viewBox="0 0 24 24"><path d="M1.333 0h8v5.333H6.667v2.667h2.666v2.667h2.667V8h2.667V5.333h2.666V2.667H20V0h2.667v8h-2.667v2.667h-2.667v2.666h2.667V16H20v2.667h2.667V24h-8v-5.333h2.666v-2.667h-2.666V13.333h-2.667v2.667H6.667v2.667h2.666V24H1.333z"/></svg>',
+        vk: '<svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.525-2.05-1.714-1.038-1.012-1.498-1.144-1.754-1.144-.356 0-.458.102-.458.593v1.65c0 .423-.135.677-1.253.677-1.846 0-3.896-1.118-5.335-3.193-2.168-3.083-2.76-5.404-2.76-5.877 0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.847 2.456 2.27 4.608 2.862 4.608.22 0 .322-.102.322-.66V10.45c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.744c.373 0 .508.186.508.627v3.37c0 .356.153.492.271.492.22 0 .407-.136.813-.542 1.27-1.423 2.185-3.642 2.185-3.642.119-.254.339-.491.78-.491h1.744c.525 0 .644.271.525.644-.22 1.016-2.354 4.031-2.456 4.183-.237.356-.322.508 0 .948.237.339 1.016 1.016 1.541 1.626 1.016 1.152 1.812 2.117 2.015 2.778.204.644-.118.966-.542.966z"/></svg>'
+      };
+
+      const labels = {
+        twitch: 'Twitch',
+        youtube: 'YouTube',
+        tiktok: 'TikTok',
+        telegram: 'Telegram',
+        discord: 'Discord',
+        kick: 'Kick',
+        vk: 'VKontakte'
+      };
+
+      let html = '';
+      for (const [key, url] of Object.entries(socials)) {
+        if (!url || !url.trim()) continue;
+        const icon = icons[key] || '';
+        const label = labels[key] || key;
+        const finalUrl = url.startsWith('http') ? url : `https://${key === 'twitch' ? 'twitch.tv/' : key === 'telegram' ? 't.me/' : ''}${url}`;
+        html += `
+          <a href="${finalUrl}" target="_blank" rel="noopener noreferrer" class="social-btn">
+            ${icon}
+            <span>${label}</span>
+          </a>
+        `;
+      }
+      container.innerHTML = html;
+      container.style.display = html.trim() ? 'flex' : 'none';
+    }
+
+    function renderCustomLinks(links) {
+      const container = document.getElementById('custom-links-container');
+      if (!Array.isArray(links) || links.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      container.innerHTML = links.map(l => `
+        <a href="${l.url || '#'}" target="_blank" rel="noopener noreferrer" class="custom-link-item">
+          <div class="custom-link-left">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>${l.title || 'Ссылка'}</span>
+          </div>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      `).join('');
+      container.style.display = 'flex';
+    }
+
+    function renderGoal(goal) {
+      const card = document.getElementById('goal-card-section');
+      if (!goal || !goal.target) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'block';
+      document.getElementById('goal-title').innerText = goal.title || 'На развитие стрима';
+      
+      const current = Number(goal.current) || 0;
+      const target = Number(goal.target) || 500000;
+      const pct = Math.min(100, Math.round((current / target) * 100));
+
+      document.getElementById('goal-percent').innerText = `${pct}%`;
+      document.getElementById('goal-current').innerText = formatKzt(current);
+      document.getElementById('goal-target').innerText = formatKzt(target);
+      document.getElementById('goal-progress-fill').style.width = `${pct}%`;
+    }
+
+    function renderTopDonors(list) {
+      const container = document.getElementById('donors-list-container');
+      if (!Array.isArray(list) || list.length === 0) {
+        container.innerHTML = '<div class="empty-donors-note">Будьте первым, кто поддержит стримера!</div>';
+        return;
+      }
+
+      container.innerHTML = list.slice(0, 5).map((d, index) => {
+        const rank = String(index + 1).padStart(2, '0');
+        return `
+          <div class="donor-row">
+            <div class="donor-left">
+              <span class="donor-rank">${rank}</span>
+              <span class="donor-name">${d.sender || 'Аноним'}</span>
+            </div>
+            <span class="donor-amount">${formatKzt(d.amount)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Handling
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const amount = parseInt(document.getElementById('amount-input').value, 10) || 0;
+      const minAmount = (streamerData && streamerData.settings && streamerData.settings.min_donation_amount) || 100;
+      
+      if (amount < minAmount) {
+        showToast(`Минимальная сумма доната: ${formatKzt(minAmount)}`);
+        return;
+      }
+
+      // Update Modal
+      document.getElementById('modal-amount-display').innerText = formatKzt(amount);
+      document.getElementById('modal-ref-code').innerText = currentRefCode;
+      document.getElementById('modal-code-inline').innerText = currentRefCode;
+
+      document.getElementById('confirm-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('confirm-modal').classList.remove('active');
+    }
+
+    // Send donation to TengeAlert Core Server
+    async function sendDonationToServer() {
+      const btn = document.getElementById('modal-confirm-btn');
+      btn.disabled = true;
+      btn.innerText = 'Отправка алерта...';
+
+      const slug = getSlugFromUrl();
+      const amount = parseInt(document.getElementById('amount-input').value, 10) || 1000;
+      const sender = document.getElementById('donor-name-input').value.trim() || 'Аноним';
+      const message = document.getElementById('donor-message-input').value.trim();
+
+      const bankLabels = {
+        kaspi: 'Kaspi QR ₸',
+        halyk: 'Halyk Bank ₸',
+        card: 'Банковская карта ₸'
+      };
+
+      const payload = {
+        sender,
+        amount,
+        message,
+        bank: bankLabels[selectedBank] || 'Kaspi QR ₸',
+        ref_code: currentRefCode
+      };
+
+      try {
+        const url = slug ? `/api/public/donate/${slug}` : '/api/public/donate';
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closeModal();
+          showToast('Донат доставлен на экран трансляции!');
+
+          // Refresh Ref Code for next transfer
+          currentRefCode = 'TA-' + Math.floor(1000 + Math.random() * 9000);
+          document.getElementById('val-ref-code').innerText = currentRefCode;
+          document.getElementById('val-halyk-ref').innerText = currentRefCode;
+          document.getElementById('val-card-ref').innerText = currentRefCode;
+
+          // Clear message
+          document.getElementById('donor-message-input').value = '';
+          updateCharCount();
+          renderKaspiQR();
+        } else {
+          showToast(data.error || 'Ошибка отправки доната');
+        }
+      } catch (err) {
+        showToast('Ошибка связи с сервером');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Я перевел(а) — показать на стриме';
+      }
+    }
+
+    // Setup Real-time SSE Sync for Goal and Top Donors
+    function setupSSE() {
+      if (typeof EventSource === 'undefined') return;
+      try {
+        sseSource = new EventSource('/api/events');
+        
+        sseSource.addEventListener('goal_update', (e) => {
+          try {
+            const goal = JSON.parse(e.data);
+            if (goal) renderGoal(goal);
+          } catch(err){}
+        });
+
+        sseSource.addEventListener('top_update', (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            if (data && data.top_donors) renderTopDonors(data.top_donors);
+          } catch(err){}
+        });
+
+        sseSource.addEventListener('donation', () => {
+          // Re-fetch top donors & goal for freshest stats
+          loadStreamerData();
+        });
+      } catch(err){}
+    }
+
+    // Fetch Streamer Public Profile
+    async function loadStreamerData() {
+      const slug = getSlugFromUrl();
+      try {
+        const apiUrl = slug ? `/api/public/streamer/${slug}` : '/api/public/streamer';
+        const res = await fetch(apiUrl);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.streamer) {
+            renderProfile(json.streamer);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load streamer info:', err);
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStreamerData();
+      setupSSE();
+    });
+  </script>
+</body>
+</html>

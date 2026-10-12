@@ -1,0 +1,29 @@
+# Large binary releases (GitHub limits single files to 100MB)
+apps/windows/reference/legacy_sample.exe
+*.exe
+
+# Temporary files & caches
+node_modules/
+.vercel/
+scratch/
+.vscode/
+.gemini/
+.idea/
+
+# Local database and server state
+website/server/data/tts_cache/*.mp3
+website/server/data/donations.json
+website/server/data/users.json
+website/server/secret_token.txt
+*.log
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+
+# Android & .NET build artifacts
+.gradle/
+**/build/
+**/bin/
+**/obj/

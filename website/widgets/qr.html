@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Kaspi QR Widget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Geist+Mono:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script src="/widgets/qr-gen.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Widget Frame */
+    .qr-widget-card {
+      width: 250px;
+      padding: 16px 16px 14px;
+      border-radius: 20px;
+      background: linear-gradient(160deg, rgba(14, 18, 28, 0.94) 0%, rgba(7, 10, 16, 0.98) 100%);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 245, 160, 0.12);
+      border: 1px solid rgba(0, 245, 160, 0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      cursor: pointer;
+    }
+
+    /* Top Brand & Status Row */
+    .widget-top-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .kaspi-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(241, 70, 53, 0.15);
+      border: 1px solid rgba(241, 70, 53, 0.35);
+      padding: 4px 9px 4px 6px;
+      border-radius: 999px;
+    }
+
+    .kaspi-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f14635;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 2px 6px rgba(241, 70, 53, 0.4);
+    }
+
+    .kaspi-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: 'Geist Mono', monospace;
+      color: #00f5a0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00f5a0;
+    }
+
+    /* QR Plate Container */
+    .qr-plate-box {
+      width: 196px;
+      height: 196px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 4px rgba(0, 0, 0, 0.15);
+      transition: transform 0.4s ease;
+    }
+
+    #qr-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+
+    /* Streamer Meta Footer */
+    .qr-meta-box {
+      width: 100%;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .streamer-phone-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .streamer-phone-chip svg {
+      width: 12px;
+      height: 12px;
+      stroke: #00f5a0;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .qr-cta-text {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.01em;
+      margin-top: 2px;
+    }
+
+    /* ------------------------------------------------------------- */
+    /* DONATION SPOTLIGHT OVERLAY (Celebration Mode)                 */
+    /* ------------------------------------------------------------- */
+    .spotlight-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #090e1a 0%, #050811 100%);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.92) rotateY(15deg);
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 20;
+    }
+
+    .qr-widget-card.celebrating {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .qr-widget-card.celebrating .spotlight-overlay {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) rotateY(0deg);
+    }
+
+    .spotlight-tag {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      color: #00f5a0;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spotlight-amount {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .spotlight-amount span {
+      color: #00f5a0;
+      font-size: 20px;
+    }
+
+    .spotlight-donor {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+
+    .spotlight-msg {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      line-height: 1.35;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 7px 10px;
+      width: 100%;
+      word-break: break-word;
+      max-height: 60px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .spotlight-progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .spotlight-progress-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #00f5a0 0%, #22d3ee 100%);
+      transform-origin: left;
+      transition: width linear;
+    }
+
+    /* ------------------------------------------------------------- */
+    /* THEMES SUPPORT                                                */
+    /* ------------------------------------------------------------- */
+
+    /* 1. NEO-NOMAD (Golden Kazakh Cultural Futurism) */
+    body.theme-neo_nomad .qr-widget-card {
+      border-color: rgba(229, 169, 60, 0.35);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+    }
+    body.theme-neo_nomad .live-status,
+    body.theme-neo_nomad .spotlight-tag,
+    body.theme-neo_nomad .spotlight-amount span {
+      color: #e5a93c;
+    }
+    body.theme-neo_nomad .live-dot {
+      background: #e5a93c;
+    }
+    body.theme-neo_nomad .streamer-phone-chip svg {
+      stroke: #e5a93c;
+    }
+
+    /* 2. ESPORTS HUD (Aggressive Gaming Crimson) */
+    body.theme-esports_hud .qr-widget-card {
+      border-radius: 12px;
+      border: 1px solid #ff0055;
+      background: linear-gradient(160deg, #18050e 0%, #090206 100%);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
+    }
+    body.theme-esports_hud .qr-plate-box {
+      border-radius: 8px;
+    }
+    body.theme-esports_hud .live-status,
+    body.theme-esports_hud .spotlight-tag,
+    body.theme-esports_hud .spotlight-amount span {
+      color: #ff0055;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    body.theme-esports_hud .live-dot {
+      background: #ff0055;
+    }
+    body.theme-esports_hud .streamer-phone-chip svg {
+      stroke: #ff0055;
+    }
+
+    /* 3. LIQUID GLASS (Frosted Translucent Minimal) */
+    body.theme-liquid_glass .qr-widget-card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+    body.theme-liquid_glass .live-status,
+    body.theme-liquid_glass .spotlight-tag,
+    body.theme-liquid_glass .spotlight-amount span {
+      color: #38bdf8;
+    }
+    body.theme-liquid_glass .live-dot {
+      background: #38bdf8;
+    }
+
+    /* Size variants */
+    body.size-compact .qr-widget-card {
+      width: 200px;
+      padding: 12px 12px 10px;
+    }
+    body.size-compact .qr-plate-box {
+      width: 154px;
+      height: 154px;
+    }
+    body.size-compact .qr-cta-text {
+      display: none;
+    }
+  </style>
+</head>
+<body class="theme-cyber_emerald">
+
+  <div class="qr-widget-card" id="qr-card" title="Нажмите для проверки анимации доната">
+    
+    <!-- Top Row -->
+    <div class="widget-top-bar">
+      <div class="kaspi-badge">
+        <div class="kaspi-icon">K</div>
+        <div class="kaspi-title">Kaspi QR</div>
+      </div>
+      <div class="live-status">
+        <span class="live-dot"></span>
+        <span id="live-label">ОНЛАЙН</span>
+      </div>
+    </div>
+
+    <!-- QR Canvas Container -->
+    <div class="qr-plate-box">
+      <canvas id="qr-canvas"></canvas>
+    </div>
+
+    <!-- Bottom Requisites & CTA -->
+    <div class="qr-meta-box">
+      <div class="streamer-phone-chip" id="phone-chip">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span id="phone-text">+7 (777) 123-45-67</span>
+      </div>
+      <div class="qr-cta-text" id="cta-text">Сканируй в Kaspi — попади на экран!</div>
+    </div>
+
+    <!-- Donation Celebration Spotlight -->
+    <div class="spotlight-overlay" id="spotlight">
+      <div class="spotlight-tag">
+        НОВЫЙ ПЕРЕВОД
+      </div>
+      <div class="spotlight-amount" id="spotlight-amount">+2 500 <span>₸</span></div>
+      <div class="spotlight-donor" id="spotlight-donor">Данияр К.</div>
+      <div class="spotlight-msg" id="spotlight-msg">«Тащи катку, бро!»</div>
+      <div class="spotlight-progress-track">
+        <div class="spotlight-progress-bar" id="spotlight-timer"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamerToken = urlParams.get('token') || '';
+    let currentTheme = urlParams.get('theme') || 'cyber_emerald';
+    const sizeParam = urlParams.get('size') || 'standard';
+
+    if (sizeParam === 'compact') {
+      document.body.classList.add('size-compact');
+    }
+
+    function applyTheme(t) {
+      if (!t) return;
+      document.body.classList.remove('theme-neo_nomad', 'theme-cyber_emerald', 'theme-esports_hud', 'theme-liquid_glass');
+      if (t === 'nomad' || t === 'royal_gold') t = 'neo_nomad';
+      if (t === 'esports') t = 'esports_hud';
+      if (t === 'liquid' || t === 'glass') t = 'liquid_glass';
+      document.body.classList.add(`theme-${t}`);
+      currentTheme = t;
+    }
+
+    if (currentTheme) applyTheme(currentTheme);
+
+    // Streamer state
+    let streamerProfile = {
+      display_name: 'Asset Streamer',
+      phone: '+7 (777) 123-45-67',
+      pay_link: '',
+      qr_value: '+77771234567'
+    };
+
+    function updateQR() {
+      const canvas = document.getElementById('qr-canvas');
+      const textToEncode = urlParams.get('pay_link') ||
+        streamerProfile.pay_link ||
+        urlParams.get('phone') ||
+        streamerProfile.phone ||
+        '+77771234567';
+
+      if (window.QRGen) {
+        window.QRGen.renderToCanvas(canvas, textToEncode, {
+          scale: 7,
+          margin: 1,
+          darkColor: '#07090e',
+          lightColor: '#ffffff',
+          centerBadge: true,
+          badgeColor: '#f14635',
+          badgeSymbol: 'K'
+        });
+      }
+
+      // Update phone display
+      const dispPhone = urlParams.get('phone') || streamerProfile.phone || '+7 (777) 123-45-67';
+      document.getElementById('phone-text').textContent = dispPhone;
+    }
+
+    // Fetch streamer profile
+    function fetchProfile() {
+      fetch(`/api/user/profile${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.profile) {
+            const reqs = d.profile.requisites || {};
+            if (reqs.kaspi_phone) streamerProfile.phone = reqs.kaspi_phone;
+            if (reqs.kaspi_pay_link) streamerProfile.pay_link = reqs.kaspi_pay_link;
+            if (d.profile.display_name) streamerProfile.display_name = d.profile.display_name;
+            updateQR();
+          }
+        })
+        .catch(() => updateQR());
+    }
+
+    // Audio Chime for Donation Flash (Procedural Web Audio)
+    let audioCtx = null;
+    function playChime() {
+      if (urlParams.get('sound') === 'false') return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, now); // D5
+        osc1.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(880, now); // A5
+        osc2.frequency.exponentialRampToValueAtTime(1174.66, now + 0.2); // D6
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 1.2);
+        osc2.stop(now + 1.2);
+      } catch (e) {}
+    }
+
+    // Trigger celebration spotlight on incoming donation
+    let celebrationTimeout = null;
+    function showDonationSpotlight(donation) {
+      if (!donation) return;
+      const card = document.getElementById('qr-card');
+      const amtEl = document.getElementById('spotlight-amount');
+      const donorEl = document.getElementById('spotlight-donor');
+      const msgEl = document.getElementById('spotlight-msg');
+      const timerEl = document.getElementById('spotlight-timer');
+
+      const amountFormatted = (donation.amount || 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      amtEl.innerHTML = `+${amountFormatted} <span>₸</span>`;
+      donorEl.textContent = donation.sender || 'Анонимный зритель';
+      msgEl.textContent = donation.message ? `«${donation.message}»` : 'Поддержка стрима через Kaspi QR';
+
+      playChime();
+
+      card.classList.add('celebrating');
+      timerEl.style.transition = 'none';
+      timerEl.style.width = '100%';
+
+      setTimeout(() => {
+        timerEl.style.transition = 'width 6s linear';
+        timerEl.style.width = '0%';
+      }, 50);
+
+      clearTimeout(celebrationTimeout);
+      celebrationTimeout = setTimeout(() => {
+        card.classList.remove('celebrating');
+      }, 6200);
+    }
+
+    // Connect to SSE
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const eventSource = new EventSource(sseUrl);
+
+    eventSource.addEventListener('donation', (e) => {
+      try {
+        const donation = JSON.parse(e.data);
+        showDonationSpotlight(donation);
+      } catch (err) {}
+    });
+
+    eventSource.addEventListener('theme_updated', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.theme && !urlParams.get('theme')) applyTheme(data.theme);
+      } catch (err) {}
+    });
+
+    // Test on click or Space key
+    document.getElementById('qr-card').addEventListener('click', () => {
+      showDonationSpotlight({
+        sender: 'Тестовый Зритель',
+        amount: 2500,
+        message: 'Проверка Kaspi QR виджета в OBS!'
+      });
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        showDonationSpotlight({
+          sender: 'Данияр К.',
+          amount: 5000,
+          message: 'Отличный стрим, тащи катку!'
+        });
+      }
+    });
+
+    // Initialize
+    fetchProfile();
+    updateQR();
+  </script>
+</body>
+</html>

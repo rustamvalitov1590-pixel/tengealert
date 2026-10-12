@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Slash Design System Tokens (Midnight Vault) -->
+    <color name="bg_dark">#08080A</color>
+    <color name="card_dark">#0B0C10</color>
+    <color name="panel_elevated">#121317</color>
+    <color name="border_hairline">#1C1D22</color>
+    <color name="border_strong">#2E3038</color>
+    
+    <color name="accent_gold">#E5A93C</color>
+    <color name="accent_copper">#CC9166</color>
+    <color name="accent_emerald">#10B981</color>
+    <color name="accent_red">#EF4444</color>
+    
+    <color name="text_light">#FFFFFF</color>
+    <color name="text_body">#E2E3E9</color>
+    <color name="text_secondary">#9194A1</color>
+    <color name="text_muted">#5E616E</color>
+</resources>

@@ -1,0 +1,3873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TengeAlert Studio — Панель стримера</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="/widgets/qr-gen.js"></script>
+  <style>
+    :root {
+      /* Slash Design System Surfaces: Midnight Vault */
+      --bg-base: #08080a;           /* Obsidian canvas */
+      --bg-sidebar: #040406;        /* Onyx sidebar */
+      --bg-surface: #0b0c10;        /* Card surface */
+      --bg-surface-elevated: #121317; /* Carbon elevated panels & inputs */
+      --bg-surface-hover: #171920;  /* Panel hover state */
+      
+      /* Hairline Borders - Zero drop shadows */
+      --border-subtle: #1c1d22;     /* 1px hairline border */
+      --border-strong: #2e3038;     /* Secondary divider */
+      --border-focus: #e5a93c;      /* Kazakh gold focus outline */
+      
+      /* Accents */
+      --accent-copper: #cc9166;     /* Editorial tags & links */
+      --accent-gold: #e5a93c;       /* Kazakh Gold accent */
+      --accent-gold-dim: rgba(229, 169, 60, 0.12);
+      --accent-emerald: #10b981;    /* Live / Online indicator */
+      --accent-emerald-dim: rgba(16, 185, 129, 0.12);
+      --accent-red: #ef4444;
+      
+      /* Banks */
+      --bank-kaspi: #f5222d;
+      --bank-halyk: #00875a;
+      --bank-freedom: #2563eb;
+      --bank-jusan: #f97316;
+
+      /* Typography Colors */
+      --text-primary: #ffffff;
+      --text-body: #e2e3e9;         /* Bone */
+      --text-secondary: #9194a1;    /* Fog */
+      --text-muted: #5e616e;        /* Ash */
+      
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', monospace;
+
+      --sidebar-width: 250px;
+      --header-height: 64px;
+      --bottom-nav-height: 68px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-body);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* SVG Icon Utility */
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .icon-sm { width: 14px; height: 14px; }
+    .icon-lg { width: 22px; height: 22px; }
+
+    /* Top Navigation Header */
+    .app-header {
+      height: var(--header-height);
+      background: rgba(8, 8, 10, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #040406;
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--accent-gold);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+    .brand-title span { color: var(--accent-gold); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: default;
+      user-select: none;
+    }
+    .status-pill.clickable {
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .status-pill.clickable:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-surface-hover);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+    .status-dot.offline {
+      background: var(--text-muted);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 4px 10px 4px 5px;
+      border-radius: 9999px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #1c1d22;
+      color: var(--accent-gold);
+      border: 1px solid var(--border-strong);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Main App Layout */
+    .app-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    /* Sidebar (Desktop) */
+    .app-sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: var(--header-height);
+      height: calc(100vh - var(--header-height));
+      padding: 18px 12px;
+      flex-shrink: 0;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+    }
+
+    .nav-item.active {
+      color: var(--text-primary);
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-subtle);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+    .nav-item.active .nav-badge {
+      background: var(--accent-gold-dim);
+      color: var(--accent-gold);
+    }
+
+    .sidebar-footer {
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .token-quick-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .token-quick-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-copper);
+      margin-bottom: 4px;
+    }
+
+    .token-quick-box {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-gold);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* Content Area */
+    .app-content {
+      flex: 1;
+      max-width: 1200px;
+      padding: 28px 32px 64px 32px;
+      overflow-y: auto;
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.15s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header Titles for Tabs */
+    .tab-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .tab-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+    .tab-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 18px 20px;
+      transition: border-color 0.15s ease;
+    }
+    .metric-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-copper);
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .metric-unit {
+      font-size: 16px;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .metric-subtext {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+
+    /* Workspace 2-col Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-primary);
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    /* Form Fields & Controls */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .input-field, .select-field, .textarea-field {
+      width: 100%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .input-field:focus, .select-field:focus, .textarea-field:focus {
+      border-color: var(--accent-gold);
+    }
+    .input-mono { font-family: var(--font-mono); }
+
+    .textarea-field {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Buttons (Slash Pill System) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      min-height: 38px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #040406;
+      border-color: #ffffff;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background: #e2e3e9;
+      border-color: #e2e3e9;
+    }
+
+    .btn-gold {
+      background: var(--accent-gold);
+      color: #08080a;
+      border-color: var(--accent-gold);
+      font-weight: 600;
+    }
+    .btn-gold:hover {
+      background: #f3be56;
+      border-color: #f3be56;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--border-strong);
+      color: var(--text-body);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px;
+      min-height: 30px;
+    }
+
+    .btn-danger {
+      background: transparent;
+      border-color: rgba(239, 68, 68, 0.4);
+      color: var(--accent-red);
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--accent-red);
+    }
+
+    /* Pill Tag Utilities */
+    .pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pill-tag.copper {
+      background: rgba(204, 145, 102, 0.12);
+      border: 1px solid rgba(204, 145, 102, 0.3);
+      color: var(--accent-copper);
+    }
+    .pill-tag.gold {
+      background: var(--accent-gold-dim);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      color: var(--accent-gold);
+    }
+    .pill-tag.emerald {
+      background: var(--accent-emerald-dim);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+    }
+
+    /* Goal Bar Mini Card */
+    .goal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+    .goal-card.active-obs {
+      border-color: rgba(229, 169, 60, 0.35);
+    }
+    .goal-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 12px 0 8px 0;
+      position: relative;
+    }
+    .goal-fill {
+      height: 100%;
+      background: var(--accent-gold);
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+
+    /* Theme Picker Tiles */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .theme-tile {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .theme-tile:hover {
+      border-color: var(--border-strong);
+    }
+    .theme-tile.active {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-dim);
+    }
+    .theme-icon { font-size: 20px; margin-bottom: 6px; color: var(--accent-gold); }
+    .theme-name { font-weight: 600; font-size: 12px; color: var(--text-primary); }
+    .theme-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+    /* OBS Link Rows */
+    .link-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 10px;
+    }
+    .link-row:last-child { margin-bottom: 0; }
+
+    .link-meta { flex: 1; min-width: 0; }
+    .link-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; color: var(--text-primary); }
+    .link-url {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .link-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    /* Donations Table & Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      padding: 5px 14px;
+      border-radius: 9999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .chip:hover { color: var(--text-primary); border-color: var(--border-strong); }
+    .chip.active {
+      background: var(--bg-surface-elevated);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .donations-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .donations-table th {
+      background: #040406;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .donations-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+    .donations-table tr:last-child td { border-bottom: none; }
+    .donations-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-primary);
+    }
+
+    .bank-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      border: 1px solid transparent;
+    }
+    .bank-badge.kaspi { background: rgba(245, 34, 45, 0.1); color: #ff7875; border-color: rgba(245, 34, 45, 0.25); }
+    .bank-badge.halyk { background: rgba(0, 135, 90, 0.12); color: #52c41a; border-color: rgba(0, 135, 90, 0.25); }
+    .bank-badge.freedom { background: rgba(37, 99, 235, 0.12); color: #60a5fa; border-color: rgba(37, 99, 235, 0.25); }
+    .bank-badge.jusan { background: rgba(249, 115, 22, 0.12); color: #ffa940; border-color: rgba(249, 115, 22, 0.25); }
+
+    /* Live Feed Container */
+    .feed-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .feed-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      animation: slideIn 0.2s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feed-donor { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+    .feed-msg { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .feed-time { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 4px; }
+    .feed-amt { font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: var(--accent-gold); }
+
+    /* Interactive SVG Revenue Chart */
+    .chart-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .chart-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .chart-svg-wrap {
+      width: 100%;
+      height: 220px;
+      position: relative;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .chart-tooltip {
+      position: absolute;
+      display: none;
+      pointer-events: none;
+      background: #040406;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-body);
+      transform: translate(-50%, -115%);
+      z-index: 20;
+      white-space: nowrap;
+    }
+    .chart-tooltip-amount {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    /* Goals Hub Grid */
+    .goals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .goal-manage-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease;
+    }
+    .goal-manage-card.is-active {
+      border-color: rgba(229, 169, 60, 0.4);
+      background: linear-gradient(180deg, rgba(229, 169, 60, 0.04) 0%, var(--bg-surface) 100%);
+    }
+
+    /* Companion Push Status Card */
+    .companion-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+    .companion-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    /* Bank Breakdown Bars */
+    .bank-share-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .bank-share-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .bank-share-fill {
+      height: 100%;
+      border-radius: 9999px;
+    }
+
+    /* Hourly 24h Distribution Histogram */
+    .hourly-bars-wrap {
+      display: flex;
+      align-items: flex-end;
+      height: 90px;
+      gap: 3px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .hourly-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .hourly-bar-fill {
+      width: 100%;
+      background: #1c1d22;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      transition: background 0.15s ease, height 0.3s ease;
+    }
+    .hourly-bar-col:hover .hourly-bar-fill {
+      background: var(--accent-gold);
+    }
+
+    /* Mobile Bottom Navigation */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background: rgba(8, 8, 10, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-subtle);
+      z-index: 50;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 6px;
+    }
+
+    .mobile-nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      flex: 1;
+      min-height: 48px;
+      border-radius: 8px;
+    }
+    .mobile-nav-btn.active {
+      color: var(--accent-gold);
+    }
+
+    /* Modal Dialogs */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      animation: modalPop 0.15s ease-out;
+    }
+    .modal-card-wide {
+      max-width: 860px;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .modal-pretitle {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-copper);
+      margin-bottom: 4px;
+    }
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      line-height: 1;
+    }
+    .modal-close-btn:hover { color: var(--text-primary); }
+
+    /* Subscription Elements */
+    .sub-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 6px 4px 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .sub-pill:hover {
+      border-color: var(--border-strong);
+    }
+    .sub-pill-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sub-pill-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .sub-pill-counter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .sub-pill-action {
+      background: var(--accent-gold-dim);
+      color: var(--accent-gold);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      border-radius: 9999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .sub-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .sub-card.featured {
+      border-color: rgba(229, 169, 60, 0.4);
+      background: linear-gradient(180deg, rgba(229, 169, 60, 0.05) 0%, var(--bg-surface-elevated) 100%);
+    }
+    .sub-card-tag {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-gold);
+      color: #08080a;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+    .sub-card-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+    .sub-card-price {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .sub-card-period {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .sub-card-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-bottom: 16px;
+      min-height: 32px;
+    }
+    .sub-feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .sub-feature-list li {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      line-height: 1.4;
+    }
+    .sub-feature-list li svg {
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .sub-btn {
+      width: 100%;
+      padding: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+
+    .sub-payment-panel {
+      background: var(--bg-surface-elevated);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+    .payment-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+    .payment-amount {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      margin-bottom: 12px;
+    }
+    .payment-instructions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .pay-ref-code {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: var(--accent-gold-dim);
+      color: var(--accent-gold);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px dashed rgba(229, 169, 60, 0.4);
+      user-select: all;
+    }
+
+    /* Toast Notification */
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #040406;
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      z-index: 200;
+      animation: toastIn 0.15s ease;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .workspace-grid { grid-template-columns: 1fr; }
+      .goals-grid { grid-template-columns: 1fr; }
+      .theme-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .app-sidebar { display: none; }
+      .mobile-bottom-nav { display: flex; }
+      .app-content { padding: 18px 16px calc(var(--bottom-nav-height) + 24px) 16px; }
+      .metrics-grid { grid-template-columns: 1fr; gap: 10px; }
+      .form-row { grid-template-columns: 1fr; }
+      .link-row { flex-direction: column; align-items: flex-start; }
+      .link-actions { width: 100%; justify-content: flex-end; }
+      .sub-grid { grid-template-columns: 1fr; }
+      
+      .donations-table, .donations-table tbody, .donations-table tr, .donations-table td {
+        display: block;
+        width: 100%;
+      }
+      .donations-table thead { display: none; }
+      .donations-table tr {
+        margin-bottom: 12px;
+        background: var(--bg-surface-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 14px;
+      }
+      .donations-table td {
+        border-bottom: none;
+        padding: 4px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <a href="/dashboard/" class="brand">
+      <div class="brand-mark">₸</div>
+      <div class="brand-title">Tenge<span>Alert</span></div>
+    </a>
+
+    <div class="header-actions">
+      <!-- Direct Gateway Status -->
+      <div class="status-pill" title="Статус прямого шлюза">
+        <span class="status-dot"></span>
+        <span id="gateway-status-text">ШЛЮЗ ONLINE (&lt;5 мс)</span>
+      </div>
+
+      <!-- Companion Push Status Pill -->
+      <div class="status-pill clickable" id="header-companion-pill" onclick="openCompanionModal()" title="Нажмите для настройки push-клиента">
+        <span class="status-dot offline" id="header-companion-dot"></span>
+        <span id="header-companion-text">PUSH: ОФЛАЙН</span>
+      </div>
+
+      <!-- Subscription Status Pill -->
+      <div class="sub-pill" id="header-sub-pill" onclick="openSubscriptionModal()" title="Управление подпиской и лимитами">
+        <div class="sub-pill-status">
+          <span class="sub-pill-badge" id="sub-pill-badge">Starter Free</span>
+          <span class="sub-pill-counter" id="sub-pill-counter">0/20</span>
+        </div>
+        <button class="sub-pill-action" id="sub-pill-action" onclick="event.stopPropagation(); openSubscriptionModal();">Тарифы</button>
+      </div>
+
+      <button class="btn btn-secondary btn-sm" onclick="quickFireAlert()" id="btn-quick-test" title="Быстрый тестовый алерт в OBS">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Тест алерта</span>
+      </button>
+
+      <a href="/download/" class="btn btn-secondary btn-sm" id="btn-header-download" title="Скачать приложение TengeAlert">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Клиент</span>
+      </a>
+
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar-letter">S</div>
+        <span id="header-user-name">Streamer</span>
+        <button onclick="logoutStreamer()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:2px; display:flex;" title="Выйти">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container with Sidebar + Content -->
+  <div class="app-container">
+
+    <!-- Desktop Sidebar -->
+    <aside class="app-sidebar">
+      <ul class="nav-list">
+        <li class="nav-item active" onclick="switchTab('tab-dashboard')" id="nav-tab-dashboard">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Дашборд</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-analytics')" id="nav-tab-analytics">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Аналитика</span>
+          <span class="nav-badge" style="color: var(--accent-gold);">SVG</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-goals')" id="nav-tab-goals">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>Цели сбора</span>
+          <span class="nav-badge" id="sidebar-goals-count">1</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-widgets')" id="nav-tab-widgets">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>Виджеты OBS</span>
+          <span class="nav-badge">4 темы</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-history')" id="nav-tab-history">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>История донатов</span>
+          <span class="nav-badge" id="sidebar-donations-count">0</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-tts')" id="nav-tab-tts">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <span>Озвучка и Спам</span>
+          <span class="nav-badge" id="sidebar-tts-status">KZ/RU</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('tab-requisites')" id="nav-tab-requisites">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Реквизиты и Страница</span>
+        </li>
+        <li class="nav-item" onclick="openSubscriptionModal()" id="nav-tab-subscription" style="margin-top: 6px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Тарифы и подписка</span>
+          <span class="nav-badge" id="sidebar-sub-badge" style="color: var(--accent-gold);">PRO</span>
+        </li>
+        <li class="nav-item" onclick="window.location.href='/download/'" id="nav-tab-download" style="margin-top: 4px;">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Скачать клиент</span>
+          <span class="nav-badge" style="color: var(--accent-emerald);">Win/APK</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="token-quick-card">
+          <div class="token-quick-label">Стримерский токен</div>
+          <div class="token-quick-box" id="sidebar-token-display" onclick="copyToken()" title="Нажмите для копирования">••••••••••••••••</div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">
+          TengeAlert v2.5 Clean-Room
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-content">
+
+      <!-- ============================================== -->
+      <!-- TAB 1: ДАШБОРД / СВОДКА                         -->
+      <!-- ============================================== -->
+      <div id="tab-dashboard" class="tab-pane active">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Сводка стрима</h1>
+            <p class="tab-subtitle">Аналитика сборов, статус прямого шлюза и эмулятор оповещений</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="switchTab('tab-analytics')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span>Подробная аналитика</span>
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="loadStats()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Обновить</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Metric Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Собрано сегодня</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="metric-value" id="stat-today">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext" id="stat-today-sub">0 донатов за день</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">За 7 дней</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="metric-value" id="stat-week">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext">за последние 7 суток</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">За 30 дней</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="metric-value" id="stat-month">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext">активный месяц</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Всего / Топ донат</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            </div>
+            <div class="metric-value" id="stat-total">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext" id="stat-top-donor">Топ: нет данных</div>
+          </div>
+        </div>
+
+        <!-- Streamer Quick Control Deck -->
+        <div class="panel" style="margin-bottom: 20px;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Пульт управления стримом</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot"></span>
+              <span>OBS подключен</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+              <button class="btn btn-secondary btn-sm" onclick="replayLastAlert()" title="Заново проиграть последний донат в OBS со звуком">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                <span>Повторить алерт</span>
+              </button>
+
+              <button class="btn btn-secondary btn-sm" onclick="skipAlert()" title="Мгновенно остановить звук и скрыть алерт в OBS">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                <span>Заглушить / Пропустить</span>
+              </button>
+
+              <button class="btn btn-secondary btn-sm" onclick="clearAlertScreen()" title="Сбросить очередь и очистить оверлей в OBS">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <span>Очистить экран OBS</span>
+              </button>
+
+              <div style="height: 20px; width: 1px; background: var(--border-subtle); margin: 0 4px;"></div>
+
+              <button class="btn btn-secondary btn-sm" onclick="openQrPreview()" title="Открыть наэкранный виджет Kaspi QR">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Наэкранный Kaspi QR</span>
+              </button>
+
+              <button class="btn btn-secondary btn-sm" onclick="spinWheelNow()" title="Запустить рулетку челленджей в OBS">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M2 12h20"/></svg>
+                <span>Крутить рулетку</span>
+              </button>
+
+              <div style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Тест:</span>
+                <button class="btn btn-secondary btn-sm" onclick="quickTestDonation(1000)">1 000 ₸</button>
+                <button class="btn btn-secondary btn-sm" onclick="quickTestDonation(5000)">5 000 ₸</button>
+                <button class="btn btn-secondary btn-sm" onclick="quickTestDonation(20000)">20 000 ₸</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Col Grid: Tools & Feed -->
+        <div class="workspace-grid">
+          <div>
+            <!-- Active Goal Widget Box -->
+            <div class="goal-card active-obs">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <span class="pill-tag copper" style="margin-bottom: 4px;">Активная цель в OBS</span>
+                  <div style="font-weight: 600; font-size: 16px; margin-top: 4px; color: var(--text-primary);" id="goal-title-display">На развитие стрима</div>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-secondary btn-sm" onclick="switchTab('tab-goals')">
+                    <span>Все цели</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm" onclick="openGoalModal()">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <span>Настроить</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="goal-track">
+                <div class="goal-fill" id="goal-fill-bar" style="width: 0%;"></div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <span id="goal-current-display" style="font-weight: 600; font-family: var(--font-mono); color: var(--text-primary);">0 ₸</span>
+                <span id="goal-percent-display" style="font-family: var(--font-mono); color: var(--accent-gold); font-weight: 600;">0%</span>
+                <span id="goal-target-display" style="font-family: var(--font-mono); color: var(--text-muted);">из 500 000 ₸</span>
+              </div>
+            </div>
+
+            <!-- Push Interception Companion Status Card -->
+            <div class="companion-card">
+              <div class="companion-status-row">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="status-dot offline" id="card-companion-dot"></span>
+                  <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Перехват уведомлений (Push Companion)</span>
+                </div>
+                <span class="pill-tag" id="card-companion-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Ожидает</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;" id="card-companion-desc">
+                Подключите телефон на Android или ПК-демон для автоматического мгновенного захвата пушей Kaspi/Halyk без ручного ввода.
+              </p>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-secondary btn-sm" onclick="openCompanionModal()">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  <span>Подключить телефон (QR)</span>
+                </button>
+                <a href="/download/" class="btn btn-secondary btn-sm" style="text-decoration: none;">
+                  <span>Скачать APK / Daemon</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Simulation Tool -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <span>Эмулятор перевода в OBS</span>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Отправитель</label>
+                    <input type="text" id="sim-sender" class="input-field" value="Азамат Б.">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Сумма (₸)</label>
+                    <input type="number" id="sim-amount" class="input-field input-mono" value="5000">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Банк / Источник</label>
+                    <select id="sim-bank" class="select-field">
+                      <option value="Kaspi Gold">Kaspi Gold ₸</option>
+                      <option value="Halyk Bank">Halyk Bank ₸</option>
+                      <option value="Freedom Bank">Freedom Bank ₸</option>
+                      <option value="Jusan Bank">Jusan Bank ₸</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Сообщение</label>
+                    <input type="text" id="sim-message" class="input-field" value="Тащи турнир, бро! Отличный стрим!">
+                  </div>
+                </div>
+
+                <button class="btn btn-gold" style="width: 100%;" id="btn-fire" onclick="fireSimulation()">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  <span>Отправить тестовый донат в OBS</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Token & Privacy Card -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>Токен шлюза и конфиденциальность</span>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                  Коды из СМС, 2FA и остатки на банковских картах автоматически фильтруются и никогда не попадают в эфир.
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <input type="password" id="secret-token-box" class="input-field input-mono" readonly value="Загрузка токена..." style="font-size: 12px;">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTokenVisibility()" id="btn-toggle-token">Показать</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="copyToken()">Копировать</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Feed Column -->
+          <div>
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  <span>Живой журнал (Live Ingestion)</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="clearDonationHistory()" style="font-size: 11px; padding: 4px 8px; min-height: 28px;">
+                  Очистить
+                </button>
+              </div>
+              <div class="panel-body">
+                <div class="feed-container" id="feed-container">
+                  <!-- Ingestion feed items -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 2: АНАЛИТИКА И СТАТИСТИКА (SLASH DECK)     -->
+      <!-- ============================================== -->
+      <div id="tab-analytics" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Финансовая аналитика</h1>
+            <p class="tab-subtitle">Интерактивный анализ поступлений, средний чек и активность зрителей</p>
+          </div>
+          <div class="filter-chips">
+            <span class="chip active" id="chip-an-7d" onclick="switchAnalyticsPeriod('7d', this)">7 дней</span>
+            <span class="chip" id="chip-an-14d" onclick="switchAnalyticsPeriod('14d', this)">14 дней</span>
+            <span class="chip" id="chip-an-30d" onclick="switchAnalyticsPeriod('30d', this)">30 дней</span>
+          </div>
+        </div>
+
+        <!-- Interactive SVG Chart Card -->
+        <div class="chart-panel">
+          <div class="chart-header">
+            <div class="chart-title-wrap">
+              <div class="chart-title">Динамика сборов (₸)</div>
+              <div class="chart-subtitle" id="chart-date-range-label">Сумма поступлений по суткам</div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 13px; color: var(--accent-gold); font-weight: 600;" id="chart-total-label">
+              0 ₸
+            </div>
+          </div>
+          <div class="chart-svg-wrap" id="chart-svg-container">
+            <svg class="chart-svg" viewBox="0 0 800 220" preserveAspectRatio="none" id="analytics-svg">
+              <defs>
+                <linearGradient id="gildedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ae9357" />
+                  <stop offset="40%" stop-color="#fff0cc" />
+                  <stop offset="70%" stop-color="#e5a93c" />
+                  <stop offset="100%" stop-color="#cc9166" />
+                </linearGradient>
+                <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#e5a93c" stop-opacity="0.18" />
+                  <stop offset="100%" stop-color="#e5a93c" stop-opacity="0.0" />
+                </linearGradient>
+              </defs>
+              <g id="chart-grid-lines"></g>
+              <path id="chart-area-path" d="" fill="url(#areaGrad)"></path>
+              <path id="chart-line-path" d="" fill="none" stroke="url(#gildedGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <g id="chart-hover-elements"></g>
+            </svg>
+            <div class="chart-tooltip" id="chart-tooltip">
+              <div id="chart-tooltip-date" style="color: var(--text-secondary); margin-bottom: 2px;"></div>
+              <div class="chart-tooltip-amount" id="chart-tooltip-amount">0 ₸</div>
+              <div id="chart-tooltip-count" style="color: var(--text-muted); font-size: 10px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 KPI Metrics Grid -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Общий оборот</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M8 10h8"/></svg>
+            </div>
+            <div class="metric-value" id="an-total-amount">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext" id="an-total-count">0 донатов за период</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Средний чек</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="metric-value" id="an-avg-amount">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext" id="an-median-amount">Медиана: 0 ₸</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Рекордный донат</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="metric-value" id="an-max-amount">0 <span class="metric-unit">₸</span></div>
+            <div class="metric-subtext" id="an-peak-hours">Пик: —</div>
+          </div>
+        </div>
+
+        <!-- 2-Col Breakdown: Banks & Hourly Distribution -->
+        <div class="workspace-grid" style="margin-bottom: 24px;">
+          <!-- Left: Banks share -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <span>Методы оплаты и банки</span>
+              </div>
+              <span class="pill-tag copper">P2P 0%</span>
+            </div>
+            <div class="panel-body" id="an-banks-container">
+              <!-- Rendered dynamically -->
+              <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">Загрузка данных...</div>
+            </div>
+          </div>
+
+          <!-- Right: Hourly distribution -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Пиковые часы активности (24ч)</span>
+              </div>
+              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);" id="an-peak-summary">UTC+5 Almaty</span>
+            </div>
+            <div class="panel-body">
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                Распределение донатов по времени суток для планирования эфиров:
+              </div>
+              <div class="hourly-bars-wrap" id="an-hourly-bars">
+                <!-- 24 bars rendered dynamically -->
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); margin-top: 6px;">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>23:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Donors Table for Period -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <span>Топ донатеров за выбранный период</span>
+            </div>
+          </div>
+          <div class="panel-body" style="padding: 0;">
+            <table class="donations-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">Ранг</th>
+                  <th>Зритель</th>
+                  <th>Количество донатов</th>
+                  <th style="text-align: right;">Сумма (₸)</th>
+                </tr>
+              </thead>
+              <tbody id="an-top-donors-body">
+                <tr><td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);">Загрузка топа...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 3: ЦЕЛИ СБОРА (MULTI-GOAL HUB)             -->
+      <!-- ============================================== -->
+      <div id="tab-goals" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Цели сбора средств</h1>
+            <p class="tab-subtitle">Управление полосками сбора (Goal Bars) и моментальное переключение активной цели в OBS</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openNewGoalModal()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Новая цель</span>
+          </button>
+        </div>
+
+        <!-- Goals Grid -->
+        <div class="goals-grid" id="goals-hub-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 4: ВИДЖЕТЫ OBS                             -->
+      <!-- ============================================== -->
+      <div id="tab-widgets" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Виджеты для OBS Studio</h1>
+            <p class="tab-subtitle">Кастомизация Alert Box, Goal Bar и готовые ссылки для Browser Source</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Alert Box — Оповещения о донатах</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <label class="form-label" style="margin-bottom: 8px;">Выберите стиль оформления виджета</label>
+            <div class="theme-grid">
+              <div class="theme-tile active" onclick="selectStudioTheme('neo_nomad')" id="tile-neo_nomad">
+                <div class="theme-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+                <div class="theme-name">Neo-Nomad</div>
+                <div class="theme-desc">Золото, орнамент, домбра</div>
+              </div>
+              <div class="theme-tile" onclick="selectStudioTheme('cyber_emerald')" id="tile-cyber_emerald">
+                <div class="theme-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                <div class="theme-name">Cyber Emerald</div>
+                <div class="theme-desc">Изумрудный акцент, сетка</div>
+              </div>
+              <div class="theme-tile" onclick="selectStudioTheme('esports_hud')" id="tile-esports_hud">
+                <div class="theme-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+                <div class="theme-name">Esports HUD</div>
+                <div class="theme-desc">Киберспортивный HUD</div>
+              </div>
+              <div class="theme-tile" onclick="selectStudioTheme('liquid_glass')" id="tile-liquid_glass">
+                <div class="theme-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+                <div class="theme-name">Liquid Glass</div>
+                <div class="theme-desc">Матовое стекло, минимализм</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Звук оповещения (Web Audio API)</label>
+                <div style="display: flex; gap: 8px;">
+                  <select id="sound-select" class="select-field" onchange="updateObsUrls(); saveSoundPreference();">
+                    <option value="nomad">Nomad (Домбра / Кюй)</option>
+                    <option value="coin">Coin (Звон тенге)</option>
+                    <option value="crystal">Crystal (Хрустальный аккорд)</option>
+                    <option value="level_up">Level Up (Ретро аркада)</option>
+                    <option value="jackpot">Jackpot (Праздничный фанфар)</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="previewSelectedSound()">Тест звука</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Голосовое чтение (TTS)</label>
+                <select id="tts-select" class="select-field" onchange="updateObsUrls(); saveSoundPreference();">
+                  <option value="true">Включено (Казахский / Русский)</option>
+                  <option value="false">Выключено (Только музыка)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Ссылка Browser Source для OBS</div>
+                <div class="link-url" id="url-alert">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-alert')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openAlertPreview()">Открыть тест</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Widgets Links -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              <span>Остальные оверлеи для стрима</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <!-- Goal Bar -->
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Goal Bar — Полоса сбора средств</div>
+                <div class="link-url" id="url-goal">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-goal')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openGoalPreview()">Открыть</button>
+              </div>
+            </div>
+
+            <!-- On-Screen QR -->
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Наэкранный Kaspi QR оверлей</div>
+                <div class="link-url" id="url-qr">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-qr')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openQrPreview()">Открыть</button>
+              </div>
+            </div>
+
+            <!-- Wheel of Fortune -->
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Рулетка челленджей (Wheel of Fortune)</div>
+                <div class="link-url" id="url-wheel">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-wheel')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openWheelPreview()">Открыть</button>
+              </div>
+            </div>
+
+            <!-- Ticker -->
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Бегущая строка (Ticker)</div>
+                <div class="link-url" id="url-ticker">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-ticker')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openTickerPreview()">Открыть</button>
+              </div>
+            </div>
+
+            <!-- Top Donors -->
+            <div class="link-row">
+              <div class="link-meta">
+                <div class="link-title">Топ донатеров (Top Podium)</div>
+                <div class="link-url" id="url-top">...</div>
+              </div>
+              <div class="link-actions">
+                <button class="btn btn-secondary btn-sm" onclick="copyLink('url-top')">Копировать</button>
+                <button class="btn btn-secondary btn-sm" onclick="openTopPreview()">Открыть</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 5: ИСТОРИЯ ДОНАТОВ И ЭКСПОРТ               -->
+      <!-- ============================================== -->
+      <div id="tab-history" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">История донатов</h1>
+            <p class="tab-subtitle">Журнал всех полученных средств, фильтрация по банкам и выгрузка в CSV для Excel</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" onclick="exportDonationsCsv()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Экспорт в CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-bar">
+          <div class="filter-chips">
+            <span class="chip active" onclick="setHistoryPeriod('all', this)">Все время</span>
+            <span class="chip" onclick="setHistoryPeriod('today', this)">Сегодня</span>
+            <span class="chip" onclick="setHistoryPeriod('week', this)">7 дней</span>
+            <span class="chip" onclick="setHistoryPeriod('month', this)">30 дней</span>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex: 1; justify-content: flex-end; min-width: 280px;">
+            <select id="filter-bank-select" class="select-field" style="width: auto; min-width: 140px;" onchange="loadDonationHistory()">
+              <option value="all">Все банки</option>
+              <option value="kaspi">Kaspi Gold</option>
+              <option value="halyk">Halyk Bank</option>
+              <option value="freedom">Freedom Bank</option>
+              <option value="jusan">Jusan Bank</option>
+            </select>
+            <input type="text" id="history-search-input" class="input-field" placeholder="Поиск по имени или тексту..." style="max-width: 260px;" oninput="debounceHistorySearch()">
+          </div>
+        </div>
+
+        <!-- Donations Table -->
+        <div class="table-container">
+          <table class="donations-table">
+            <thead>
+              <tr>
+                <th>Дата и время</th>
+                <th>Отправитель</th>
+                <th>Банк</th>
+                <th>Сообщение</th>
+                <th>Сумма</th>
+                <th style="text-align: right;">Действие</th>
+              </tr>
+            </thead>
+            <tbody id="donations-table-body">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                  Загрузка истории донатов...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12px; color: var(--text-muted);">
+          <span id="history-summary-text">Показано: 0 записей</span>
+          <div style="display: flex; gap: 6px;" id="history-pagination"></div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 6: ОЗВУЧКА И АНТИСПАМ                      -->
+      <!-- ============================================== -->
+      <div id="tab-tts" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Синтез речи (TTS) и Антиспам</h1>
+            <p class="tab-subtitle">Двуязычная озвучка на казахском и русском языках с фильтром нецензурной лексики</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              <span>Параметры озвучки донатов</span>
+            </div>
+            <span class="pill-tag emerald" id="tts-status-pill">АКТИВНА</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Статус синтеза речи</label>
+                <select id="tts-enabled-select" class="select-field" onchange="saveTtsSettings()">
+                  <option value="true">Включена (Озвучивать имя и текст)</option>
+                  <option value="false">Выключена (Только звуковой сигнал)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Минимальная сумма для озвучки (Анти-спам)</label>
+                <div style="position: relative;">
+                  <input type="number" id="tts-min-amount" class="input-field input-mono" value="500" min="0" step="100" onchange="saveTtsSettings()">
+                  <span style="position: absolute; right: 12px; top: 11px; color: var(--accent-gold); font-weight: 600;">₸</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Голос для Казахского (kk-KZ)</label>
+                <select id="tts-voice-kz" class="select-field" onchange="saveTtsSettings()">
+                  <option value="kk-KZ-DauletNeural">Даулет (Мужской диктор — ТВ / Радио)</option>
+                  <option value="kk-KZ-AigulNeural">Айгүл (Женский диктор — ТВ / Радио)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Голос для Русского (ru-RU)</label>
+                <select id="tts-voice-ru" class="select-field" onchange="saveTtsSettings()">
+                  <option value="ru-RU-SvetlanaNeural">Светлана (Женский — Живая дикция)</option>
+                  <option value="ru-RU-DmitryNeural">Дмитрий (Мужской диктор)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Скорость речи: <span id="tts-rate-val" style="color: var(--accent-gold);">1.0x</span></label>
+                <input type="range" id="tts-rate-range" min="0.8" max="1.4" step="0.05" value="1.0" style="width: 100%; accent-color: var(--accent-gold); margin-top: 8px;" oninput="updateRateDisplay(this.value)" onchange="saveTtsSettings()">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Тестирование озвучки</label>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="testSpeechSample('kk')">
+                    Тест KZ (5 000 ₸)
+                  </button>
+                  <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="testSpeechSample('ru')">
+                    Тест RU (10 000 ₸)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Moderation & Profanity Shield -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg class="icon icon-sm" style="color: var(--accent-gold);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Фильтр нецензурной лексики и защита от банов</span>
+            </div>
+            <span class="pill-tag copper">Twitch / YouTube Safe</span>
+          </div>
+          <div class="panel-body">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <div>
+                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Автоматическая цензура сообщений</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Заменяет нецензурные слова на «***» в титрах и вырезает из озвучки TTS</div>
+              </div>
+              <input type="checkbox" id="profanity-filter-toggle" checked onchange="saveModerationSettings()" style="width: 18px; height: 18px; accent-color: var(--accent-gold); cursor: pointer;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Дополнительные запрещенные слова (через запятую)</label>
+              <textarea id="custom-stop-words" class="textarea-field" placeholder="слово1, слово2, реклама, ссылка" onchange="saveModerationSettings()"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 7: РЕКВИЗИТЫ И СТРАНИЦА                    -->
+      <!-- ============================================== -->
+      <div id="tab-requisites" class="tab-pane">
+        <div class="tab-header">
+          <div>
+            <h1 class="tab-title">Банковские реквизиты и Профиль</h1>
+            <p class="tab-subtitle">Привязка Kaspi, Halyk, Jusan, оформление страницы доната и соцсети</p>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="saveProfileAndRequisites()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>Сохранить настройки</span>
+          </button>
+        </div>
+
+        <!-- Public Multi-Link & Donation Page Showcase Card -->
+        <div class="panel" style="border-color: rgba(229, 169, 60, 0.35);">
+          <div class="panel-header">
+            <div class="panel-title" style="color: var(--accent-gold);">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>Ваша страница-мультиссылка и донаты</span>
+            </div>
+            <span class="pill-tag emerald">0% комиссии • Прямой P2P</span>
+          </div>
+          <div class="panel-body">
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5;">
+              Разместите эту ссылку в описании каналов (Twitch, YouTube, TikTok) и в шапке Telegram. Зрители смогут отправить прямой донат через Kaspi QR / Halyk без посредников и перейти по всем вашим соцсетям.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <input type="text" id="public-donate-url" class="input-field input-mono" readonly value="" style="flex: 1; min-width: 260px; color: var(--accent-gold);">
+              <button class="btn btn-secondary btn-sm" onclick="copyPublicDonateUrl()">Копировать</button>
+              <a href="#" id="btn-open-donate-page" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration: none;">Открыть страницу</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form fields for Requisites & Profile -->
+        <div class="workspace-grid">
+          <div>
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Банковские реквизиты (P2P)</div>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label class="form-label">Телефон для Kaspi Gold (Перевод)</label>
+                  <input type="text" id="req-kaspi-phone" class="input-field input-mono" placeholder="+7 777 000 00 00">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Имя получателя Kaspi (как в банке)</label>
+                  <input type="text" id="req-kaspi-name" class="input-field" placeholder="Данияр К.">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Номер карты Halyk Bank</label>
+                  <input type="text" id="req-halyk-card" class="input-field input-mono" placeholder="4405 6300 0000 0000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Номер карты Jusan Bank</label>
+                  <input type="text" id="req-jusan-card" class="input-field input-mono" placeholder="5311 0000 0000 0000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Ссылка Kaspi Pay (для ИП / ТОО)</label>
+                  <input type="text" id="req-kaspi-pay" class="input-field input-mono" placeholder="https://pay.kaspi.kz/pay/...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Публичный профиль и страница</div>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label class="form-label">Отображаемое имя стримера</label>
+                  <input type="text" id="prof-display-name" class="input-field" placeholder="SuperStreamer">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Персональный URL (slug)</label>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">/d/</span>
+                    <input type="text" id="prof-slug" class="input-field input-mono" placeholder="my_channel" oninput="updatePublicUrlDisplay()">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Текст кнопки доната</label>
+                  <input type="text" id="prof-button-text" class="input-field" value="Поддержать стримера">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Пресеты сумм (₸, через запятую)</label>
+                  <input type="text" id="prof-presets" class="input-field input-mono" value="500, 1000, 2500, 5000, 10000, 25000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">О себе / Описание</label>
+                  <textarea id="prof-bio" class="textarea-field" placeholder="Стримлю CS2, Valorant и квесты..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Социальные сети</div>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label class="form-label">YouTube</label>
+                  <input type="text" id="soc-youtube" class="input-field" placeholder="https://youtube.com/@...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Twitch</label>
+                  <input type="text" id="soc-twitch" class="input-field" placeholder="https://twitch.tv/...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Telegram</label>
+                  <input type="text" id="soc-telegram" class="input-field" placeholder="https://t.me/...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">TikTok</label>
+                  <input type="text" id="soc-tiktok" class="input-field" placeholder="https://tiktok.com/@...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Discord</label>
+                  <input type="text" id="soc-discord" class="input-field" placeholder="https://discord.gg/...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Kick</label>
+                  <input type="text" id="soc-kick" class="input-field" placeholder="https://kick.com/...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" onclick="switchTab('tab-dashboard')" id="m-nav-tab-dashboard">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Дашборд</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTab('tab-analytics')" id="m-nav-tab-analytics">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Аналитика</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTab('tab-goals')" id="m-nav-tab-goals">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span>Цели</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTab('tab-widgets')" id="m-nav-tab-widgets">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+      <span>Виджеты</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTab('tab-history')" id="m-nav-tab-history">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span>История</span>
+    </button>
+  </nav>
+
+  <!-- ============================================== -->
+  <!-- MODALS                                         -->
+  <!-- ============================================== -->
+
+  <!-- Goal Modal (Create / Edit) -->
+  <div class="modal-overlay" id="goal-modal">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div>
+          <div class="modal-pretitle">Сбор средств</div>
+          <div class="modal-title" id="goal-modal-heading">Настройка цели сбора</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeGoalModal()">&times;</button>
+      </div>
+
+      <input type="hidden" id="modal-goal-id" value="">
+
+      <div class="form-group">
+        <label class="form-label">Название цели</label>
+        <input type="text" id="modal-goal-title" class="input-field" placeholder="На новый микрофон Shure SM7B">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Целевая сумма (₸)</label>
+          <input type="number" id="modal-goal-target" class="input-field input-mono" value="500000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Уже собрано (₸)</label>
+          <input type="number" id="modal-goal-current" class="input-field input-mono" value="0">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn btn-secondary btn-sm" onclick="closeGoalModal()">Отмена</button>
+        <button class="btn btn-gold btn-sm" onclick="submitGoalForm()">Сохранить цель</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Companion Pairing Modal -->
+  <div class="modal-overlay" id="companion-modal">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <div>
+          <div class="modal-pretitle">Push Companion</div>
+          <div class="modal-title">Подключение телефона</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeCompanionModal()">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+          <canvas id="companion-qr-canvas" width="200" height="200"></canvas>
+        </div>
+        <div style="font-size: 11px; color: var(--text-secondary); text-align: center; max-width: 320px;">
+          Отсканируйте камерой в приложении TengeAlert для Android для моментальной привязки без логина и пароля.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Стримерский токен для ручного ввода</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="companion-modal-token" class="input-field input-mono" readonly value="" style="font-size: 11px;">
+          <button class="btn btn-secondary btn-sm" onclick="copyCompanionToken()">Копировать</button>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+        <b style="color: var(--text-primary);">Для Windows ПК (демон в фоне):</b><br>
+        <code>node apps/windows/companion-cli.js --token=ВАШ_ТОКЕН</code>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="/download/" class="btn btn-secondary btn-sm" style="text-decoration: none;">Скачать APK</a>
+        <button class="btn btn-primary btn-sm" onclick="closeCompanionModal()">Готово</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription & Billing Modal -->
+  <div class="modal-overlay" id="subscription-modal">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header-row">
+        <div>
+          <div class="modal-pretitle">Тарифные планы</div>
+          <div class="modal-title">Безлимитный прием донатов без посредников</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeSubscriptionModal()">&times;</button>
+      </div>
+
+      <div class="sub-grid">
+        <!-- Starter Free -->
+        <div class="sub-card" id="plan-card-starter_free">
+          <div class="sub-card-name">Starter Free</div>
+          <div class="sub-card-price">0 ₸ <span class="sub-card-period">/ навсегда</span></div>
+          <div class="sub-card-desc">Для начинающих стримеров для теста шлюза и виджетов.</div>
+          <ul class="sub-feature-list">
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> До 20 донатов за сутки</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 4 готовые темы OBS</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Прямой Kaspi QR и Halyk</li>
+          </ul>
+          <button class="btn btn-secondary sub-btn" id="btn-plan-starter_free">Текущий тариф</button>
+        </div>
+
+        <!-- Creator Pro -->
+        <div class="sub-card featured" id="plan-card-creator_pro">
+          <span class="sub-card-tag">Популярный</span>
+          <div class="sub-card-name">Creator Pro</div>
+          <div class="sub-card-price">4 900 ₸ <span class="sub-card-period">/ 30 дней</span></div>
+          <div class="sub-card-desc">Полный безлимит для регулярных стримов на Twitch и YouTube.</div>
+          <ul class="sub-feature-list">
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <b>Безлимитное</b> число донатов</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Нейро-озвучка TTS (KZ/RU)</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Рулетка и Донат-битва</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Мульти-цели и Аналитика</li>
+          </ul>
+          <button class="btn btn-gold sub-btn" id="btn-plan-creator_pro" onclick="selectPlanPayment('creator_pro')">Выбрать Creator Pro</button>
+        </div>
+
+        <!-- Esports Studio -->
+        <div class="sub-card" id="plan-card-esports_studio">
+          <div class="sub-card-name">Esports Studio</div>
+          <div class="sub-card-price">8 900 ₸ <span class="sub-card-period">/ 30 дней</span></div>
+          <div class="sub-card-desc">Для киберспортивных турниров, студий и медиа-домов.</div>
+          <ul class="sub-feature-list">
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Все функции Creator Pro</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Мульти-сцены до 10 источников</li>
+            <li><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Выделенный шлюз и приоритет</li>
+          </ul>
+          <button class="btn btn-secondary sub-btn" id="btn-plan-esports_studio" onclick="selectPlanPayment('esports_studio')">Выбрать Studio</button>
+        </div>
+      </div>
+
+      <!-- Direct P2P Payment Instruction Box -->
+      <div id="sub-payment-panel" class="sub-payment-panel" style="display: none;">
+        <div class="payment-title" id="payment-panel-title">Оплата подписки</div>
+        <div class="payment-amount" id="payment-panel-amount">4 900 ₸</div>
+        <div class="payment-instructions">
+          <div class="instruction-step">1. Переведите сумму на Kaspi: <b>+7 705 918 06 18</b> (Рустам Т.)</div>
+          <div class="instruction-step">
+            2. В комментарии к переводу обязательно укажите код:
+            <span class="pay-ref-code" id="payment-ref-code">TA-SUB-CODE</span>
+            <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 11px; margin-left: 6px;" onclick="copyPaymentRef()">Копировать код</button>
+          </div>
+          <div class="instruction-step">3. Подписка активируется автоматически после зачисления перевода (~3-5 сек).</div>
+        </div>
+      </div>
+
+      <!-- Promo Code Box -->
+      <div class="promo-box" style="display: flex; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+        <input type="text" id="promo-code-input" class="input-field input-mono" placeholder="Промокод (например: NOMAD_VIP)" style="max-width: 280px; text-transform: uppercase;">
+        <button class="btn btn-secondary btn-sm" onclick="submitPromoCode()">Активировать промокод</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast">Уведомление</div>
+
+  <!-- ============================================== -->
+  <!-- SCRIPT ENGINE                                  -->
+  <!-- ============================================== -->
+  <script>
+    let selectedTheme = 'neo_nomad';
+    let currentStreamerToken = '';
+    let currentHistoryPeriod = 'all';
+    let currentHistoryPage = 1;
+    let historySearchTimer = null;
+    let currentAnalyticsPeriod = '7d';
+    let analyticsDataCache = null;
+
+    // Number Formatting
+    function formatNumber(num) {
+      return (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2400);
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add('active');
+
+      const desktopNav = document.getElementById('nav-' + tabId);
+      if (desktopNav) desktopNav.classList.add('active');
+
+      const mobileNav = document.getElementById('m-nav-' + tabId);
+      if (mobileNav) mobileNav.classList.add('active');
+
+      if (tabId === 'tab-analytics') {
+        loadAnalytics(currentAnalyticsPeriod);
+      } else if (tabId === 'tab-goals') {
+        loadGoalsHub();
+      } else if (tabId === 'tab-history') {
+        loadDonationHistory();
+      } else if (tabId === 'tab-requisites') {
+        loadProfileData();
+      }
+    }
+
+    // Token helpers
+    function copyToken() {
+      const token = currentStreamerToken || document.getElementById('secret-token-box').value || '';
+      navigator.clipboard.writeText(token).then(() => {
+        showToast('Секретный токен скопирован');
+      });
+    }
+
+    function copyLink(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Ссылка для OBS скопирована');
+      });
+    }
+
+    function toggleTokenVisibility() {
+      const box = document.getElementById('secret-token-box');
+      const btn = document.getElementById('btn-toggle-token');
+      if (box.type === 'password') {
+        box.type = 'text';
+        btn.textContent = 'Скрыть';
+      } else {
+        box.type = 'password';
+        btn.textContent = 'Показать';
+      }
+    }
+
+    // ==============================================
+    // ANALYTICS DECK ENGINE
+    // ==============================================
+    function switchAnalyticsPeriod(period, el) {
+      currentAnalyticsPeriod = period;
+      document.querySelectorAll('.filter-chips .chip').forEach(c => {
+        if (c.id && c.id.startsWith('chip-an-')) c.classList.remove('active');
+      });
+      if (el) el.classList.add('active');
+      loadAnalytics(period);
+    }
+
+    async function loadAnalytics(period = '7d') {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/analytics/overview?period=${period}&token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        if (!data.success) return;
+
+        analyticsDataCache = data;
+        const s = data.summary || {};
+
+        // KPIs
+        document.getElementById('an-total-amount').innerHTML = `${formatNumber(s.total_revenue || 0)} <span class="metric-unit">₸</span>`;
+        document.getElementById('an-total-count').textContent = `${s.total_donations || 0} донатов за период`;
+        document.getElementById('an-avg-amount').innerHTML = `${formatNumber(s.average_donation || 0)} <span class="metric-unit">₸</span>`;
+        document.getElementById('an-median-amount').textContent = `Медиана: ${formatNumber(s.median_donation || 0)} ₸`;
+        document.getElementById('an-max-amount').innerHTML = `${formatNumber(s.max_donation || 0)} <span class="metric-unit">₸</span>`;
+        document.getElementById('an-peak-hours').textContent = `Пик: ${s.peak_hour || '—'}`;
+        document.getElementById('chart-total-label').textContent = `${formatNumber(s.total_revenue || 0)} ₸`;
+
+        // Render SVG Chart
+        renderAnalyticsChart(data.timeline || []);
+
+        // Render Bank Share
+        renderBankBreakdown(data.banks || {});
+
+        // Render Hourly Bars
+        renderHourlyDistribution(data.hourly || []);
+
+        // Render Top Donors
+        renderTopDonorsTable(data.top_donors || []);
+      } catch (err) {
+        console.error('Failed to load analytics:', err);
+      }
+    }
+
+    function renderAnalyticsChart(timeline) {
+      const svg = document.getElementById('analytics-svg');
+      const gridG = document.getElementById('chart-grid-lines');
+      const areaPath = document.getElementById('chart-area-path');
+      const linePath = document.getElementById('chart-line-path');
+      const hoverG = document.getElementById('chart-hover-elements');
+      const tooltip = document.getElementById('chart-tooltip');
+
+      gridG.innerHTML = '';
+      hoverG.innerHTML = '';
+
+      if (!timeline || timeline.length === 0) {
+        linePath.setAttribute('d', 'M 0 180 L 800 180');
+        areaPath.setAttribute('d', '');
+        return;
+      }
+
+      const W = 800;
+      const H = 200;
+      const padTop = 20;
+      const padBottom = 20;
+      const padX = 20;
+      const innerW = W - padX * 2;
+      const innerH = H - padTop - padBottom;
+
+      const maxVal = Math.max(1000, ...timeline.map(t => t.amount || 0));
+
+      // 3 horizontal grid lines
+      for (let i = 0; i <= 3; i++) {
+        const y = padTop + (innerH / 3) * i;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', '0');
+        line.setAttribute('x2', String(W));
+        line.setAttribute('y1', String(y));
+        line.setAttribute('y2', String(y));
+        line.setAttribute('stroke', '#1c1d22');
+        line.setAttribute('stroke-dasharray', '4 4');
+        gridG.appendChild(line);
+      }
+
+      // Compute Points
+      const pts = timeline.map((item, idx) => {
+        const x = padX + (innerW / Math.max(1, timeline.length - 1)) * idx;
+        const ratio = (item.amount || 0) / maxVal;
+        const y = (padTop + innerH) - (ratio * innerH);
+        return { x, y, item };
+      });
+
+      // Build smooth cubic bezier curve
+      let dLine = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i];
+        const p1 = pts[i + 1];
+        const cx1 = p0.x + (p1.x - p0.x) / 2;
+        const cy1 = p0.y;
+        const cx2 = p0.x + (p1.x - p0.x) / 2;
+        const cy2 = p1.y;
+        dLine += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p1.x} ${p1.y}`;
+      }
+
+      linePath.setAttribute('d', dLine);
+
+      // Area Path
+      const firstX = pts[0].x;
+      const lastX = pts[pts.length - 1].x;
+      const bottomY = padTop + innerH;
+      const dArea = `${dLine} L ${lastX} ${bottomY} L ${firstX} ${bottomY} Z`;
+      areaPath.setAttribute('d', dArea);
+
+      // Hover points & interactivity
+      pts.forEach(pt => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', String(pt.x));
+        circle.setAttribute('cy', String(pt.y));
+        circle.setAttribute('r', '4');
+        circle.setAttribute('fill', '#e5a93c');
+        circle.setAttribute('stroke', '#08080a');
+        circle.setAttribute('stroke-width', '2');
+        circle.style.cursor = 'pointer';
+        circle.style.transition = 'r 0.15s ease';
+
+        circle.addEventListener('mouseenter', (e) => {
+          circle.setAttribute('r', '6');
+          tooltip.style.display = 'block';
+          tooltip.style.left = (pt.x / W * 100) + '%';
+          tooltip.style.top = pt.y + 'px';
+          document.getElementById('chart-tooltip-date').textContent = pt.item.date;
+          document.getElementById('chart-tooltip-amount').textContent = `${formatNumber(pt.item.amount)} ₸`;
+          document.getElementById('chart-tooltip-count').textContent = `${pt.item.count || 0} донатов`;
+        });
+
+        circle.addEventListener('mouseleave', () => {
+          circle.setAttribute('r', '4');
+          tooltip.style.display = 'none';
+        });
+
+        hoverG.appendChild(circle);
+      });
+    }
+
+    function renderBankBreakdown(banks) {
+      const container = document.getElementById('an-banks-container');
+      container.innerHTML = '';
+
+      const bankDefs = [
+        { key: 'kaspi_qr', label: 'Kaspi QR', color: '#ff4d4f' },
+        { key: 'kaspi_gold', label: 'Kaspi Gold (Перевод)', color: '#f5222d' },
+        { key: 'halyk', label: 'Halyk Bank', color: '#10b981' },
+        { key: 'freedom', label: 'Freedom Bank', color: '#2563eb' },
+        { key: 'jusan', label: 'Jusan Bank', color: '#f97316' }
+      ];
+
+      bankDefs.forEach(b => {
+        const info = banks[b.key] || { amount: 0, percent: 0, count: 0 };
+        const row = document.createElement('div');
+        row.innerHTML = `
+          <div class="bank-share-row">
+            <span style="font-weight: 500; color: var(--text-primary);">${b.label}</span>
+            <div style="display: flex; gap: 8px; font-family: var(--font-mono);">
+              <span style="color: var(--text-secondary);">${formatNumber(info.amount)} ₸</span>
+              <span style="color: var(--accent-copper); font-weight: 600;">${info.percent}%</span>
+            </div>
+          </div>
+          <div class="bank-share-track">
+            <div class="bank-share-fill" style="width: ${info.percent}%; background: ${b.color};"></div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderHourlyDistribution(hourly) {
+      const container = document.getElementById('an-hourly-bars');
+      container.innerHTML = '';
+      if (!hourly || hourly.length === 0) return;
+
+      const maxH = Math.max(1, ...hourly.map(h => h.amount || 0));
+
+      hourly.forEach(h => {
+        const col = document.createElement('div');
+        col.className = 'hourly-bar-col';
+        col.title = `${h.hour}:00 — ${formatNumber(h.amount)} ₸ (${h.count} дон.)`;
+        const pct = Math.max(4, Math.round(((h.amount || 0) / maxH) * 100));
+
+        col.innerHTML = `
+          <div class="hourly-bar-fill" style="height: ${pct}%;"></div>
+        `;
+        container.appendChild(col);
+      });
+    }
+
+    function renderTopDonorsTable(topDonors) {
+      const tbody = document.getElementById('an-top-donors-body');
+      tbody.innerHTML = '';
+
+      if (!topDonors || topDonors.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);">За выбранный период донатов не было.</td></tr>';
+        return;
+      }
+
+      topDonors.forEach((d, idx) => {
+        const tr = document.createElement('tr');
+        const rank = String(idx + 1).padStart(2, '0');
+        tr.innerHTML = `
+          <td><span style="font-family: var(--font-mono); font-weight: 700; color: ${idx === 0 ? 'var(--accent-gold)' : 'var(--text-muted)'};">${rank}</span></td>
+          <td><b style="color: var(--text-primary);">${escapeHtml(d.sender || 'Аноним')}</b></td>
+          <td><span style="color: var(--text-secondary); font-family: var(--font-mono);">${d.count || 1}</span></td>
+          <td style="text-align: right;"><b style="color: var(--accent-gold); font-family: var(--font-mono);">+${formatNumber(d.amount)} ₸</b></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ==============================================
+    // MULTI-GOAL MANAGEMENT HUB
+    // ==============================================
+    async function loadGoalsHub() {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/goals?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        if (!data.success) return;
+
+        const goals = data.goals || [];
+        const activeId = data.active_id;
+        const container = document.getElementById('goals-hub-container');
+        container.innerHTML = '';
+
+        document.getElementById('sidebar-goals-count').textContent = goals.length;
+
+        if (goals.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">Цели сбора еще не созданы. Нажмите «Новая цель».</div>';
+          return;
+        }
+
+        goals.forEach(g => {
+          const isActive = g.id === activeId || g.is_active;
+          const card = document.createElement('div');
+          card.className = 'goal-manage-card' + (isActive ? ' is-active' : '');
+
+          const percent = Math.min(100, Math.round(((g.current || 0) / Math.max(1, g.target || 1)) * 100));
+
+          card.innerHTML = `
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <span class="pill-tag ${isActive ? 'gold' : 'copper'}">${isActive ? 'Активна в OBS' : 'В архиве / Запасная'}</span>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-secondary btn-sm" onclick="openEditGoal('${g.id}')" title="Редактировать">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteGoal('${g.id}')" title="Удалить цель">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div style="font-weight: 600; font-size: 16px; color: var(--text-primary); margin-bottom: 6px;">${escapeHtml(g.title || 'Сбор')}</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">${g.description ? escapeHtml(g.description) : 'Полоса сбора средств для стрима'}</div>
+              
+              <div class="goal-track">
+                <div class="goal-fill" style="width: ${percent}%;"></div>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 8px;">
+                <span style="font-weight: 600; font-family: var(--font-mono); color: var(--text-primary);">${formatNumber(g.current || 0)} ₸</span>
+                <span style="font-family: var(--font-mono); color: var(--accent-gold); font-weight: 600;">${percent}%</span>
+                <span style="font-family: var(--font-mono); color: var(--text-muted);">из ${formatNumber(g.target || 0)} ₸</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+              ${isActive 
+                ? '<span style="font-size: 11.5px; color: var(--accent-emerald); font-weight: 600; display: flex; align-items: center; gap: 5px;"><span class="status-dot"></span> Транслируется в оверлей</span>'
+                : `<button class="btn btn-secondary btn-sm" onclick="activateGoal('${g.id}')">Сделать активной для OBS</button>`
+              }
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Failed to load goals hub:', err);
+      }
+    }
+
+    function openNewGoalModal() {
+      document.getElementById('modal-goal-id').value = '';
+      document.getElementById('goal-modal-heading').textContent = 'Создание новой цели';
+      document.getElementById('modal-goal-title').value = '';
+      document.getElementById('modal-goal-target').value = '500000';
+      document.getElementById('modal-goal-current').value = '0';
+      document.getElementById('goal-modal').classList.add('active');
+    }
+
+    async function openEditGoal(goalId) {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/goals?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        const g = (data.goals || []).find(item => item.id === goalId);
+        if (!g) return;
+
+        document.getElementById('modal-goal-id').value = g.id;
+        document.getElementById('goal-modal-heading').textContent = 'Редактирование цели';
+        document.getElementById('modal-goal-title').value = g.title || '';
+        document.getElementById('modal-goal-target').value = g.target || 500000;
+        document.getElementById('modal-goal-current').value = g.current || 0;
+        document.getElementById('goal-modal').classList.add('active');
+      } catch (e) {}
+    }
+
+    function openGoalModal() {
+      // Default to active goal edit
+      document.getElementById('goal-modal').classList.add('active');
+    }
+
+    function closeGoalModal() {
+      document.getElementById('goal-modal').classList.remove('active');
+    }
+
+    async function submitGoalForm() {
+      const id = document.getElementById('modal-goal-id').value;
+      const title = document.getElementById('modal-goal-title').value.trim();
+      const target = parseInt(document.getElementById('modal-goal-target').value, 10) || 500000;
+      const current = parseInt(document.getElementById('modal-goal-current').value, 10) || 0;
+      const token = currentStreamerToken || '';
+
+      if (!title) {
+        showToast('Введите название цели');
+        return;
+      }
+
+      try {
+        const endpoint = id ? '/api/goals/update' : '/api/goals/create';
+        const res = await fetch(`${endpoint}?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, title, target, current })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(id ? 'Цель обновлена' : 'Новая цель создана');
+          closeGoalModal();
+          loadGoalsHub();
+          loadStats();
+        }
+      } catch (err) {
+        showToast('Ошибка при сохранении цели');
+      }
+    }
+
+    async function activateGoal(goalId) {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/goals/activate?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal_id: goalId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Цель активирована в OBS!');
+          loadGoalsHub();
+          loadStats();
+        }
+      } catch (err) {
+        showToast('Ошибка активации цели');
+      }
+    }
+
+    async function deleteGoal(goalId) {
+      if (!confirm('Вы уверены, что хотите удалить эту цель?')) return;
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/goals/delete?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal_id: goalId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Цель удалена');
+          loadGoalsHub();
+          loadStats();
+        } else {
+          showToast(data.error || 'Не удалось удалить цель');
+        }
+      } catch (err) {
+        showToast('Ошибка удаления цели');
+      }
+    }
+
+    // ==============================================
+    // COMPANION STATUS & PAIRING MODAL
+    // ==============================================
+    async function loadCompanionStatus() {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/companion/status?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        if (!data.success) return;
+
+        const isOnline = data.online;
+        const hDot = document.getElementById('header-companion-dot');
+        const hText = document.getElementById('header-companion-text');
+        const cDot = document.getElementById('card-companion-dot');
+        const cBadge = document.getElementById('card-companion-badge');
+        const cDesc = document.getElementById('card-companion-desc');
+
+        if (isOnline) {
+          if (hDot) { hDot.classList.remove('offline'); }
+          if (hText) { hText.textContent = 'PUSH: ONLINE'; }
+          if (cDot) { cDot.classList.remove('offline'); }
+          if (cBadge) {
+            cBadge.className = 'pill-tag emerald';
+            cBadge.textContent = 'Подключен';
+          }
+          if (cDesc) {
+            const lastSec = data.last_heartbeat ? Math.round((Date.now() - new Date(data.last_heartbeat).getTime()) / 1000) : 0;
+            cDesc.textContent = `Шлюз активен (${data.app_type || 'Android/PC'}), последний сигнал: ${lastSec} сек. назад. Пуши перехватываются автоматически.`;
+          }
+        } else {
+          if (hDot) { hDot.classList.add('offline'); }
+          if (hText) { hText.textContent = 'PUSH: ОФЛАЙН'; }
+          if (cDot) { cDot.classList.add('offline'); }
+          if (cBadge) {
+            cBadge.className = 'pill-tag copper';
+            cBadge.textContent = 'Не подключен';
+          }
+          if (cDesc) {
+            cDesc.textContent = 'Шлюз не обнаружен. Отсканируйте QR-код в мобильном приложении TengeAlert или запустите фоновый демон на ПК.';
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load companion status:', err);
+      }
+    }
+
+    function openCompanionModal() {
+      const modal = document.getElementById('companion-modal');
+      const tokenInput = document.getElementById('companion-modal-token');
+      const token = currentStreamerToken || document.getElementById('secret-token-box').value || '';
+      if (tokenInput) tokenInput.value = token;
+
+      const canvas = document.getElementById('companion-qr-canvas');
+      if (canvas && window.QRGen) {
+        const origin = window.location.origin;
+        const pairUrl = `tengealert://pair?token=${encodeURIComponent(token)}&host=${encodeURIComponent(origin)}`;
+        QRGen.renderToCanvas(canvas, pairUrl, {
+          size: 200,
+          margin: 2,
+          darkColor: '#08080a',
+          lightColor: '#ffffff',
+          centerBadge: true,
+          badgeColor: '#e5a93c',
+          badgeSymbol: '₸'
+        });
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeCompanionModal() {
+      document.getElementById('companion-modal').classList.remove('active');
+    }
+
+    function copyCompanionToken() {
+      const token = currentStreamerToken || document.getElementById('secret-token-box').value || '';
+      navigator.clipboard.writeText(token).then(() => {
+        showToast('Токен скопирован');
+      });
+    }
+
+    // ==============================================
+    // WIDGETS & PREVIEWS
+    // ==============================================
+    function selectStudioTheme(themeName) {
+      selectedTheme = themeName;
+      document.querySelectorAll('.theme-tile').forEach(t => t.classList.remove('active'));
+      const activeTile = document.getElementById('tile-' + themeName);
+      if (activeTile) activeTile.classList.add('active');
+
+      fetch('/api/user/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme: themeName })
+      }).catch(console.error);
+
+      playThemeAudio(themeName);
+      updateObsUrls();
+      showToast(`Тема «${themeName}» активирована и синхронизирована с OBS`);
+    }
+
+    function saveSoundPreference() {
+      const sound = document.getElementById('sound-select').value;
+      const tts = document.getElementById('tts-select').value === 'true';
+
+      fetch('/api/user/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sound, tts_enabled: tts })
+      }).then(() => {
+        updateObsUrls();
+        showToast('Настройки звука сохранены');
+      }).catch(console.error);
+    }
+
+    function updateObsUrls() {
+      const origin = window.location.origin;
+      const sound = document.getElementById('sound-select') ? document.getElementById('sound-select').value : 'nomad';
+      const tts = document.getElementById('tts-select') ? document.getElementById('tts-select').value : 'true';
+      const token = currentStreamerToken || document.getElementById('secret-token-box').value || '';
+
+      const alertUrl = `${origin}/widgets/alert.html?token=${encodeURIComponent(token)}&theme=${selectedTheme}&sound=${sound}&tts=${tts}`;
+      const goalUrl = `${origin}/widgets/goal.html?token=${encodeURIComponent(token)}&theme=${selectedTheme}`;
+      const qrUrl = `${origin}/widgets/qr.html?token=${encodeURIComponent(token)}&theme=${selectedTheme}`;
+      const wheelUrl = `${origin}/widgets/wheel.html?token=${encodeURIComponent(token)}`;
+      const tickerUrl = `${origin}/widgets/ticker.html?token=${encodeURIComponent(token)}`;
+      const topUrl = `${origin}/widgets/top.html?token=${encodeURIComponent(token)}`;
+
+      if (document.getElementById('url-alert')) document.getElementById('url-alert').textContent = alertUrl;
+      if (document.getElementById('url-goal')) document.getElementById('url-goal').textContent = goalUrl;
+      if (document.getElementById('url-qr')) document.getElementById('url-qr').textContent = qrUrl;
+      if (document.getElementById('url-wheel')) document.getElementById('url-wheel').textContent = wheelUrl;
+      if (document.getElementById('url-ticker')) document.getElementById('url-ticker').textContent = tickerUrl;
+      if (document.getElementById('url-top')) document.getElementById('url-top').textContent = topUrl;
+    }
+
+    function openAlertPreview() { window.open(document.getElementById('url-alert').textContent, '_blank', 'width=800,height=600'); }
+    function openGoalPreview() { window.open(document.getElementById('url-goal').textContent, '_blank', 'width=700,height=240'); }
+    function openQrPreview() { window.open(document.getElementById('url-qr').textContent, '_blank', 'width=320,height=440'); }
+    function openWheelPreview() { window.open(document.getElementById('url-wheel').textContent, '_blank', 'width=540,height=540'); }
+    function openTickerPreview() { window.open(document.getElementById('url-ticker').textContent, '_blank', 'width=980,height=160'); }
+    function openTopPreview() { window.open(document.getElementById('url-top').textContent, '_blank', 'width=660,height=440'); }
+
+    // Stream Deck Actions
+    async function replayLastAlert() {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/streamer/replay-last?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          const info = data.donation ? ` (${data.donation.sender}, ${data.donation.amount} ₸)` : '';
+          showToast(`Повтор алерта в OBS${info}`);
+        } else {
+          showToast(data.message || 'Нет предыдущих донатов');
+        }
+      } catch (e) {
+        showToast('Ошибка при повторе алерта');
+      }
+    }
+
+    async function skipAlert() {
+      try {
+        const token = currentStreamerToken || '';
+        await fetch(`/api/streamer/skip-alert?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        showToast('Текущий алерт заглушен и скрыт в OBS');
+      } catch (e) {
+        showToast('Ошибка при пропуске');
+      }
+    }
+
+    async function clearAlertScreen() {
+      try {
+        const token = currentStreamerToken || '';
+        await fetch(`/api/streamer/clear-screen?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        showToast('Экран OBS очищен, очередь сброшена');
+      } catch (e) {
+        showToast('Ошибка очистки экрана');
+      }
+    }
+
+    async function spinWheelNow() {
+      try {
+        const token = currentStreamerToken || '';
+        const res = await fetch(`/api/widgets/wheel/spin?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ donor: 'Стример (Тест)', amount: 2500 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Рулетка запущена в OBS! Сектор: «${data.spin.sector}»`);
+        }
+      } catch (e) {
+        showToast('Ошибка при запуске рулетки');
+      }
+    }
+
+    function quickTestDonation(amount) {
+      document.getElementById('sim-amount').value = amount;
+      document.getElementById('sim-sender').value = 'Данияр К.';
+      document.getElementById('sim-message').value = `Тестовый донат ${formatNumber(amount)} ₸ через Kaspi`;
+      fireSimulation();
+    }
+
+    // Audio Synthesizer (Web Audio API)
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playThemeAudio(theme) {
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+      [440, 659.25, 880, 1318.51].forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, now + i * 0.08);
+        g.gain.setValueAtTime(0, now + i * 0.08);
+        g.gain.linearRampToValueAtTime(0.2, now + i * 0.08 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 1.1);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 1.2);
+      });
+    }
+
+    function previewSelectedSound() {
+      playThemeAudio(selectedTheme);
+    }
+
+    // Load Stats Overview
+    function loadStats() {
+      const token = currentStreamerToken || '';
+      fetch(`/api/stats?token=${encodeURIComponent(token)}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('stat-today').innerHTML = `${formatNumber(data.today_amount || 0)} <span class="metric-unit">₸</span>`;
+          document.getElementById('stat-week').innerHTML = `${formatNumber(data.week_amount || 0)} <span class="metric-unit">₸</span>`;
+          document.getElementById('stat-month').innerHTML = `${formatNumber(data.month_amount || 0)} <span class="metric-unit">₸</span>`;
+          document.getElementById('stat-total').innerHTML = `${formatNumber(data.total_amount || 0)} <span class="metric-unit">₸</span>`;
+          
+          document.getElementById('stat-today-sub').textContent = `${data.total_count || 0} донатов в базе`;
+          document.getElementById('sidebar-donations-count').textContent = data.total_count || 0;
+
+          if (data.top_donor) {
+            document.getElementById('stat-top-donor').textContent = `Топ: ${data.top_donor.sender} (${formatNumber(data.top_donor.amount)} ₸)`;
+          } else {
+            document.getElementById('stat-top-donor').textContent = 'Топ: нет данных';
+          }
+
+          if (data.goal) {
+            updateGoalDisplay(data.goal);
+          }
+        })
+        .catch(console.error);
+    }
+
+    function updateGoalDisplay(goal) {
+      document.getElementById('goal-title-display').textContent = goal.title || 'Сбор средств';
+      const target = goal.target || 500000;
+      const current = goal.current || 0;
+      const percent = Math.min(100, Math.round((current / (target || 1)) * 100));
+
+      document.getElementById('goal-fill-bar').style.width = percent + '%';
+      document.getElementById('goal-current-display').textContent = `${formatNumber(current)} ₸`;
+      document.getElementById('goal-percent-display').textContent = `${percent}%`;
+      document.getElementById('goal-target-display').textContent = `из ${formatNumber(target)} ₸`;
+
+      document.getElementById('modal-goal-title').value = goal.title || '';
+      document.getElementById('modal-goal-target').value = target;
+      document.getElementById('modal-goal-current').value = current;
+    }
+
+    // Ingestion Feed
+    function loadRecentFeed() {
+      const token = currentStreamerToken || '';
+      fetch(`/api/donations/recent?token=${encodeURIComponent(token)}`)
+        .then(res => res.json())
+        .then(donations => {
+          const container = document.getElementById('feed-container');
+          container.innerHTML = '';
+          if (!donations || donations.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted); font-size: 13px;">Журнал пуст. Запустите симуляцию перевода для проверки.</div>';
+            return;
+          }
+          donations.forEach(d => prependFeedItem(d, false));
+        });
+    }
+
+    function prependFeedItem(donation, animate = true) {
+      const container = document.getElementById('feed-container');
+      const item = document.createElement('div');
+      item.className = 'feed-item';
+      if (!animate) item.style.animation = 'none';
+
+      const time = donation.received_at ? new Date(donation.received_at).toLocaleTimeString('ru-RU') : 'Только что';
+      const bClass = getBankClass(donation.source_label);
+
+      item.innerHTML = `
+        <div style="flex: 1; min-width: 0;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="feed-donor">${escapeHtml(donation.sender || 'Аноним')}</span>
+            <span class="bank-badge ${bClass}">${escapeHtml(donation.source_label || 'Перевод')}</span>
+          </div>
+          <div class="feed-msg">${donation.message ? escapeHtml(donation.message) : 'Без комментария'}</div>
+          <div class="feed-time">${time}</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="feed-amt">+${formatNumber(donation.amount)} ₸</div>
+        </div>
+      `;
+
+      container.insertBefore(item, container.firstChild);
+    }
+
+    function getBankClass(label) {
+      const l = (label || '').toLowerCase();
+      if (l.includes('kaspi')) return 'kaspi';
+      if (l.includes('halyk')) return 'halyk';
+      if (l.includes('freedom')) return 'freedom';
+      if (l.includes('jusan')) return 'jusan';
+      return 'kaspi';
+    }
+
+    // Simulation tool
+    function fireSimulation() {
+      const btn = document.getElementById('btn-fire');
+      btn.disabled = true;
+
+      const sender = document.getElementById('sim-sender').value;
+      const amount = parseInt(document.getElementById('sim-amount').value, 10) || 5000;
+      const bank = document.getElementById('sim-bank').value;
+      const message = document.getElementById('sim-message').value;
+      const sound = document.getElementById('sound-select').value;
+      const token = currentStreamerToken || '';
+
+      fetch(`/api/donations/test?token=${encodeURIComponent(token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender, amount, bank, message, sound, theme: selectedTheme })
+      })
+      .then(res => res.json())
+      .then(data => {
+        showToast('Донат успешно смоделирован и отправлен в OBS');
+        loadStats();
+      })
+      .finally(() => {
+        setTimeout(() => { btn.disabled = false; }, 300);
+      });
+    }
+
+    function quickFireAlert() {
+      fireSimulation();
+    }
+
+    function clearDonationHistory() {
+      if (!confirm('Вы уверены, что хотите очистить всю историю донатов?')) return;
+      fetch('/api/donations/clear', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          showToast(`История очищена (${data.count || 0} записей)`);
+          loadStats();
+          loadRecentFeed();
+          loadDonationHistory();
+        })
+        .catch(console.error);
+    }
+
+    // Donations History Tab Logic
+    function setHistoryPeriod(period, el) {
+      currentHistoryPeriod = period;
+      document.querySelectorAll('.filter-chips .chip').forEach(c => {
+        if (!c.id || !c.id.startsWith('chip-an-')) c.classList.remove('active');
+      });
+      if (el) el.classList.add('active');
+      currentHistoryPage = 1;
+      loadDonationHistory();
+    }
+
+    function debounceHistorySearch() {
+      clearTimeout(historySearchTimer);
+      historySearchTimer = setTimeout(() => {
+        currentHistoryPage = 1;
+        loadDonationHistory();
+      }, 300);
+    }
+
+    function loadDonationHistory() {
+      const bank = document.getElementById('filter-bank-select').value;
+      const search = document.getElementById('history-search-input').value;
+      const token = currentStreamerToken || '';
+
+      const url = `/api/donations?token=${encodeURIComponent(token)}&period=${currentHistoryPeriod}&bank=${bank}&search=${encodeURIComponent(search)}&page=${currentHistoryPage}&limit=25`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('donations-table-body');
+          tbody.innerHTML = '';
+
+          const donations = data.donations || [];
+          if (donations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">Донаты по заданным критериям не найдены.</td></tr>';
+            document.getElementById('history-summary-text').textContent = 'Показано: 0 записей';
+            document.getElementById('history-pagination').innerHTML = '';
+            return;
+          }
+
+          donations.forEach(d => {
+            const tr = document.createElement('tr');
+            const dDate = new Date(d.received_at).toLocaleString('ru-RU', { timeZone: 'Asia/Almaty' });
+            const bClass = getBankClass(d.source_label);
+
+            tr.innerHTML = `
+              <td><span style="font-family: var(--font-mono); font-size: 11px;">${dDate}</span></td>
+              <td><b style="color: var(--text-primary);">${escapeHtml(d.sender || 'Аноним')}</b></td>
+              <td><span class="bank-badge ${bClass}">${escapeHtml(d.source_label || 'Перевод')}</span></td>
+              <td><span style="color: var(--text-secondary);">${d.message ? escapeHtml(d.message) : '—'}</span></td>
+              <td><b style="color: var(--accent-gold); font-family: var(--font-mono); font-size: 14px;">+${formatNumber(d.amount)} ₸</b></td>
+              <td style="text-align: right;">
+                <button class="btn btn-danger btn-sm" onclick="deleteDonationRecord('${d.id}')" title="Удалить запись">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          document.getElementById('history-summary-text').textContent = `Всего: ${data.total || 0} донатов на сумму ${formatNumber(data.totalAmount || 0)} ₸ (Стр. ${data.page} из ${data.totalPages})`;
+
+          const pagin = document.getElementById('history-pagination');
+          pagin.innerHTML = '';
+          if (data.totalPages > 1) {
+            if (data.page > 1) {
+              const prev = document.createElement('button');
+              prev.className = 'btn btn-secondary btn-sm';
+              prev.textContent = '← Назад';
+              prev.onclick = () => { currentHistoryPage--; loadDonationHistory(); };
+              pagin.appendChild(prev);
+            }
+            if (data.page < data.totalPages) {
+              const next = document.createElement('button');
+              next.className = 'btn btn-secondary btn-sm';
+              next.textContent = 'Вперед →';
+              next.onclick = () => { currentHistoryPage++; loadDonationHistory(); };
+              pagin.appendChild(next);
+            }
+          }
+        })
+        .catch(console.error);
+    }
+
+    function deleteDonationRecord(donationId) {
+      if (!confirm('Удалить эту запись о донате?')) return;
+      fetch(`/api/donations/${donationId}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => {
+          showToast('Запись удалена');
+          loadDonationHistory();
+          loadStats();
+          loadRecentFeed();
+        })
+        .catch(console.error);
+    }
+
+    function exportDonationsCsv() {
+      const bank = document.getElementById('filter-bank-select').value;
+      const search = document.getElementById('history-search-input').value;
+      const token = currentStreamerToken || '';
+      window.location.href = `/api/donations/export/csv?token=${encodeURIComponent(token)}&period=${currentHistoryPeriod}&bank=${bank}&search=${encodeURIComponent(search)}`;
+      showToast('Загрузка CSV-файла запущена');
+    }
+
+    // TTS & Moderation
+    function updateRateDisplay(val) {
+      document.getElementById('tts-rate-val').textContent = val + 'x';
+    }
+
+    function saveTtsSettings() {
+      const enabled = document.getElementById('tts-enabled-select').value === 'true';
+      const minAmount = parseInt(document.getElementById('tts-min-amount').value, 10) || 0;
+      const voiceKz = document.getElementById('tts-voice-kz').value;
+      const voiceRu = document.getElementById('tts-voice-ru').value;
+      const rate = parseFloat(document.getElementById('tts-rate-range').value) || 1.0;
+
+      const pill = document.getElementById('tts-status-pill');
+      if (pill) {
+        pill.textContent = enabled ? 'АКТИВНА' : 'ВЫКЛ';
+        pill.className = enabled ? 'pill-tag emerald' : 'pill-tag copper';
+      }
+
+      fetch('/api/user/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tts_enabled: enabled,
+          tts_min_amount: minAmount,
+          tts_voice_kz: voiceKz,
+          tts_voice_ru: voiceRu,
+          tts_rate: rate
+        })
+      })
+      .then(r => r.json())
+      .then(() => {
+        showToast('Настройки озвучки сохранены');
+        updateObsUrls();
+      })
+      .catch(console.error);
+    }
+
+    function saveModerationSettings() {
+      const profanity = document.getElementById('profanity-filter-toggle').checked;
+      const stopWordsRaw = document.getElementById('custom-stop-words').value;
+      const customWords = stopWordsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+      fetch('/api/user/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          moderation: {
+            profanity_filter: profanity,
+            custom_bad_words: customWords
+          }
+        })
+      })
+      .then(r => r.json())
+      .then(() => {
+        showToast('Настройки цензуры обновлены');
+      })
+      .catch(console.error);
+    }
+
+    let currentPreviewAudio = null;
+    function testSpeechSample(lang) {
+      if (currentPreviewAudio) {
+        try { currentPreviewAudio.pause(); currentPreviewAudio.currentTime = 0; } catch (e) {}
+        currentPreviewAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      const voiceKz = document.getElementById('tts-voice-kz') ? document.getElementById('tts-voice-kz').value : 'kk-KZ-DauletNeural';
+      const voiceRu = document.getElementById('tts-voice-ru') ? document.getElementById('tts-voice-ru').value : 'ru-RU-SvetlanaNeural';
+      const selectedVoice = lang === 'kk' ? voiceKz : voiceRu;
+      const targetLang = lang === 'kk' ? 'kk-KZ' : 'ru-RU';
+      const sampleText = lang === 'kk'
+        ? 'Айдос, бес мың теңге. Рақмет бауырым, керемет ойын! Алға Қазақстан!'
+        : 'Дмитрий, десять тысяч тенге. Спасибо за поддержку! Отличная игра!';
+
+      showToast(`Генерация студийного голоса (${lang === 'kk' ? 'Даулет/Айгүл' : 'Светлана/Дмитрий'})...`);
+
+      const audioUrl = `/api/tts/audio?lang=${encodeURIComponent(targetLang)}&voice=${encodeURIComponent(selectedVoice)}&text=${encodeURIComponent(sampleText)}`;
+      const audio = new Audio(audioUrl);
+      currentPreviewAudio = audio;
+
+      audio.play().then(() => {
+        showToast(`Воспроизведение студийного голоса (${lang.toUpperCase()})`);
+      }).catch(err => {
+        console.warn('Neural audio playback failed, falling back:', err);
+        if ('speechSynthesis' in window) {
+          const u = new SpeechSynthesisUtterance(sampleText);
+          u.lang = targetLang;
+          window.speechSynthesis.speak(u);
+        }
+      });
+    }
+
+    // Public URL helpers
+    function updatePublicUrlDisplay() {
+      const slugInput = document.getElementById('prof-slug');
+      const cleanSlug = (slugInput ? slugInput.value : '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      const baseUrl = window.location.origin;
+      const fullUrl = cleanSlug ? `${baseUrl}/d/${cleanSlug}` : `${baseUrl}/d/`;
+      const urlInput = document.getElementById('public-donate-url');
+      if (urlInput) urlInput.value = fullUrl;
+      const openBtn = document.getElementById('btn-open-donate-page');
+      if (openBtn) openBtn.href = fullUrl;
+    }
+
+    function copyPublicDonateUrl() {
+      const urlInput = document.getElementById('public-donate-url');
+      if (!urlInput) return;
+      navigator.clipboard.writeText(urlInput.value).then(() => {
+        showToast('Ссылка на страницу доната скопирована!');
+      });
+    }
+
+    // Profile & Requisites
+    function loadProfileData() {
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success || !data.profile) return;
+          const p = data.profile;
+          document.getElementById('prof-display-name').value = p.display_name || '';
+          document.getElementById('prof-slug').value = p.custom_page_slug || '';
+          if (document.getElementById('prof-button-text')) document.getElementById('prof-button-text').value = p.button_text || 'Поддержать стримера';
+          if (document.getElementById('prof-presets')) document.getElementById('prof-presets').value = (p.amount_presets || [500, 1000, 2500, 5000, 10000, 25000]).join(', ');
+          document.getElementById('prof-bio').value = p.bio || '';
+
+          if (p.requisites) {
+            document.getElementById('req-kaspi-phone').value = p.requisites.kaspi_phone || '';
+            document.getElementById('req-kaspi-name').value = p.requisites.kaspi_name || '';
+            document.getElementById('req-halyk-card').value = p.requisites.halyk_card || '';
+            document.getElementById('req-jusan-card').value = p.requisites.jusan_card || '';
+            document.getElementById('req-kaspi-pay').value = p.requisites.kaspi_pay_link || '';
+          }
+
+          if (p.socials) {
+            document.getElementById('soc-youtube').value = p.socials.youtube || '';
+            document.getElementById('soc-twitch').value = p.socials.twitch || '';
+            document.getElementById('soc-tiktok').value = p.socials.tiktok || '';
+            document.getElementById('soc-telegram').value = p.socials.telegram || '';
+            if (document.getElementById('soc-discord')) document.getElementById('soc-discord').value = p.socials.discord || '';
+            if (document.getElementById('soc-kick')) document.getElementById('soc-kick').value = p.socials.kick || '';
+          }
+
+          if (p.moderation) {
+            document.getElementById('profanity-filter-toggle').checked = p.moderation.profanity_filter !== false;
+            document.getElementById('custom-stop-words').value = (p.moderation.custom_bad_words || []).join(', ');
+          }
+
+          updatePublicUrlDisplay();
+        })
+        .catch(console.error);
+    }
+
+    function saveProfileAndRequisites() {
+      const displayName = document.getElementById('prof-display-name').value;
+      const slug = document.getElementById('prof-slug').value;
+      const bio = document.getElementById('prof-bio').value;
+      const buttonText = document.getElementById('prof-button-text') ? document.getElementById('prof-button-text').value.trim() : 'Поддержать стримера';
+      const presetsRaw = document.getElementById('prof-presets') ? document.getElementById('prof-presets').value : '';
+      const amountPresets = presetsRaw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => n && !isNaN(n) && n > 0);
+
+      const requisites = {
+        kaspi_phone: document.getElementById('req-kaspi-phone').value,
+        kaspi_name: document.getElementById('req-kaspi-name').value,
+        halyk_card: document.getElementById('req-halyk-card').value,
+        jusan_card: document.getElementById('req-jusan-card').value,
+        kaspi_pay_link: document.getElementById('req-kaspi-pay').value
+      };
+
+      const socials = {
+        youtube: document.getElementById('soc-youtube').value,
+        twitch: document.getElementById('soc-twitch').value,
+        tiktok: document.getElementById('soc-tiktok').value,
+        telegram: document.getElementById('soc-telegram').value,
+        discord: document.getElementById('soc-discord') ? document.getElementById('soc-discord').value : '',
+        kick: document.getElementById('soc-kick') ? document.getElementById('soc-kick').value : ''
+      };
+
+      fetch('/api/user/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          display_name: displayName,
+          custom_page_slug: slug,
+          button_text: buttonText,
+          amount_presets: amountPresets.length > 0 ? amountPresets : [500, 1000, 2500, 5000, 10000, 25000],
+          bio,
+          requisites,
+          socials
+        })
+      })
+      .then(res => res.json())
+      .then(() => {
+        showToast('Реквизиты и страница сохранены!');
+        document.getElementById('header-user-name').textContent = displayName;
+        document.getElementById('user-avatar-letter').textContent = (displayName || 'S')[0].toUpperCase();
+        updatePublicUrlDisplay();
+      })
+      .catch(console.error);
+    }
+
+    // SSE Realtime Connection
+    let es = null;
+    function connectSSE() {
+      if (es) es.close();
+      const token = currentStreamerToken || '';
+      es = new EventSource(`/api/events?token=${encodeURIComponent(token)}`);
+      
+      es.addEventListener('donation', (e) => {
+        try {
+          const donation = JSON.parse(e.data);
+          prependFeedItem(donation, true);
+          loadStats();
+          if (document.getElementById('tab-analytics').classList.contains('active')) {
+            loadAnalytics(currentAnalyticsPeriod);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+
+      es.addEventListener('goal_update', (e) => {
+        try {
+          const goal = JSON.parse(e.data);
+          updateGoalDisplay(goal);
+          if (document.getElementById('tab-goals').classList.contains('active')) {
+            loadGoalsHub();
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+
+      es.addEventListener('donations_cleared', () => {
+        loadStats();
+        loadRecentFeed();
+        loadDonationHistory();
+      });
+
+      es.addEventListener('subscription_updated', () => {
+        loadSubscriptionData();
+      });
+
+      es.addEventListener('companion_heartbeat', () => {
+        loadCompanionStatus();
+      });
+    }
+
+    // Subscription & Billing
+    async function loadSubscriptionData() {
+      try {
+        const res = await fetch('/api/subscription');
+        const data = await res.json();
+        if (!data.success) return;
+
+        const sub = data.subscription;
+        const pillBadge = document.getElementById('sub-pill-badge');
+        const pillCounter = document.getElementById('sub-pill-counter');
+        const pillAction = document.getElementById('sub-pill-action');
+        const sidebarBadge = document.getElementById('sidebar-sub-badge');
+
+        if (sub.plan_id === 'starter_free') {
+          if (pillBadge) pillBadge.textContent = 'Starter Free';
+          if (pillCounter) {
+            pillCounter.textContent = `${sub.donations_count}/${sub.stream_limit}`;
+            pillCounter.style.color = sub.limit_reached ? '#ef4444' : 'var(--text-muted)';
+          }
+          if (pillAction) {
+            pillAction.textContent = 'Upgrade';
+            pillAction.style.display = 'inline-block';
+          }
+          if (sidebarBadge) {
+            sidebarBadge.textContent = 'FREE';
+            sidebarBadge.style.color = 'var(--text-muted)';
+          }
+        } else {
+          const isStudio = sub.plan_id === 'esports_studio';
+          if (pillBadge) {
+            pillBadge.textContent = isStudio ? 'Esports Studio' : 'Creator Pro';
+            pillBadge.style.color = 'var(--accent-gold)';
+          }
+          if (pillCounter) {
+            pillCounter.textContent = sub.days_left > 0 ? `${sub.days_left} дн.` : 'PRO';
+            pillCounter.style.color = 'var(--accent-gold)';
+          }
+          if (pillAction) pillAction.style.display = 'none';
+          if (sidebarBadge) {
+            sidebarBadge.textContent = isStudio ? 'STUDIO' : 'PRO';
+            sidebarBadge.style.color = 'var(--accent-gold)';
+          }
+        }
+
+        updatePlanCardsHighlight(sub.plan_id);
+      } catch (err) {
+        console.error('Failed to load subscription:', err);
+      }
+    }
+
+    function updatePlanCardsHighlight(activePlanId) {
+      ['starter_free', 'creator_pro', 'esports_studio'].forEach(pid => {
+        const btn = document.getElementById('btn-plan-' + pid);
+        if (!btn) return;
+        if (pid === activePlanId) {
+          btn.textContent = 'Текущий активный';
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      });
+    }
+
+    function openSubscriptionModal(preselectPlan) {
+      document.getElementById('subscription-modal').classList.add('active');
+      if (preselectPlan && preselectPlan !== 'starter_free') {
+        selectPlanPayment(preselectPlan);
+      }
+    }
+
+    function closeSubscriptionModal() {
+      document.getElementById('subscription-modal').classList.remove('active');
+      document.getElementById('sub-payment-panel').style.display = 'none';
+    }
+
+    async function selectPlanPayment(planId) {
+      if (planId === 'starter_free') {
+        showToast('Starter Free уже включен по умолчанию');
+        return;
+      }
+      try {
+        const res = await fetch('/api/subscription/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan_id: planId })
+        });
+        const data = await res.json();
+        if (data.success && (data.payment_instruction || data.plan)) {
+          const plan = data.plan || {};
+          const pi = data.payment_instruction || {};
+          const planName = plan.name || pi.plan_name || (planId === 'creator_pro' ? 'Creator Pro' : 'Esports Studio');
+          const amountVal = plan.price || pi.amount || (planId === 'creator_pro' ? 4900 : 8900);
+          const refCode = pi.payment_comment || pi.ref_code || 'TA-PAY-CODE';
+
+          const panel = document.getElementById('sub-payment-panel');
+          document.getElementById('payment-panel-title').textContent = `Оплата подписки ${planName} (30 дней)`;
+          document.getElementById('payment-panel-amount').textContent = `${formatNumber(amountVal)} ₸`;
+          document.getElementById('payment-ref-code').textContent = refCode;
+          panel.style.display = 'block';
+          panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } catch (err) {
+        showToast('Ошибка при формировании платежа');
+      }
+    }
+
+    function copyPaymentRef() {
+      const refEl = document.getElementById('payment-ref-code');
+      if (refEl) {
+        navigator.clipboard.writeText(refEl.textContent).then(() => {
+          showToast('Код платежа скопирован: ' + refEl.textContent);
+        });
+      }
+    }
+
+    async function submitPromoCode() {
+      const input = document.getElementById('promo-code-input');
+      const code = input ? input.value.trim() : '';
+      if (!code) {
+        showToast('Введите промокод');
+        return;
+      }
+      try {
+        const res = await fetch('/api/subscription/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ promo_code: code })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || 'Промокод успешно активирован!');
+          input.value = '';
+          loadSubscriptionData();
+          setTimeout(() => closeSubscriptionModal(), 1200);
+        } else {
+          showToast(data.error || 'Неверный промокод');
+        }
+      } catch (err) {
+        showToast('Ошибка при активации промокода');
+      }
+    }
+
+    // Check Authentication
+    async function checkAuthSession() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          document.getElementById('header-user-name').textContent = data.user.display_name;
+          document.getElementById('user-avatar-letter').textContent = (data.user.display_name || 'S')[0].toUpperCase();
+          currentStreamerToken = data.token || data.user.streamer_token;
+          document.getElementById('secret-token-box').value = currentStreamerToken;
+          document.getElementById('sidebar-token-display').textContent = currentStreamerToken.slice(0, 10) + '...';
+
+          if (data.user.settings) {
+            const s = data.user.settings;
+            if (s.theme) {
+              selectedTheme = s.theme;
+              document.querySelectorAll('.theme-tile').forEach(t => t.classList.remove('active'));
+              const activeTile = document.getElementById('tile-' + selectedTheme);
+              if (activeTile) activeTile.classList.add('active');
+            }
+            if (s.sound) document.getElementById('sound-select').value = s.sound;
+            if (s.tts_enabled !== undefined) {
+              document.getElementById('tts-enabled-select').value = s.tts_enabled ? 'true' : 'false';
+              document.getElementById('tts-select').value = s.tts_enabled ? 'true' : 'false';
+            }
+            if (s.tts_min_amount !== undefined) document.getElementById('tts-min-amount').value = s.tts_min_amount;
+            if (s.tts_voice_kz) document.getElementById('tts-voice-kz').value = s.tts_voice_kz;
+            if (s.tts_voice_ru) document.getElementById('tts-voice-ru').value = s.tts_voice_ru;
+            if (s.tts_rate !== undefined) {
+              document.getElementById('tts-rate-range').value = s.tts_rate;
+              document.getElementById('tts-rate-val').textContent = s.tts_rate + 'x';
+            }
+          }
+
+          updateObsUrls();
+          loadStats();
+          loadRecentFeed();
+          loadProfileData();
+          loadSubscriptionData();
+          loadCompanionStatus();
+          connectSSE();
+
+          // Periodic companion heartbeat check
+          setInterval(loadCompanionStatus, 15000);
+        } else {
+          window.location.href = '/auth/login.html';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function logoutStreamer() {
+      fetch('/api/auth/logout', { method: 'POST' })
+        .then(() => {
+          localStorage.removeItem('tenge_session_token');
+          localStorage.removeItem('tenge_user');
+          window.location.href = '/auth/login.html';
+        });
+    }
+
+    checkAuthSession();
+  </script>
+</body>
+</html>

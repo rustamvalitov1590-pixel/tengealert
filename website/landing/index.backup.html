@@ -1,0 +1,4464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — Стриминговые оповещения и прямой P2P Kaspi QR без комиссии</title>
+  <meta name="description" content="Платформа нового поколения для стримеров Казахстана. Прямые переводы Kaspi QR и Halyk без комиссии 0%, задержка в OBS < 5 мс, интерактивные виджеты, рулетка челленджей и озвучка на казахском и русском языках.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Void Base & Elevated Surface Hierarchy (n8n Refero 8601c8ef) */
+      --bg-base: #090a10;
+      --bg-surface: #111420;
+      --bg-surface-elevated: #161b2c;
+      --bg-surface-hover: #1c2236;
+      --bg-muted-shell: #222940;
+      
+      --border-hairline: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --border-glow: rgba(229, 169, 60, 0.35);
+      
+      /* Chromatic Energy Tokens */
+      --accent-gold: #e5a93c;
+      --accent-ember: linear-gradient(35deg, #e5a93c 0%, #f59e0b 100%);
+      --accent-emerald: #10b981;
+      --accent-cyan: #38bdf8;
+      --accent-crimson: #f43f5e;
+      --accent-purple: #8b5cf6;
+      
+      /* Typography Colors */
+      --text-primary: #ffffff;
+      --text-ash: #d1cece;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    section {
+      scroll-margin-top: 84px;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-ash);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4, .display-font {
+      font-family: var(--font-display);
+      letter-spacing: -0.02em;
+    }
+
+    .mono-font {
+      font-family: var(--font-mono);
+    }
+
+    /* Icon Utility */
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+    }
+
+    /* ========================================================
+       1. NAVIGATION & HEADER
+       ======================================================== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(8, 9, 14, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-inner {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      color: #04120c;
+    }
+
+    .brand-mark svg {
+      width: 20px;
+      height: 20px;
+      stroke: #04120c;
+      stroke-width: 2.5;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title span {
+      color: var(--accent-emerald);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-link {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .burger-btn {
+      display: none;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      color: var(--text-primary);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 960px) {
+      .nav-links {
+        display: none;
+      }
+      .burger-btn {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .btn-desktop-only {
+        display: none !important;
+      }
+      .brand-title {
+        font-size: 17px;
+      }
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+      }
+      .brand-mark svg {
+        width: 17px;
+        height: 17px;
+      }
+    }
+
+    /* Mobile Drawer */
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      top: 68px;
+      left: 0;
+      width: 100%;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-strong);
+      padding: 20px 24px 28px;
+      z-index: 190;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.9);
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .mobile-drawer a {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .mobile-drawer a:hover {
+      color: var(--accent-emerald);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 9px;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent-emerald);
+      color: #04120c;
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #14cd8f;
+      transform: translateY(-1px);
+    }
+
+    .btn-ember {
+      background: var(--accent-ember);
+      color: #07090f !important;
+      font-weight: 700;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      box-shadow: 0 4px 16px rgba(229, 169, 60, 0.25);
+    }
+
+    .btn-ember:hover {
+      background: linear-gradient(35deg, #f59e0b 0%, #fbbf24 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(229, 169, 60, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface-hover);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-lg {
+      padding: 13px 26px;
+      font-size: 15px;
+      border-radius: 11px;
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 12.5px;
+      border-radius: 7px;
+    }
+
+    /* Spotlight Card System (Awwwards / n8n / Linear) */
+    .spotlight-card {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(550px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(229, 169, 60, 0.12), transparent 45%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+
+    .spotlight-card:hover {
+      border-color: rgba(229, 169, 60, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .spotlight-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Scroll-driven Reveal */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Audio Equalizer Frequency Bars */
+    .audio-eq-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+      margin-right: 6px;
+    }
+
+    .eq-bar {
+      width: 2.5px;
+      background: var(--accent-emerald);
+      border-radius: 1px;
+      animation: eqBounce 1.2s ease-in-out infinite alternate;
+    }
+
+    .eq-bar:nth-child(1) { height: 40%; animation-delay: 0.1s; }
+    .eq-bar:nth-child(2) { height: 90%; animation-delay: 0.3s; }
+    .eq-bar:nth-child(3) { height: 60%; animation-delay: 0.2s; }
+    .eq-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+
+    @keyframes eqBounce {
+      0% { height: 25%; }
+      50% { height: 100%; }
+      100% { height: 45%; }
+    }
+
+    /* ========================================================
+       2. HERO SECTION & LIVE PLAYGROUND
+       ======================================================== */
+    .hero {
+      padding: 64px 0 72px 0;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.08fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      margin-bottom: 20px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+    }
+
+    /* n8n Lightweight High-Precision Display Typography */
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 300;
+      line-height: 0.98;
+      margin-bottom: 20px;
+      letter-spacing: -0.028em;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 34px;
+        line-height: 1.05;
+      }
+    }
+
+    .hero-title span.grad-text {
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 25%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 16.5px;
+      color: var(--text-ash);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 520px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    @media (max-width: 480px) {
+      .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    .hero-stat-value {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Interactive Live Stream Showcase */
+    .playground-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 24px 60px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .playground-header {
+      background: #0a0d14;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .playground-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      letter-spacing: 0.05em;
+    }
+
+    /* Widget Tabs Selector */
+    .widget-tabs-nav {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 8px 12px;
+      background: #090c13;
+      border-bottom: 1px solid var(--border-subtle);
+      scrollbar-width: none;
+    }
+
+    .widget-tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .w-tab-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .w-tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .w-tab-btn.active {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .w-tab-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+    }
+
+    /* Simulated OBS Viewport Stage */
+    .stream-stage {
+      height: 290px;
+      background: #06070a;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 16px 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .stream-hud-overlay {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.3);
+      display: flex;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    /* Widget Containers inside Stage */
+    .widget-view {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .widget-view.active {
+      display: flex;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    /* 1. Alert Box Demo */
+    .mini-alert-card {
+      width: 100%;
+      max-width: 380px;
+      background: linear-gradient(145deg, #090e1a 0%, #050811 100%);
+      border: 1px solid rgba(229, 169, 60, 0.35);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mini-alert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #22d3ee;
+      background: rgba(34, 211, 238, 0.12);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .mini-alert-donor {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+
+    .mini-alert-amount {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 800;
+      color: #e5a93c;
+      margin-bottom: 6px;
+    }
+
+    .mini-alert-msg {
+      font-size: 12px;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 10px;
+      border-radius: 8px;
+      word-break: break-word;
+    }
+
+    /* 2. Kaspi QR Demo */
+    .mini-qr-card {
+      background: #0d121c;
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      width: 170px;
+    }
+
+    .mini-qr-top {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .mini-kaspi-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #f14635;
+      background: rgba(241, 70, 53, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .mini-qr-box {
+      width: 120px;
+      height: 120px;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-qr-box canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .mini-phone-chip {
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    /* 3. Top Donors Demo */
+    .mini-top-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .mini-podium-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .mini-pedestal {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .mini-pedestal.rank-1 {
+      border-top: 3px solid #e5a93c;
+      background: rgba(229, 169, 60, 0.05);
+      padding-top: 14px;
+    }
+
+    .mini-pedestal.rank-2 {
+      border-top: 3px solid #94a3b8;
+    }
+
+    .mini-pedestal.rank-3 {
+      border-top: 3px solid #b45309;
+    }
+
+    .mini-p-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 auto 6px;
+    }
+
+    .mini-p-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-p-amount {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5a93c;
+      margin-top: 2px;
+    }
+
+    .mini-p-rank {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 800;
+      color: #64748b;
+      margin-top: 6px;
+    }
+
+    /* 4. Battle Bar Demo */
+    .mini-battle-card {
+      width: 100%;
+      max-width: 440px;
+      background: #0b0e17;
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 16px 20px;
+    }
+
+    .mini-battle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .mini-team-scores {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .mini-battle-track {
+      height: 16px;
+      border-radius: 999px;
+      background: #141824;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mini-track-a {
+      height: 100%;
+      width: 60%;
+      background: linear-gradient(90deg, #0ea5e9, #10b981);
+      transition: width 0.4s ease;
+    }
+
+    .mini-track-b {
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, #e11d48, #f97316);
+      transition: width 0.4s ease;
+    }
+
+    .mini-track-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ffffff;
+      transform: translateX(-50%);
+      left: 60%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+      transition: left 0.4s ease;
+    }
+
+    /* 5. Wheel Demo */
+    .mini-wheel-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #mini-wheel-canvas {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 6. Ticker Demo */
+    .mini-ticker-card {
+      width: 100%;
+      background: #090c13;
+      border-top: 1px solid var(--border-strong);
+      border-bottom: 1px solid var(--border-strong);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .mini-ticker-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .mini-ticker-text {
+      font-size: 13px;
+      color: #cbd5e1;
+      display: flex;
+      gap: 24px;
+    }
+
+    /* Playground Interactive Controls Footer */
+    .playground-footer {
+      background: #0a0d14;
+      border-top: 1px solid var(--border-subtle);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .interactive-hint {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ========================================================
+       2.5 PAIN VS SOLUTION (DALINK / N8N INSPIRED)
+       ======================================================== */
+    .pain-solution-section {
+      padding: 30px 0 60px 0;
+    }
+
+    .pain-solution-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .pain-solution-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    .pain-card {
+      padding: 32px 28px;
+      background: var(--bg-surface);
+      border-color: rgba(244, 63, 94, 0.2);
+    }
+
+    .solution-card {
+      padding: 32px 28px;
+      background: var(--bg-surface-elevated);
+      border-color: rgba(229, 169, 60, 0.3);
+      box-shadow: inset 0 1px 0 rgba(229, 169, 60, 0.15), 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .ps-header {
+      margin-bottom: 24px;
+    }
+
+    .ps-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .tag-pain {
+      background: rgba(244, 63, 94, 0.12);
+      color: var(--accent-crimson);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .tag-solution {
+      background: rgba(229, 169, 60, 0.12);
+      color: var(--accent-gold);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+    }
+
+    .ps-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .ps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .ps-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-ash);
+    }
+
+    .ps-list strong {
+      display: block;
+      color: var(--text-primary);
+      font-size: 14.5px;
+      margin-bottom: 2px;
+    }
+
+    .ps-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-family: var(--font-mono);
+    }
+
+    .pain-x {
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--accent-crimson);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .solution-check {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* ========================================================
+       3. 0% COMMISSION SAVINGS CALCULATOR
+       ======================================================== */
+    .calculator-section {
+      padding: 72px 0;
+      background: #0a0d15;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .calc-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .calc-card {
+        grid-template-columns: 1fr;
+        padding: 24px 20px;
+      }
+    }
+
+    .calc-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .calc-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .calc-header-row label {
+        font-size: 16px !important;
+      }
+      .calc-header-row span {
+        font-size: 24px !important;
+      }
+      .calc-saved-sum {
+        font-size: 32px !important;
+      }
+    }
+
+    .calc-slider-wrap {
+      margin: 28px 0 20px;
+    }
+
+    .calc-range {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #1a2233;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    .calc-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .calc-range::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .calc-slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .calc-result-box {
+      background: var(--bg-surface-elevated);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .calc-saved-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.12);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .calc-saved-sum {
+      font-family: var(--font-mono);
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .calc-saved-sum span {
+      color: var(--accent-emerald);
+    }
+
+    .calc-comparison-pills {
+      width: 100%;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .calc-pill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ========================================================
+       4. 6-WIDGET ECOSYSTEM SECTION
+       ======================================================== */
+    .section {
+      padding: 80px 0;
+    }
+
+    @media (max-width: 640px) {
+      .section {
+        padding: 56px 0;
+      }
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 52px;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(229, 169, 60, 0.1);
+      border: 1px solid rgba(229, 169, 60, 0.25);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .section-title {
+        font-size: 26px;
+      }
+    }
+
+    .section-desc {
+      font-size: 15.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .widgets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .widgets-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .widgets-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .widget-feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .widget-feature-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      background: var(--bg-surface-elevated);
+    }
+
+    .w-icon-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent-emerald);
+    }
+
+    .w-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .w-card-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .w-card-specs {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .w-spec-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .w-spec-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent-gold);
+    }
+
+    /* ========================================================
+       5. COMPARISON TABLE
+       ======================================================== */
+    .comparison-section {
+      padding: 72px 0;
+      background: #090c14;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 640px;
+    }
+
+    .comp-table th, .comp-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .comp-table th {
+      font-family: var(--font-display);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .comp-table th.brand-col {
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .comp-table td.brand-col {
+      background: rgba(16, 185, 129, 0.03);
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .comp-table td.legacy-col {
+      color: #94a3b8;
+    }
+
+    /* ========================================================
+       6. PRICING TIERS (VISUALLY DELINEATED & CLEARLY SEPARATED)
+       ======================================================== */
+    .pricing-toggle-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 auto 36px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      padding: 5px;
+      border-radius: 12px;
+      width: fit-content;
+    }
+
+    .pricing-toggle-btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .pricing-toggle-btn.active {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .pricing-discount-pill {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 960px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        margin: 0 auto;
+        gap: 24px;
+      }
+    }
+
+    /* Common Card Baseline */
+    .pricing-card {
+      border-radius: 20px;
+      padding: 34px 28px 30px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Card 1: Starter Free (Clean Slate Graphite) */
+    .pricing-card.p-starter {
+      background: #090c14;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .pricing-card.p-starter:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-2px);
+    }
+
+    /* Card 2: Creator Pro (Elevated Kazakh Emerald Standout) */
+    .pricing-card.p-pro {
+      background: linear-gradient(180deg, #121927 0%, #0c111c 100%);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(16, 185, 129, 0.2);
+      transform: scale(1.02);
+      z-index: 2;
+    }
+
+    @media (max-width: 960px) {
+      .pricing-card.p-pro {
+        transform: none;
+      }
+    }
+
+    .pricing-card.p-pro:hover {
+      border-color: rgba(16, 185, 129, 0.65);
+      transform: scale(1.02) translateY(-2px);
+    }
+
+    /* Card 3: Esports Studio (Deep Obsidian & Kazakh Gold) */
+    .pricing-card.p-studio {
+      background: linear-gradient(180deg, #0e121e 0%, #090b13 100%);
+      border: 1px solid rgba(229, 169, 60, 0.35);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .pricing-card.p-studio:hover {
+      border-color: rgba(229, 169, 60, 0.55);
+      transform: translateY(-2px);
+    }
+
+    /* Tier Headers and Badges */
+    .pricing-card-header {
+      margin-bottom: 16px;
+    }
+
+    .pricing-tier-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tag-starter {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tag-pro {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .tag-studio {
+      background: rgba(229, 169, 60, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(229, 169, 60, 0.35);
+    }
+
+    .tier-featured-pill {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-emerald);
+      color: #04120c;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .pricing-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pricing-cost-block {
+      margin: 14px 0 10px;
+    }
+
+    .pricing-cost {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+
+    .pricing-cost span {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .pricing-period-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .pricing-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+      min-height: 42px;
+    }
+
+    .pricing-divider {
+      border-top: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+
+    .pricing-features-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .pricing-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      margin-bottom: 28px;
+      flex-grow: 1;
+    }
+
+    .pricing-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .pricing-list li.highlight {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .pricing-list li svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .p-starter .pricing-list li svg { stroke: var(--text-muted); }
+    .p-pro .pricing-list li svg { stroke: var(--accent-emerald); }
+    .p-studio .pricing-list li svg { stroke: var(--accent-gold); }
+
+    /* Distinct CTA Buttons */
+    .btn-plan-starter {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-strong);
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+    }
+    .btn-plan-starter:hover {
+      background: var(--bg-surface-hover);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-plan-pro {
+      background: var(--accent-emerald);
+      color: #04120c;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-plan-pro:hover {
+      background: #14cd8f;
+      transform: translateY(-1px);
+    }
+
+    .btn-plan-studio {
+      background: linear-gradient(135deg, rgba(229, 169, 60, 0.2) 0%, rgba(229, 169, 60, 0.1) 100%);
+      color: #ffd88a;
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-plan-studio:hover {
+      background: rgba(229, 169, 60, 0.25);
+      border-color: rgba(229, 169, 60, 0.6);
+      transform: translateY(-1px);
+    }
+
+    /* ========================================================
+       7. GUIDE & VIDEO INSTRUCTIONS SECTION
+       ======================================================== */
+    .guide-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .guide-video-frame-card {
+      background: #090c14;
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .guide-video-header {
+      padding: 12px 18px;
+      background: #06080e;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .guide-video-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .video-aspect-box {
+      width: 100%;
+      background: #040508;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .guide-screencast-placeholder {
+      width: 100%;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      background: radial-gradient(circle at center, #101626 0%, #06080e 100%);
+    }
+
+    .screencast-preview-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(229, 169, 60, 0.1);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .screencast-status-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-gold);
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.25);
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .screencast-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      font-family: var(--font-display);
+      max-width: 580px;
+    }
+
+    .screencast-sub {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .screencast-features-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .sc-feat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .sc-feat svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent-emerald);
+    }
+
+    /* Video Chapter Timeline */
+    .video-chapters-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: #070910;
+      border-top: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .video-chapters-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chapter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .chapter-pill:hover, .chapter-pill.active {
+      color: var(--text-primary);
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-strong);
+    }
+
+    .chapter-pill .tc {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-emerald);
+    }
+
+    /* 4-Step Cards Grid */
+    .guide-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .guide-steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .guide-steps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .step-card:hover {
+      border-color: rgba(229, 169, 60, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.15);
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      transition: color 0.2s ease;
+    }
+
+    .step-card:hover .step-num {
+      color: var(--accent-gold);
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.35;
+      color: var(--text-primary);
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 14px;
+      flex-grow: 1;
+    }
+
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border-subtle);
+      width: fit-content;
+    }
+
+    /* OS & Platform Setup Tabs */
+    .platform-tabs-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .platform-tabs-nav {
+      display: flex;
+      background: #090c14;
+      border-bottom: 1px solid var(--border-subtle);
+      overflow-x: auto;
+    }
+
+    .platform-tab-btn {
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .platform-tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .platform-tab-btn.active {
+      color: var(--accent-emerald);
+      border-bottom-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.04);
+    }
+
+    .platform-tab-content {
+      display: none;
+      padding: 24px;
+    }
+
+    .platform-tab-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .setup-steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setup-steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .setup-badge-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ========================================================
+       8. REVIEWS & COMMUNITY FEEDBACK
+       ======================================================== */
+    .reviews-header-wrap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .reviews-cta-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Reviews Empty State */
+    .reviews-empty-box {
+      grid-column: 1 / -1;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: 20px;
+      padding: 56px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .reviews-empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(229, 169, 60, 0.08);
+      border: 1px solid rgba(229, 169, 60, 0.25);
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .reviews-empty-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      font-family: var(--font-display);
+    }
+
+    .reviews-empty-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+
+    /* Text Reviews Grid */
+    .reviews-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .reviews-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .review-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease;
+    }
+
+    .review-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .review-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .review-author-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .review-author-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-emerald);
+    }
+
+    .review-author-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verified-streamer-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      color: #04120c;
+    }
+
+    .verified-streamer-badge svg {
+      width: 9px;
+      height: 9px;
+      stroke: #04120c;
+      stroke-width: 3;
+    }
+
+    .review-author-channel {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .review-rating-stars {
+      display: flex;
+      gap: 2px;
+      color: var(--accent-gold);
+    }
+
+    .review-rating-stars svg {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+    }
+
+    .review-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .review-date {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* Review Submission Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(4, 5, 8, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .modal-window {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: var(--font-display);
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-elevated);
+    }
+
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-type-tabs {
+      display: flex;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .modal-type-btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .modal-type-btn.active {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-input, .form-textarea {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent-emerald);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 85px;
+    }
+
+    .star-select-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .star-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 2px;
+      transition: color 0.1s ease;
+    }
+
+    .star-btn.active, .star-btn:hover {
+      color: var(--accent-gold);
+    }
+
+    .star-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Video Player Modal */
+    .video-modal-dialog {
+      background: #000000;
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 720px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .video-modal-aspect {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-modal-aspect iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Toast Notification */
+    .toast-pill {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 400;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-left: 3px solid var(--accent-emerald);
+      padding: 14px 20px;
+      border-radius: 10px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      font-size: 13.5px;
+      color: var(--text-primary);
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toast-pill.show {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    /* ========================================================
+       7. ACCORDION FAQ
+       ======================================================== */
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    .faq-item.active {
+      border-color: var(--border-strong);
+    }
+
+    .faq-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .faq-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-shrink: 0;
+    }
+
+    .faq-item.active .faq-btn svg {
+      transform: rotate(180deg);
+      stroke: var(--accent-emerald);
+    }
+
+    .faq-content {
+      display: none;
+      padding: 0 20px 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      border-top: 1px solid transparent;
+    }
+
+    .faq-item.active .faq-content {
+      display: block;
+      border-top-color: var(--border-subtle);
+      padding-top: 14px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* ========================================================
+       8. CTA BANNER & FOOTER
+       ======================================================== */
+    .cta-wrap {
+      padding: 64px 0;
+    }
+
+    .cta-box {
+      background: linear-gradient(145deg, #121827 0%, #0c101a 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: 24px;
+      padding: 48px 36px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .cta-title {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .cta-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+
+    footer {
+      background: #05060a;
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px 0 28px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-emerald);
+    }
+
+    .footer-bottom {
+      margin-top: 20px;
+      line-height: 1.55;
+      font-size: 12px;
+      color: #526078;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HEADER & NAVIGATION -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="/" class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="brand-title">Tenge<span>Alert</span></div>
+      </a>
+
+      <div class="nav-links">
+        <a href="#guide" class="nav-link">Инструкция</a>
+        <a href="#widgets" class="nav-link">Виджеты</a>
+        <a href="#pricing" class="nav-link">Тарифы</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </div>
+
+      <div class="nav-actions">
+        <a href="/download/" class="btn btn-secondary btn-sm" title="Скачать TengeAlert для Windows или Android APK" style="display: flex; align-items: center; gap: 6px; border-color: rgba(229, 169, 60, 0.4); color: var(--accent-gold);">
+          <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Скачать</span>
+        </a>
+        <a href="/auth/login.html" class="btn btn-secondary btn-sm">Вход</a>
+        <a href="/auth/login.html?mode=register" class="btn btn-primary btn-sm btn-desktop-only">Подключить студию</a>
+        <button class="burger-btn" id="burger-toggle" aria-label="Меню">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobile-menu">
+    <a href="/download/" onclick="closeMobileMenu()" style="color: var(--accent-gold); font-weight: 700; display: flex; align-items: center; gap: 8px;">
+      <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Скачать приложение (Win / APK)</span>
+    </a>
+    <a href="#guide" onclick="closeMobileMenu()">Инструкция</a>
+    <a href="#widgets" onclick="closeMobileMenu()">Виджеты OBS</a>
+    <a href="#pricing" onclick="closeMobileMenu()">Тарифы</a>
+    <a href="#faq" onclick="closeMobileMenu()">Частые вопросы (FAQ)</a>
+    <div style="display: flex; gap: 10px; margin-top: 8px;">
+      <a href="/auth/login.html" class="btn btn-secondary btn-sm" style="flex: 1; text-align: center;">Вход</a>
+      <a href="/auth/login.html?mode=register" class="btn btn-primary btn-sm" style="flex: 1; text-align: center;">Регистрация</a>
+    </div>
+  </div>
+
+  <!-- 2. HERO SECTION -->
+  <section class="hero fade-up visible">
+    <div class="container hero-grid">
+      
+      <!-- Left Column: Value Proposition -->
+      <div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Прямой P2P шлюз • 0% комиссии платформы
+        </div>
+
+        <h1 class="hero-title">
+          Стриминговые донаты в Казахстане <span class="grad-text">без посредников</span>
+        </h1>
+
+        <p class="hero-desc">
+          Оповещения в OBS Studio с задержкой &lt; 5 мс. Зрители платят напрямую через Kaspi QR и Halyk, а деньги поступают прямо на вашу карту без комиссий сторонних сервисов.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/auth/login.html?mode=register" class="btn btn-ember btn-lg">
+            Открыть студию TengeAlert
+            <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="/download/" class="btn btn-secondary btn-lg" style="border-color: rgba(229, 169, 60, 0.45); color: var(--accent-gold);">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Скачать приложение
+          </a>
+          <button class="btn btn-secondary btn-lg" onclick="triggerTestDonation()">
+            <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Тест доната
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-value" style="color: var(--accent-gold);">0%</div>
+            <div class="hero-stat-label">Комиссия с переводов</div>
+          </div>
+          <div>
+            <div class="hero-stat-value" style="color: var(--accent-emerald);">&lt; 5 мс</div>
+            <div class="hero-stat-label">Задержка вывода в OBS</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">6 в 1</div>
+            <div class="hero-stat-label">Готовых виджетов для стрима</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Multi-Widget Playground -->
+      <div id="playground" class="playground-card spotlight-card">
+        
+        <div class="playground-header">
+          <div class="playground-live-badge">
+            <div class="audio-eq-bars">
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+            </div>
+            <span>ИНТЕРАКТИВНЫЙ ОВЕРЛЕЙ OBS</span>
+          </div>
+          <div class="mono-font" style="font-size: 11px; color: var(--text-muted);">1920 × 1080 CANVAS</div>
+        </div>
+
+        <!-- Tab Selector for All 6 Widgets -->
+        <div class="widget-tabs-nav">
+          <button class="w-tab-btn active" onclick="switchPlaygroundTab('alert', this)">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Alert Box
+          </button>
+          <button class="w-tab-btn" onclick="switchPlaygroundTab('qr', this)">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Kaspi QR
+          </button>
+          <button class="w-tab-btn" onclick="switchPlaygroundTab('top', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            Топ донатеров
+          </button>
+          <button class="w-tab-btn" onclick="switchPlaygroundTab('battle', this)">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Голосование
+          </button>
+          <button class="w-tab-btn" onclick="switchPlaygroundTab('wheel', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+            Рулетка
+          </button>
+          <button class="w-tab-btn" onclick="switchPlaygroundTab('ticker', this)">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+            Бегущая строка
+          </button>
+        </div>
+
+        <!-- Simulated OBS Stage -->
+        <div class="stream-stage">
+          <div class="stream-hud-overlay">
+            <span>REC [01:42:19]</span>
+            <span>60.00 FPS</span>
+            <span>1080p</span>
+          </div>
+
+          <!-- 1. View: Alert Box -->
+          <div class="widget-view active" id="view-alert">
+            <div class="mini-alert-card" id="mini-alert-box">
+              <div class="mini-alert-badge">TENGEALERT • ПОСТУПЛЕНИЕ</div>
+              <div class="mini-alert-donor" id="demo-donor">Данияр К.</div>
+              <div class="mini-alert-amount" id="demo-amount">5 000 ₸</div>
+              <div class="mini-alert-msg" id="demo-msg">«Салам бауырым! Керемет стрим, алға!»</div>
+            </div>
+          </div>
+
+          <!-- 2. View: Kaspi QR -->
+          <div class="widget-view" id="view-qr">
+            <div class="mini-qr-card">
+              <div class="mini-qr-top">
+                <div class="mini-kaspi-pill">Kaspi QR</div>
+                <div style="font-family: var(--font-mono); font-size: 9px; color: var(--accent-emerald);">• ОНЛАЙН</div>
+              </div>
+              <div class="mini-qr-box">
+                <canvas id="landing-qr-canvas" width="120" height="120"></canvas>
+              </div>
+              <div class="mini-phone-chip">+7 (777) 123-45-67</div>
+            </div>
+          </div>
+
+          <!-- 3. View: Top Donors -->
+          <div class="widget-view" id="view-top">
+            <div class="mini-top-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-family: var(--font-display); font-size: 12px; font-weight: 800;">ТОП ДОНАТЕРОВ</span>
+                <span class="mono-font" style="font-size: 10px; color: var(--text-muted);">СЕГОДНЯ</span>
+              </div>
+              <div class="mini-podium-row">
+                <div class="mini-pedestal rank-2">
+                  <div class="mini-p-avatar">АБ</div>
+                  <div class="mini-p-name">Азамат Б.</div>
+                  <div class="mini-p-amount">40 000 ₸</div>
+                  <div class="mini-p-rank">02</div>
+                </div>
+                <div class="mini-pedestal rank-1">
+                  <div class="mini-p-avatar" style="background: #e5a93c; color: #000;">СД</div>
+                  <div class="mini-p-name">Супер-Донатер</div>
+                  <div class="mini-p-amount">55 555 ₸</div>
+                  <div class="mini-p-rank" style="color: #e5a93c;">01</div>
+                </div>
+                <div class="mini-pedestal rank-3">
+                  <div class="mini-p-avatar">ДК</div>
+                  <div class="mini-p-name">Данияр К.</div>
+                  <div class="mini-p-amount">15 000 ₸</div>
+                  <div class="mini-p-rank">03</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. View: Battle Bar -->
+          <div class="widget-view" id="view-battle">
+            <div class="mini-battle-card">
+              <div class="mini-battle-header">
+                <span>ГОЛОСОВАНИЕ ДОНАТАМИ</span>
+                <span style="color: var(--accent-gold);">VS</span>
+              </div>
+              <div class="mini-team-scores">
+                <span style="color: #0ea5e9;" id="score-team-a">CS2: 60% (15 000 ₸)</span>
+                <span style="color: #e11d48;" id="score-team-b">Valorant: 40% (10 000 ₸)</span>
+              </div>
+              <div class="mini-battle-track">
+                <div class="mini-track-a" id="mini-seg-a"></div>
+                <div class="mini-track-b" id="mini-seg-b"></div>
+                <div class="mini-track-divider" id="mini-divider"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. View: Wheel of Fortune -->
+          <div class="widget-view" id="view-wheel">
+            <div class="mini-wheel-card">
+              <canvas id="mini-wheel-canvas" width="260" height="260"></canvas>
+            </div>
+          </div>
+
+          <!-- 6. View: Running Ticker -->
+          <div class="widget-view" id="view-ticker">
+            <div class="mini-ticker-card">
+              <div class="mini-ticker-badge">LIVE ₸</div>
+              <div class="mini-ticker-text">
+                <span>ПОСЛЕДНИЙ ДОНАТ: Данияр К. — 5 000 ₸</span>
+                <span>|</span>
+                <span>ЛИДЕР: Супер-Донатер — 55 555 ₸</span>
+                <span>|</span>
+                <span>ЦЕЛЬ: Микрофон Shure — 163 610 ₸ / 250 000 ₸ (65%)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Playground Controls Footer -->
+        <div class="playground-footer">
+          <div class="interactive-hint">
+            <svg class="icon" style="width: 14px; height: 14px; color: var(--accent-emerald);" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <span>Синтез звука Web Audio &amp; Двуязычный KZ/RU TTS</span>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="togglePlaygroundTheme()">
+              Сменить стиль
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="triggerTestDonation()">
+              <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Запустить в оверлее
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2.5 PAIN VS SOLUTION (DALINK / N8N INSPIRED) -->
+  <section class="pain-solution-section fade-up">
+    <div class="container">
+      <div class="pain-solution-grid">
+        <!-- Left: Old Platforms Pain -->
+        <div class="spotlight-card pain-card">
+          <div class="ps-header">
+            <div class="ps-tag tag-pain">СТАРЫЕ СЕРВИСЫ-ПОСРЕДНИКИ</div>
+            <div class="mono-font ps-sub">DonationAlerts / Зарубежные шлюзы</div>
+          </div>
+          <ul class="ps-list">
+            <li>
+              <div class="ps-icon pain-x">✕</div>
+              <div>
+                <strong>10% – 15% грабительских комиссий:</strong>
+                <span>Потери на конвертации валют, комиссиях шлюза и выводе на карту. При сборе 500 000 ₸ стример дарит сервисам до 75 000 ₸ каждый месяц.</span>
+              </div>
+            </li>
+            <li>
+              <div class="ps-icon pain-x">✕</div>
+              <div>
+                <strong>Задержки выплат от 24 часов до 3 дней:</strong>
+                <span>Деньги замораживаются на чужих балансах. Нельзя сразу снять средства после окончания трансляции.</span>
+              </div>
+            </li>
+            <li>
+              <div class="ps-icon pain-x">✕</div>
+              <div>
+                <strong>Риск блокировки баланса без объяснения причин:</strong>
+                <span>Постоянные запросы документов, верификаций и риск заморозки аккаунта иностранными сервисами.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Right: TengeAlert Direct P2P Solution -->
+        <div class="spotlight-card solution-card">
+          <div class="ps-header">
+            <div class="ps-tag tag-solution">ПРЯМОЙ P2P ШЛЮЗ TENGEALERT</div>
+            <div class="mono-font ps-sub" style="color: var(--accent-gold);">Прямой протокол Kaspi QR &amp; Halyk</div>
+          </div>
+          <ul class="ps-list">
+            <li>
+              <div class="ps-icon solution-check">✓</div>
+              <div>
+                <strong>0% комиссии платформы с донатов:</strong>
+                <span>100% денег отправляется зрителем прямо вам на карту. Никаких удержаний, скрытых комиссий и сборов.</span>
+              </div>
+            </li>
+            <li>
+              <div class="ps-icon solution-check">✓</div>
+              <div>
+                <strong>Мгновенное поступление за 0 секунд:</strong>
+                <span>Зритель сканирует Kaspi QR на экране стрима — деньги моментально поступают на ваш Kaspi Gold / Halyk.</span>
+              </div>
+            </li>
+            <li>
+              <div class="ps-icon solution-check">✓</div>
+              <div>
+                <strong>Локальный перехват и нулевой риск блокировки:</strong>
+                <span>TengeAlert работает локально на вашем ПК (.NET 8) или смартфоне (APK). Деньги никогда не хранятся на серверах третьих лиц.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. INTERACTIVE 0% COMMISSION SAVINGS CALCULATOR -->
+  <section id="calculator" class="calculator-section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">Экономика стримера</div>
+        <h2 class="section-title">Сколько вы теряете на комиссиях каждый месяц?</h2>
+        <p class="section-desc">
+          Зарубежные сервисы удерживают 10–14% от ваших донатов на комиссии шлюзов и вывод. В TengeAlert зритель переводит деньги напрямую на вашу карту — комиссия платформы 0 ₸.
+        </p>
+      </div>
+
+      <div class="calc-card spotlight-card fade-up">
+        <div>
+          <div class="calc-header-row">
+            <label class="display-font" style="font-size: 18px; font-weight: 700;">Ваш ежемесячный сбор:</label>
+            <span class="mono-font" id="calc-display-revenue" style="font-size: 26px; font-weight: 900; color: #ffffff;">500 000 ₸</span>
+          </div>
+
+          <div class="calc-slider-wrap">
+            <input type="range" class="calc-range" id="calc-range" min="100000" max="3000000" step="50000" value="500000" oninput="updateCalculator()">
+            <div class="calc-slider-labels">
+              <span>100 000 ₸</span>
+              <span>1 500 000 ₸</span>
+              <span>3 000 000 ₸</span>
+            </div>
+          </div>
+
+          <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5;">
+            Передвигайте ползунок, чтобы увидеть чистую сумму, которую вы оставляете себе на карте Kaspi / Halyk благодаря прямому P2P протоколу.
+          </p>
+        </div>
+
+        <div class="calc-result-box">
+          <div class="calc-saved-badge">ВАША ЧИСТАЯ ЭКОНОМИЯ В МЕСЯЦ</div>
+          <div class="calc-saved-sum" id="calc-saved-month">+60 000 <span>₸</span></div>
+          <div class="mono-font" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;" id="calc-saved-year">
+            +720 000 ₸ в год сохраняется у вас
+          </div>
+
+          <div class="calc-comparison-pills">
+            <div class="calc-pill-row">
+              <span style="color: var(--text-muted);">Комиссия TengeAlert:</span>
+              <span class="mono-font" style="font-weight: 700; color: var(--accent-emerald);">0% (0 ₸)</span>
+            </div>
+            <div class="calc-pill-row">
+              <span style="color: var(--text-muted);">Потери на других сервисах (12%):</span>
+              <span class="mono-font" style="font-weight: 700; color: var(--accent-crimson);" id="calc-other-lost">-60 000 ₸</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 3.5 GUIDE & VIDEO INSTRUCTIONS SECTION -->
+  <section id="guide" class="section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">Инструкция и подключение</div>
+        <h2 class="section-title">Как подключить TengeAlert за 3 минуты</h2>
+        <p class="section-desc">
+          Пошаговое руководство по настройке прямого P2P приема Kaspi QR и Halyk без комиссии и без передачи банковских паролей.
+        </p>
+      </div>
+
+      <div class="guide-wrap">
+        
+        <!-- Official Screencast Teaser Card -->
+        <div class="guide-video-frame-card spotlight-card fade-up">
+          <div class="guide-video-header">
+            <div class="guide-video-badge">
+              <span class="status-dot"></span>
+              Официальная видеоинструкция • Готовится к публикации
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">
+              Скринкаст для Windows & Android • 1080p 60fps
+            </div>
+          </div>
+
+          <div class="video-aspect-box">
+            <div class="guide-screencast-placeholder">
+              <div class="screencast-preview-icon">
+                <svg viewBox="0 0 24 24" class="icon" style="width: 32px; height: 32px; stroke: var(--accent-gold);"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              </div>
+              <div class="screencast-status-badge">СКОРО ДОСТУПНО</div>
+              <h3 class="screencast-title">Официальный видеообзор TengeAlert записывается</h3>
+              <p class="screencast-sub">
+                Мы записываем подробный русскоязычный и казахоязычный скринкаст по настройке за 3 минуты. Прямо сейчас используйте пошаговую инструкцию ниже.
+              </p>
+              <div class="screencast-features-row">
+                <div class="sc-feat">
+                  <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Прямой Kaspi QR</span>
+                </div>
+                <div class="sc-feat">
+                  <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>0% комиссии</span>
+                </div>
+                <div class="sc-feat">
+                  <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Задержка в OBS &lt; 5 мс</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 22px;">
+                <a href="/download/" class="btn btn-primary" style="padding: 11px 22px; font-size: 14px;">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Скачать приложение для Windows / Android</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Chapter Fast Jump Buttons -->
+          <div class="video-chapters-bar">
+            <button class="chapter-pill active" onclick="document.getElementById('step-1').scrollIntoView({behavior: 'smooth'})">
+              <span class="tc">01</span> <span>Синхронизация с телефоном</span>
+            </button>
+            <button class="chapter-pill" onclick="document.getElementById('step-2').scrollIntoView({behavior: 'smooth'})">
+              <span class="tc">02</span> <span>Локальный перехват</span>
+            </button>
+            <button class="chapter-pill" onclick="document.getElementById('step-3').scrollIntoView({behavior: 'smooth'})">
+              <span class="tc">03</span> <span>Виджеты в OBS</span>
+            </button>
+            <button class="chapter-pill" onclick="document.getElementById('step-4').scrollIntoView({behavior: 'smooth'})">
+              <span class="tc">04</span> <span>Проверка доната 0%</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4-Step Summary Cards -->
+        <div class="guide-steps-grid">
+          
+          <div class="step-card spotlight-card fade-up" id="step-1">
+            <div class="step-num">01</div>
+            <div class="step-title">Подключение телефона к ПК</div>
+            <div class="step-desc">
+              Запустите стандартную утилиту Windows «Связь с телефоном» (Phone Link) и синхронизируйте iPhone или Android по Bluetooth/Wi-Fi. Либо установите нативный Android APK.
+            </div>
+            <div class="step-tag">
+              <svg class="icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              iOS и Android без рута
+            </div>
+          </div>
+
+          <div class="step-card spotlight-card fade-up" id="step-2">
+            <div class="step-num">02</div>
+            <div class="step-title">Запуск перехватчика пушей</div>
+            <div class="step-desc">
+              Запустите легковесное настольное приложение TengeAlert (.NET 8, 15 МБ). Оно локально считывает пуш-уведомления банков и передает донаты в OBS с задержкой &lt; 5 мс.
+            </div>
+            <div class="step-tag">
+              <svg class="icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              0% нагрузки на процессор
+            </div>
+          </div>
+
+          <div class="step-card spotlight-card fade-up" id="step-3">
+            <div class="step-num">03</div>
+            <div class="step-title">Вставка виджетов в OBS</div>
+            <div class="step-desc">
+              В панели TengeAlert скопируйте персональный URL алерта, наэкранного Kaspi QR, рулетки или топа и добавьте как стандартный источник «Браузер» (Browser Source).
+            </div>
+            <div class="step-tag">
+              <svg class="icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+              OBS, Streamlabs, TikTok Live
+            </div>
+          </div>
+
+          <div class="step-card spotlight-card fade-up" id="step-4">
+            <div class="step-num">04</div>
+            <div class="step-title">100% денег на вашей карте</div>
+            <div class="step-desc">
+              Зритель сканирует Kaspi QR на экране или отправляет перевод. Деньги моментально падают на ваш счет, а на стриме вылетает алерт с нативной казахской озвучкой!
+            </div>
+            <div class="step-tag" style="color: var(--accent-emerald);">
+              <svg class="icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              0 ₸ комиссии платформы
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Detailed Platform Setup Accordion Tabs -->
+        <div class="platform-tabs-box">
+          <div class="platform-tabs-nav">
+            <button class="platform-tab-btn active" onclick="switchPlatformTab('win-phone', this)">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              Windows 10/11 + Phone Link (iOS / Android)
+            </button>
+            <button class="platform-tab-btn" onclick="switchPlatformTab('android-direct', this)">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              Android Companion APK (Автономное прямое подключение)
+            </button>
+            <button class="platform-tab-btn" onclick="switchPlatformTab('obs-setup', this)">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              Настройка OBS Studio и TikTok Live Studio
+            </button>
+          </div>
+
+          <!-- Tab 1: Windows Phone Link -->
+          <div class="platform-tab-content active" id="tab-win-phone">
+            <ul class="setup-steps-list">
+              <li>
+                <div class="setup-badge-num">1</div>
+                <div>
+                  <strong>Откройте приложение «Связь с телефоном» (Phone Link) в Windows:</strong>
+                  Оно предустановлено во всех версиях Windows 10 и 11. Нажмите «Начать» и выберите тип вашего смартфона (Android или iPhone).
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">2</div>
+                <div>
+                  <strong>Разрешите передачу уведомлений:</strong>
+                  Отсканируйте QR-код на экране ПК камерой смартфона. В настройках телефона выдайте разрешение на передачу уведомлений в Windows.
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">3</div>
+                <div>
+                  <strong>Запустите TengeAlert для Windows:</strong>
+                  Скачайте нативное приложение <code>TengeAlert.exe</code> из личного кабинета, введите ваш персональный токен стримера и нажмите «Подключить шлюз».
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">4</div>
+                <div>
+                  <strong>Проверьте тестовым переводом:</strong>
+                  Отправьте 100 ₸ с карты друга или нажмите кнопку «Тестовый донат» в панели TengeAlert — алерт мгновенно отобразится на стриме.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Tab 2: Android Companion -->
+          <div class="platform-tab-content" id="tab-android-direct">
+            <ul class="setup-steps-list">
+              <li>
+                <div class="setup-badge-num">1</div>
+                <div>
+                  <strong>Установите Android Companion APK:</strong>
+                  Скачайте установочный файл <code>TengeAlert-Companion.apk</code> на телефон стримера (Android 8.0 и новее).
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">2</div>
+                <div>
+                  <strong>Выдайте доступ к уведомлениям:</strong>
+                  При первом запуске нажмите «Разрешить доступ к уведомлениям» и переключите тумблер для TengeAlert.
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">3</div>
+                <div>
+                  <strong>Отключите оптимизацию батареи:</strong>
+                  Приложение предложит добавить TengeAlert в исключения батареи (Foreground Service), чтобы система Xiaomi, Samsung или Huawei не усыпляла процесс во время долгих стримов.
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">4</div>
+                <div>
+                  <strong>Укажите адрес сервера и токен:</strong>
+                  Введите ваш персональный токен из студии. Приложение начнет транслировать все входящие пуши Kaspi и Halyk в реальном времени.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Tab 3: OBS Studio -->
+          <div class="platform-tab-content" id="tab-obs-setup">
+            <ul class="setup-steps-list">
+              <li>
+                <div class="setup-badge-num">1</div>
+                <div>
+                  <strong>Скопируйте ссылку виджета:</strong>
+                  В личном кабинете TengeAlert перейдите в раздел «Виджеты» и нажмите кнопку «Копировать ссылку» рядом с нужным инструментом (Alert Box, Kaspi QR, Рулетка).
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">2</div>
+                <div>
+                  <strong>Добавьте источник в OBS Studio:</strong>
+                  В списке «Источники» (Sources) нажмите <strong>+</strong> и выберите «Браузер» (Browser).
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">3</div>
+                <div>
+                  <strong>Задайте разрешение:</strong>
+                  Для Alert Box укажите <code>Ширина: 800</code>, <code>Высота: 600</code>. Для наэкранного Kaspi QR: <code>280 x 360</code>.
+                </div>
+              </li>
+              <li>
+                <div class="setup-badge-num">4</div>
+                <div>
+                  <strong>Готово:</strong>
+                  Виджет автоматически подключается по WebSocket с задержкой &lt; 5 мс, подгружая выбранную тему оформления и звук.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 4. 6-WIDGET ECOSYSTEM SECTION -->
+  <section id="widgets" class="section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">Экосистема для OBS Studio</div>
+        <h2 class="section-title">6 готовых инструментов для максимального интерактива</h2>
+        <p class="section-desc">
+          Все виджеты подключаются через стандартный источник «Браузер» в OBS, Streamlabs и TikTok Live Studio в 1 клик.
+        </p>
+      </div>
+
+      <div class="widgets-grid">
+        
+        <!-- 1. Alert Box -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3 class="w-card-title">Alert Box (Оповещения)</h3>
+          <p class="w-card-desc">
+            Всплывающие анимации при поступлении доната. 4 авторские темы (Neo-Nomad, Cyber Emerald, Esports HUD, Liquid Glass), настраиваемые звуки и озвучка на казахском и русском.
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Web Audio синтезатор без задержек MP3</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Фильтр нецензурных выражений</span></div>
+          </div>
+        </div>
+
+        <!-- 2. Kaspi QR Widget -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge" style="color: #f14635;">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <h3 class="w-card-title">Наэкранный Kaspi QR</h3>
+          <p class="w-card-desc">
+            Всегда активный QR-код на стриме. Зритель сканирует через Kaspi и переводит за 3 секунды. В момент поступления QR переворачивается в праздничный софит доната.
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Автогенерация чистого QR-кода</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Компактный и стандартный режимы</span></div>
+          </div>
+        </div>
+
+        <!-- 3. Leaderboard -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge" style="color: var(--accent-gold);">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <h3 class="w-card-title">Топ донатеров (Leaderboard)</h3>
+          <p class="w-card-desc">
+            Публичное признание самых преданных зрителей. Стильный 3D-пьедестал с золотом, серебром и бронзой или вертикальный киберспортивный список с количеством транзакций.
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Фильтры: за стрим, неделю, месяц, все время</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Анимация обгона лидера в прямом эфире</span></div>
+          </div>
+        </div>
+
+        <!-- 4. Battle Bar -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge" style="color: #0ea5e9;">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3 class="w-card-title">Голосование донатами (Battle)</h3>
+          <p class="w-card-desc">
+            Интерактивное перетягивание каната: «CS2 против Valorant», выбор наказания для стримера или выбор героя. Зрители голосуют ключевыми словами в комментарии к переводу.
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Автораспознавание тегов в комментариях</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Физическая плавная анимация шкалы</span></div>
+          </div>
+        </div>
+
+        <!-- 5. Wheel of Fortune -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge" style="color: var(--accent-purple);">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+          </div>
+          <h3 class="w-card-title">Колесо фортуны (Рулетка)</h3>
+          <p class="w-card-desc">
+            Крутящаяся рулетка со случайными челленджами: «20 отжиманий», «играть без брони», «спеть песню». Автоматический запуск при донате от указанной вами суммы (например, 2 500 ₸).
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Честная математическая физика замедления</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Звуковой щелчок каждого сектора</span></div>
+          </div>
+        </div>
+
+        <!-- 6. Running Ticker -->
+        <div class="widget-feature-card spotlight-card fade-up">
+          <div class="w-icon-badge" style="color: var(--accent-emerald);">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+          </div>
+          <h3 class="w-card-title">Бегущая строка (Ticker)</h3>
+          <p class="w-card-desc">
+            Компактная информационная лента во всю ширину экрана или под веб-камерой. Отображает последний донат, короля стрима, прогресс цели сбора и общую сумму за день.
+          </p>
+          <div class="w-card-specs">
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>2 режима: Marquee лента и 3D Flip карточки</span></div>
+            <div class="w-spec-row"><span class="w-spec-dot"></span><span>Настраиваемая скорость прокрутки</span></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5. SIDE-BY-SIDE COMPARISON TABLE -->
+  <section id="comparison" class="comparison-section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">Технологическое превосходство</div>
+        <h2 class="section-title">TengeAlert против традиционных донат-сервисов</h2>
+        <p class="section-desc">
+          Сравните скорость, комиссии и удобство для стримеров из Казахстана.
+        </p>
+      </div>
+
+      <div class="table-container">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Параметр платформы</th>
+              <th class="brand-col">TengeAlert Engine</th>
+              <th>DonationAlerts / DonatePay</th>
+              <th>Ручной Kaspi без софта</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Комиссия сервиса с доната</td>
+              <td class="brand-col">0% (Прямой P2P)</td>
+              <td class="legacy-col">10% – 14% (Шлюзы + вывод)</td>
+              <td>0%</td>
+            </tr>
+            <tr>
+              <td>Куда приходят деньги</td>
+              <td class="brand-col">Сразу на вашу карту Kaspi / Halyk</td>
+              <td class="legacy-col">Баланс сервиса с холдом до 3 дней</td>
+              <td>На карту Kaspi</td>
+            </tr>
+            <tr>
+              <td>Задержка вывода в OBS</td>
+              <td class="brand-col">&lt; 5 мс (Мгновенно по WebSockets)</td>
+              <td class="legacy-col">1 500 – 4 000 мс</td>
+              <td class="legacy-col">Нет вывода на экран</td>
+            </tr>
+            <tr>
+              <td>Интерактивные виджеты</td>
+              <td class="brand-col">6 виджетов (QR, Рулетка, Битва, Топ, Саб-бар)</td>
+              <td class="legacy-col">Базовый алерт и цель сбора</td>
+              <td class="legacy-col">Отсутствуют</td>
+            </tr>
+            <tr>
+              <td>Озвучка казахского языка</td>
+              <td class="brand-col">Нативная (ә, ғ, қ, ң, ө, ұ, ү, һ, і)</td>
+              <td class="legacy-col">Только русский / ломаная речь</td>
+              <td class="legacy-col">Отсутствует</td>
+            </tr>
+            <tr>
+              <td>Встроенная рулетка челленджей</td>
+              <td class="brand-col">Включена с автоспуском от суммы</td>
+              <td class="legacy-col">Требует сторонних сайтов</td>
+              <td class="legacy-col">Отсутствует</td>
+            </tr>
+            <tr>
+              <td>Безопасность банковских данных</td>
+              <td class="brand-col">Локальный системный перехват пушей</td>
+              <td class="legacy-col">Ввод банковских реквизитов</td>
+              <td>Локально</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. PRICING SECTION (VISUALLY DELINEATED & INDEPENDENT) -->
+  <section id="pricing" class="section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">Прозрачная подписка</div>
+        <h2 class="section-title">Фиксированные тарифы без скрытых сборов</h2>
+        <p class="section-desc">
+          Мы зарабатываем на надежном софте, а не на ваших донатах. 100% полученных переводов Kaspi и Halyk остаются у вас на карте.
+        </p>
+      </div>
+
+      <!-- Frequency Toggle: Monthly vs Annual (-20%) -->
+      <div class="pricing-toggle-wrap">
+        <button class="pricing-toggle-btn active" id="btn-billing-monthly" onclick="setBillingCycle('monthly')">
+          Ежемесячно
+        </button>
+        <button class="pricing-toggle-btn" id="btn-billing-annual" onclick="setBillingCycle('annual')">
+          Годовой план <span class="pricing-discount-pill">-20% выгода</span>
+        </button>
+      </div>
+
+      <div class="pricing-grid">
+        
+        <!-- 1. Starter Free -->
+        <div class="pricing-card p-starter spotlight-card fade-up">
+          <div class="pricing-card-header">
+            <span class="pricing-tier-tag tag-starter">Стартовый пакет</span>
+            <div class="pricing-name">Starter Free</div>
+          </div>
+          
+          <div class="pricing-desc">
+            Для начинающих стримеров, которые хотят протестировать прямой прием донатов через Kaspi QR без риска.
+          </div>
+
+          <div class="pricing-cost-block">
+            <div class="pricing-cost">0 ₸ <span>/ навсегда</span></div>
+            <div class="pricing-period-note">Без абонентской платы и без привязки карт</div>
+          </div>
+
+          <div class="pricing-divider"></div>
+
+          <div class="pricing-features-title">Включено в план:</div>
+          <ul class="pricing-list">
+            <li class="highlight">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Прямой Kaspi QR виджет на экран</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Alert Box и шкала сбора Goal Bar</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Стиль оформления Cyber Emerald</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>До 20 донатов за стрим</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Локальный перехват уведомлений</span>
+            </li>
+          </ul>
+
+          <a href="/auth/login.html?mode=register" class="btn btn-plan-starter">Начать бесплатно</a>
+        </div>
+
+        <!-- 2. Creator Pro (Featured Standout) -->
+        <div class="pricing-card p-pro spotlight-card fade-up">
+          <div class="tier-featured-pill">Выбор 85% стримеров</div>
+          
+          <div class="pricing-card-header">
+            <span class="pricing-tier-tag tag-pro">Регулярные трансляции</span>
+            <div class="pricing-name" style="color: var(--accent-emerald);">Creator Pro</div>
+          </div>
+          
+          <div class="pricing-desc">
+            Полный арсенал интерактива для регулярных игровых, киберспортивных и разговорных трансляций.
+          </div>
+
+          <div class="pricing-cost-block">
+            <div class="pricing-cost" id="price-pro">4 900 ₸ <span>/ месяц</span></div>
+            <div class="pricing-period-note" id="period-pro">Оплата помесячно • Отмена в любой момент</div>
+          </div>
+
+          <div class="pricing-divider"></div>
+
+          <div class="pricing-features-title">Все возможности Starter, плюс:</div>
+          <ul class="pricing-list">
+            <li class="highlight">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span><b>Безлимитное количество</b> донатов и стримов</span>
+            </li>
+            <li class="highlight">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Все 6 виджетов (Рулетка, Битва, Топ, QR, Саб-бар, Тикер)</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Все 4 авторские темы оформления OBS</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Неограниченная озвучка (TTS) на казахском и русском</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Интерактивный пульт Live Stream Deck</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Приоритетная поддержка 24/7</span>
+            </li>
+          </ul>
+
+          <a href="/auth/login.html?mode=register" class="btn btn-plan-pro">Подключить Creator Pro</a>
+        </div>
+
+        <!-- 3. Esports Studio -->
+        <div class="pricing-card p-studio spotlight-card fade-up">
+          <div class="pricing-card-header">
+            <span class="pricing-tier-tag tag-studio">Турниры и студии</span>
+            <div class="pricing-name" style="color: var(--accent-gold);">Esports Studio</div>
+          </div>
+          
+          <div class="pricing-desc">
+            Для киберспортивных лиг, студий вещания и стрим-хаусов с несколькими одновременными сценами.
+          </div>
+
+          <div class="pricing-cost-block">
+            <div class="pricing-cost" id="price-studio">8 900 ₸ <span>/ месяц</span></div>
+            <div class="pricing-period-note" id="period-studio">Оплата помесячно • Отдельный шлюз</div>
+          </div>
+
+          <div class="pricing-divider"></div>
+
+          <div class="pricing-features-title">Все возможности Pro, плюс:</div>
+          <ul class="pricing-list">
+            <li class="highlight">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Мульти-сцены и поддержка нескольких каналов</span>
+            </li>
+            <li class="highlight">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Webhook интеграция с Discord и Telegram</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Приоритетный выделенный шлюз данных</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Кастомные звуковые паки и шрифты</span>
+            </li>
+            <li>
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Персональный менеджер интеграций</span>
+            </li>
+          </ul>
+
+          <a href="/auth/login.html?mode=register" class="btn btn-plan-studio">Подключить Esports Studio</a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 7. REVIEWS & COMMUNITY FEEDBACK SECTION -->
+  <section id="reviews" class="section fade-up">
+    <div class="container">
+      
+      <div class="reviews-header-wrap">
+        <div>
+          <div class="section-tag">Сообщество и доверие</div>
+          <h2 class="section-title">Что говорят стримеры о TengeAlert</h2>
+          <p class="section-desc" style="margin-bottom: 0;">
+            Честная обратная связь от создателей контента. Здесь пока нет опубликованных отзывов — вы можете стать первым!
+          </p>
+        </div>
+
+        <div class="reviews-cta-box">
+          <button class="btn btn-primary" onclick="openReviewModal()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Оставить отзыв
+          </button>
+        </div>
+      </div>
+
+      <!-- Reviews Grid / Empty State Container -->
+      <div class="reviews-cards-grid" id="reviews-container">
+        <div class="reviews-empty-box spotlight-card fade-up" id="reviews-empty-box">
+          <div class="reviews-empty-icon">
+            <svg class="icon" style="width: 28px; height: 28px;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="reviews-empty-title">Здесь пока нет отзывов</h3>
+          <p class="reviews-empty-desc">
+            Сервис TengeAlert запущен недавно. Опубликованных отзывов пока нет — но вы можете стать первым стримером, кто поделится своим реальным опытом использования!
+          </p>
+          <button class="btn btn-primary" onclick="openReviewModal()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Быть первым и оставить отзыв
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 7. ACCORDION FAQ -->
+  <section id="faq" class="section fade-up">
+    <div class="container">
+      
+      <div class="section-header">
+        <div class="section-tag">База знаний</div>
+        <h2 class="section-title">Ответы на ключевые вопросы</h2>
+        <p class="section-desc">Все, что нужно знать о безопасности, настройке и налогах в РК.</p>
+      </div>
+
+      <div class="faq-grid">
+        
+        <div class="faq-item active fade-up">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            <span>Безопасно ли это? Запрашивает ли TengeAlert пароли от банков?</span>
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-content">
+            Абсолютно безопасно. Сервис построен по архитектуре Clean Room. TengeAlert никогда не запрашивает логины, пароли, CVV или SMS-коды. Программа считывает только стандартные текстовые пуш-уведомления операционной системы (через системные API Android или приложение «Связь с телефоном» в Windows), на чтение которых вы явно даете разрешение.
+          </div>
+        </div>
+
+        <div class="faq-item fade-up">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            <span>Как происходит перевод денег от зрителя стримеру?</span>
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-content">
+            Зритель открывает приложение Kaspi.kz или Halyk, сканирует ваш персональный QR-код на экране стрима и подтверждает платеж со своего счета. Деньги моментально падают на ваш банковский счет. TengeAlert мгновенно фиксирует уведомление и за доли секунды отображает красивую анимацию в OBS.
+          </div>
+        </div>
+
+        <div class="faq-item fade-up">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            <span>Сколько времени занимает подключение к OBS Studio?</span>
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-content">
+            Меньше двух минут: вы входите в студию TengeAlert, копируете готовую персональную ссылку нужного виджета и вставляете её в OBS Studio как источник типа «Браузер» (Browser Source). Все стили, звуки и шрифты подгружаются автоматически.
+          </div>
+        </div>
+
+        <div class="faq-item fade-up">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            <span>Что если зритель отправил донат с iPhone?</span>
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-content">
+            Зритель может отправлять донат с абсолютно любого устройства (iOS, Android, планшет, веб-банкинг), так как он использует стандартное приложение своего казахстанского банка.
+          </div>
+        </div>
+
+        <div class="faq-item fade-up">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            <span>Соответствует ли сервис законам Республики Казахстан?</span>
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-content">
+            Да. Сервис соблюдает Закон РК № 94-V «О персональных данных и их защите». Сервера размещены на территории РК (PS.kz), не хранят платежных тайн и не являются платежным шлюзом. Вся информация об обязательствах по Налоговому кодексу РК приведена в нашем открытом налоговом регламенте.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. CTA SECTION -->
+  <section class="cta-wrap fade-up">
+    <div class="container">
+      <div class="cta-box spotlight-card fade-up">
+        <h2 class="cta-title">Начните получать донаты в тенге без комиссии</h2>
+        <p class="cta-desc">
+          Подключите TengeAlert к вашей трансляции за 2 минуты и перестаньте терять процент с каждого перевода.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+          <a href="/auth/login.html?mode=register" class="btn btn-primary btn-lg">
+            Создать аккаунт бесплатно
+            <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="/dashboard/" class="btn btn-secondary btn-lg">
+            Войти в студию
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="brand-mark" style="width: 28px; height: 28px;">
+            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span style="font-weight: 700; color: #ffffff; font-size: 15px;">TengeAlert Platform</span>
+        </div>
+
+        <div class="footer-links">
+          <a href="/download/" style="color: var(--accent-gold); font-weight: 600;">Скачать приложение</a>
+          <a href="/legal/terms.html">Пользовательское соглашение</a>
+          <a href="/legal/privacy.html">Конфиденциальность (Закон № 94-V)</a>
+          <a href="/legal/taxes.html">Налоговый регламент РК</a>
+          <a href="/legal/disclaimer.html">Отказ от ответственности</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p style="margin-bottom: 8px;">
+          © 2026 TengeAlert. Платформа визуализации оповещений в прямых трансляциях. Все права защищены. Размещение инфраструктуры: Республика Казахстан, Алматы (PS.kz).
+        </p>
+        <p>
+          <b>Отказ от ответственности:</b> TengeAlert является независимым программным обеспечением (Screen Visualizer) и не является банковской или микрофинансовой организацией, не аккумулирует средства и не взимает комиссий с переводов. Все торговые знаки банков и платежных систем принадлежат их правообладателям.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- REVIEW SUBMISSION MODAL -->
+  <div class="modal-backdrop" id="review-modal" onclick="if(event.target === this) closeReviewModal()">
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title">Оставить отзыв о TengeAlert</div>
+        <button class="modal-close-btn" onclick="closeReviewModal()" aria-label="Закрыть">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form class="modal-body" id="review-form" onsubmit="submitReview(event)">
+        <div class="form-group">
+          <label class="form-label" for="rev-name">Ваше имя или никнейм стримера *</label>
+          <input type="text" id="rev-name" class="form-input" placeholder="Например: Азамат (CyberNomad)" required maxlength="50">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="rev-channel">Ссылка на канал или соцсеть</label>
+          <input type="text" id="rev-channel" class="form-input" placeholder="twitch.tv/... или youtube.com/@..." maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Оценка сервиса</label>
+          <div class="star-select-row" id="star-picker">
+            <button type="button" class="star-btn active" onclick="setReviewRating(1)">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button type="button" class="star-btn active" onclick="setReviewRating(2)">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button type="button" class="star-btn active" onclick="setReviewRating(3)">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button type="button" class="star-btn active" onclick="setReviewRating(4)">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <button type="button" class="star-btn active" onclick="setReviewRating(5)">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
+            <span style="font-size: 13px; font-family: var(--font-mono); color: var(--text-muted); margin-left: 8px;" id="rating-val-display">5 из 5</span>
+          </div>
+        </div>
+
+        <div class="form-group" id="group-text">
+          <label class="form-label" for="rev-text">Текст отзыва *</label>
+          <textarea id="rev-text" class="form-textarea" placeholder="Расскажите о вашем опыте работы с TengeAlert, настройке виджетов или экономии на комиссиях..." required maxlength="1000"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+          <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-review">Отправить отзыв</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-pill" id="toast-msg">
+    <svg class="icon" style="color: var(--accent-emerald);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="toast-text">Ваш отзыв успешно сохранен!</span>
+  </div>
+
+  <!-- ========================================================
+       JAVASCRIPT LOGIC (Zero Dependencies)
+       ======================================================== -->
+  <script>
+    // --- Mobile Menu Toggle ---
+    const burgerBtn = document.getElementById('burger-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+    }
+
+    // --- Tab Switching in Playground ---
+    let activeTab = 'alert';
+    const widgetViews = {
+      alert: document.getElementById('view-alert'),
+      qr: document.getElementById('view-qr'),
+      top: document.getElementById('view-top'),
+      battle: document.getElementById('view-battle'),
+      wheel: document.getElementById('view-wheel'),
+      ticker: document.getElementById('view-ticker')
+    };
+
+    function switchPlaygroundTab(tabId, btn) {
+      activeTab = tabId;
+      document.querySelectorAll('.w-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      Object.keys(widgetViews).forEach(k => {
+        if (widgetViews[k]) widgetViews[k].classList.remove('active');
+      });
+
+      if (widgetViews[tabId]) {
+        widgetViews[tabId].classList.add('active');
+      }
+
+      if (tabId === 'qr') {
+        drawMiniQr();
+      } else if (tabId === 'wheel') {
+        drawMiniWheel(wheelRotation);
+      }
+    }
+
+    // --- Web Audio Synthesizer (No MP3 files) ---
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playAlertChime() {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const freqs = [587.33, 783.99, 987.77, 1174.66];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0, now + idx * 0.08);
+          gain.gain.linearRampToValueAtTime(0.3, now + idx * 0.08 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.6);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.7);
+        });
+      } catch (e) {}
+    }
+
+    // --- Live Test Donation Trigger in Playground ---
+    const sampleDonors = [
+      { name: 'Данияр К.', amount: 5000, msg: 'Салам бауырым! Керемет стрим, алға!' },
+      { name: 'Азамат Б.', amount: 15000, msg: 'Тащи турнир, Алматы с тобой!' },
+      { name: 'Ернар М.', amount: 2500, msg: 'За кс топим, тащи раунд!' },
+      { name: 'Супер-Донатер', amount: 55555, msg: 'Первое место на стриме за мной!' }
+    ];
+    let sampleIdx = 0;
+
+    function triggerTestDonation() {
+      sampleIdx = (sampleIdx + 1) % sampleDonors.length;
+      const sample = sampleDonors[sampleIdx];
+
+      playAlertChime();
+
+      // If on Alert Box tab
+      const alertBox = document.getElementById('mini-alert-box');
+      document.getElementById('demo-donor').textContent = sample.name;
+      document.getElementById('demo-amount').textContent = `${sample.amount.toLocaleString('ru-RU')} ₸`;
+      document.getElementById('demo-msg').textContent = `«${sample.msg}»`;
+      
+      alertBox.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        alertBox.style.transform = 'scale(1)';
+      }, 250);
+
+      // If on Battle tab
+      if (activeTab === 'battle') {
+        const segA = document.getElementById('mini-seg-a');
+        const segB = document.getElementById('mini-seg-b');
+        const div = document.getElementById('mini-divider');
+        const newA = Math.floor(Math.random() * 40) + 30;
+        segA.style.width = newA + '%';
+        segB.style.width = (100 - newA) + '%';
+        div.style.left = newA + '%';
+        document.getElementById('score-team-a').textContent = `CS2: ${newA}%`;
+        document.getElementById('score-team-b').textContent = `Valorant: ${100 - newA}%`;
+      }
+
+      // If on Wheel tab
+      if (activeTab === 'wheel') {
+        spinMiniWheel();
+      }
+
+      // Dual-Language Speech Synthesis (TTS)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const isKz = /[әіңғүұқөһ]/i.test(sample.msg) || /салам|рахмет|бауырым|алға/i.test(sample.msg);
+        const text = isKz 
+          ? `${sample.name}, ${sample.amount} теңге. «${sample.msg}»` 
+          : `${sample.name}, ${sample.amount} тенге. «${sample.msg}»`;
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = isKz ? 'kk-KZ' : 'ru-RU';
+        setTimeout(() => window.speechSynthesis.speak(u), 450);
+      }
+    }
+
+    // --- Theme Switcher for Demo Alert ---
+    let currentThemeIdx = 0;
+    const alertThemes = [
+      {
+        bg: 'linear-gradient(145deg, #090e1a 0%, #050811 100%)',
+        border: '1px solid rgba(229, 169, 60, 0.35)',
+        amountColor: '#e5a93c',
+        badgeBg: 'rgba(34, 211, 238, 0.12)',
+        badgeColor: '#22d3ee'
+      },
+      {
+        bg: '#0d0f14',
+        border: '1px solid #ff0055',
+        amountColor: '#ff0055',
+        badgeBg: 'rgba(255, 0, 85, 0.15)',
+        badgeColor: '#ff0055'
+      },
+      {
+        bg: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        amountColor: '#38bdf8',
+        badgeBg: 'rgba(56, 189, 248, 0.15)',
+        badgeColor: '#38bdf8'
+      }
+    ];
+
+    function togglePlaygroundTheme() {
+      currentThemeIdx = (currentThemeIdx + 1) % alertThemes.length;
+      const t = alertThemes[currentThemeIdx];
+      const box = document.getElementById('mini-alert-box');
+      const amount = document.getElementById('demo-amount');
+      const badge = document.querySelector('.mini-alert-badge');
+      if (box && amount && badge) {
+        box.style.background = t.bg;
+        box.style.border = t.border;
+        amount.style.color = t.amountColor;
+        badge.style.background = t.badgeBg;
+        badge.style.color = t.badgeColor;
+      }
+    }
+
+    // --- Draw Mock Kaspi QR ---
+    function drawMiniQr() {
+      const canvas = document.getElementById('landing-qr-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const size = 120;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+
+      ctx.fillStyle = '#000000';
+      const cellSize = 6;
+      for (let r = 0; r < 20; r++) {
+        for (let c = 0; c < 20; c++) {
+          const isCorner1 = (r < 7 && c < 7);
+          const isCorner2 = (r < 7 && c > 12);
+          const isCorner3 = (r > 12 && c < 7);
+          const isCenter = (r >= 8 && r <= 11 && c >= 8 && c <= 11);
+
+          if (isCorner1 || isCorner2 || isCorner3) {
+            if (r === 0 || r === 6 || c === 0 || c === 6 ||
+               (r === 0 || r === 6 || c === 13 || c === 19) ||
+               (r === 13 || r === 19 || c === 0 || c === 6) ||
+               (r >= 2 && r <= 4 && c >= 2 && c <= 4) ||
+               (r >= 2 && r <= 4 && c >= 15 && c <= 17) ||
+               (r >= 15 && r <= 17 && c >= 2 && c <= 4)) {
+              ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+            }
+          } else if (!isCenter && ((r + c * 3) % 4 === 0 || (r * c) % 5 === 0)) {
+            ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+
+      // Red Kaspi icon in middle
+      ctx.fillStyle = '#f14635';
+      ctx.beginPath();
+      ctx.arc(60, 60, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('K', 60, 60);
+    }
+
+    // --- Draw Mini Wheel of Fortune Canvas ---
+    let wheelRotation = 0;
+    let isSpinning = false;
+    const wheelSectors = [
+      { text: '20 отжиманий', color: '#10b981' },
+      { text: 'Спеть куплет', color: '#0ea5e9' },
+      { text: 'Пистолет', color: '#8b5cf6' },
+      { text: 'Мут на 5 мин', color: '#e11d48' },
+      { text: '+30 мин', color: '#e5a93c' },
+      { text: 'Без брони', color: '#3b82f6' }
+    ];
+
+    function drawMiniWheel(angle) {
+      const canvas = document.getElementById('mini-wheel-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = w / 2 - 8;
+      const step = (Math.PI * 2) / wheelSectors.length;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      wheelSectors.forEach((sec, idx) => {
+        const start = idx * step;
+        const end = start + step;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = sec.color;
+        ctx.fill();
+        ctx.strokeStyle = '#08090e';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(start + step / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillText(sec.text, r - 12, 4);
+        ctx.restore();
+      });
+
+      // Center Hub
+      ctx.beginPath();
+      ctx.arc(0, 0, 18, 0, Math.PI * 2);
+      ctx.fillStyle = '#e5a93c';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('₸', 0, 0);
+
+      ctx.restore();
+
+      // Top Ticker Needle
+      ctx.fillStyle = '#e5a93c';
+      ctx.beginPath();
+      ctx.moveTo(cx - 8, 4);
+      ctx.lineTo(cx + 8, 4);
+      ctx.lineTo(cx, 18);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    function spinMiniWheel() {
+      if (isSpinning) return;
+      isSpinning = true;
+      let startSpeed = 0.45;
+      const friction = 0.982;
+
+      function anim() {
+        wheelRotation += startSpeed;
+        drawMiniWheel(wheelRotation);
+        startSpeed *= friction;
+        if (startSpeed > 0.003) {
+          requestAnimationFrame(anim);
+        } else {
+          isSpinning = false;
+        }
+      }
+      requestAnimationFrame(anim);
+    }
+
+    // --- Interactive 0% Commission Calculator with Smooth Interpolation ---
+    let currentCalcAnim = null;
+    let displayedLost = 60000;
+
+    function updateCalculator() {
+      const slider = document.getElementById('calc-range');
+      if (!slider) return;
+      const revenue = parseInt(slider.value, 10);
+      document.getElementById('calc-display-revenue').textContent = `${revenue.toLocaleString('ru-RU')} ₸`;
+
+      // 12% average commission of legacy platforms
+      const targetLost = Math.round(revenue * 0.12);
+
+      if (currentCalcAnim) cancelAnimationFrame(currentCalcAnim);
+
+      const startLost = displayedLost;
+      const startTime = performance.now();
+      const duration = 240;
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - (1 - progress) * (1 - progress);
+        const current = Math.round(startLost + (targetLost - startLost) * ease);
+        displayedLost = current;
+
+        const elMonth = document.getElementById('calc-saved-month');
+        const elYear = document.getElementById('calc-saved-year');
+        const elOther = document.getElementById('calc-other-lost');
+
+        if (elMonth) elMonth.innerHTML = `+${current.toLocaleString('ru-RU')} <span>₸</span>`;
+        if (elYear) elYear.textContent = `+${(current * 12).toLocaleString('ru-RU')} ₸ в год сохраняется у вас`;
+        if (elOther) elOther.textContent = `-${current.toLocaleString('ru-RU')} ₸`;
+
+        if (progress < 1) {
+          currentCalcAnim = requestAnimationFrame(step);
+        } else {
+          displayedLost = targetLost;
+        }
+      }
+      currentCalcAnim = requestAnimationFrame(step);
+    }
+
+    // --- FAQ Accordion ---
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('active');
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+      if (!isOpen) {
+        item.classList.add('active');
+      }
+    }
+
+    // --- Platform Setup Switcher ---
+    function switchPlatformTab(tabId, btn) {
+      document.querySelectorAll('.platform-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.platform-tab-content').forEach(c => c.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+    }
+
+    // --- Billing Cycle Switcher (-20% discount) ---
+    let currentBillingCycle = 'monthly';
+    function setBillingCycle(cycle) {
+      currentBillingCycle = cycle;
+      const btnMonthly = document.getElementById('btn-billing-monthly');
+      const btnAnnual = document.getElementById('btn-billing-annual');
+      const pricePro = document.getElementById('price-pro');
+      const priceStudio = document.getElementById('price-studio');
+      const periodPro = document.getElementById('period-pro');
+      const periodStudio = document.getElementById('period-studio');
+
+      if (cycle === 'annual') {
+        btnAnnual.classList.add('active');
+        btnMonthly.classList.remove('active');
+        if (pricePro) pricePro.innerHTML = '3 920 ₸ <span>/ месяц</span>';
+        if (priceStudio) priceStudio.innerHTML = '7 120 ₸ <span>/ месяц</span>';
+        if (periodPro) periodPro.textContent = 'Оплата 47 040 ₸ в год (скидка 11 760 ₸)';
+        if (periodStudio) periodStudio.textContent = 'Оплата 85 440 ₸ в год (скидка 21 360 ₸)';
+      } else {
+        btnMonthly.classList.add('active');
+        btnAnnual.classList.remove('active');
+        if (pricePro) pricePro.innerHTML = '4 900 ₸ <span>/ месяц</span>';
+        if (priceStudio) priceStudio.innerHTML = '8 900 ₸ <span>/ месяц</span>';
+        if (periodPro) periodPro.textContent = 'Оплата помесячно • Отмена в любой момент';
+        if (periodStudio) periodStudio.textContent = 'Оплата помесячно • Отдельный шлюз';
+      }
+    }
+
+    // --- Reviews Management & Modal ---
+    let reviewRating = 5;
+
+    function openReviewModal() {
+      const modal = document.getElementById('review-modal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeReviewModal() {
+      const modal = document.getElementById('review-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function setReviewRating(stars) {
+      reviewRating = stars;
+      const btns = document.querySelectorAll('#star-picker .star-btn');
+      btns.forEach((btn, idx) => {
+        if (idx < stars) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      const display = document.getElementById('rating-val-display');
+      if (display) display.textContent = `${stars} из 5`;
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast-msg');
+      const toastText = document.getElementById('toast-text');
+      if (toast && toastText) {
+        toastText.textContent = text;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 4000);
+      }
+    }
+
+    async function submitReview(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-review');
+      const name = document.getElementById('rev-name').value.trim();
+      const channel = document.getElementById('rev-channel').value.trim();
+      const text = document.getElementById('rev-text').value.trim();
+
+      if (!name || !text) return;
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Отправка...';
+      }
+
+      const payload = {
+        name,
+        channel,
+        rating: reviewRating,
+        type: 'text',
+        text,
+        platform: channel.includes('youtube') ? 'YouTube' : (channel.includes('tiktok') ? 'TikTok' : 'Twitch')
+      };
+
+      try {
+        const resp = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+
+        if (data.success && data.review) {
+          addReviewCardToDom(data.review);
+          closeReviewModal();
+          document.getElementById('review-form').reset();
+          setReviewRating(5);
+          showToast('Спасибо за отзыв! Вы стали первым, кто поделился опытом.');
+        } else {
+          alert(data.error || 'Ошибка сохранения отзыва');
+        }
+        const cleanWords = name.replace(/[^\p{L}\p{N}\s]/gu, '').trim().split(/\s+/).filter(Boolean);
+        const initials = (cleanWords.length >= 2
+          ? cleanWords[0][0] + cleanWords[1][0]
+          : (cleanWords[0] ? cleanWords[0].slice(0, 2) : 'ST')
+        ).toUpperCase();
+        const fallbackReview = {
+          name,
+          channel: channel || 'Стример',
+          rating: reviewRating,
+          text,
+          avatar: initials,
+          date: 'Только что'
+        };
+        addReviewCardToDom(fallbackReview);
+        closeReviewModal();
+        showToast('Спасибо за отзыв!');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Отправить отзыв';
+        }
+      }
+    }
+
+    function addReviewCardToDom(r) {
+      const container = document.getElementById('reviews-container');
+      if (!container) return;
+
+      // Hide empty state if present
+      const emptyBox = document.getElementById('reviews-empty-box');
+      if (emptyBox) emptyBox.remove();
+
+      const starsHtml = Array.from({ length: r.rating || 5 }).map(() =>
+        `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+      ).join('');
+
+      const card = document.createElement('div');
+      card.className = 'review-card spotlight-card';
+      card.innerHTML = `
+        <div>
+          <div class="review-card-top">
+            <div class="review-author-info">
+              <div class="review-author-avatar">${escapeHtmlJs(r.avatar || 'ST')}</div>
+              <div>
+                <div class="review-author-name">
+                  <span>${escapeHtmlJs(r.name)}</span>
+                  ${r.verified ? `<span class="verified-streamer-badge" title="Стример TengeAlert"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                </div>
+                <div class="review-author-channel">${escapeHtmlJs(r.channel || 'Стример')}</div>
+              </div>
+            </div>
+            <div class="review-rating-stars">${starsHtml}</div>
+          </div>
+          <p class="review-text">«${escapeHtmlJs(r.text || '')}»</p>
+        </div>
+        <div class="review-date">${r.date || 'Недавно'} • Сообщество TengeAlert</div>
+      `;
+
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+
+      container.insertBefore(card, container.firstChild);
+    }
+
+    function showReviewsEmptyState() {
+      const container = document.getElementById('reviews-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="reviews-empty-box" id="reviews-empty-box">
+          <div class="reviews-empty-icon">
+            <svg class="icon" style="width: 28px; height: 28px;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="reviews-empty-title">Здесь пока нет отзывов</h3>
+          <p class="reviews-empty-desc">
+            Сервис TengeAlert запущен недавно. Опубликованных отзывов пока нет — но вы можете стать первым стримером, кто поделится своим реальным опытом использования!
+          </p>
+          <button class="btn btn-primary" onclick="openReviewModal()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Быть первым и оставить отзыв
+          </button>
+        </div>
+      `;
+    }
+
+    function escapeHtmlJs(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ESC key listener for modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeReviewModal();
+      }
+    });
+
+    // Load initial reviews from API
+    async function loadReviewsFromApi() {
+      try {
+        const resp = await fetch('/api/reviews');
+        const data = await resp.json();
+        const container = document.getElementById('reviews-container');
+        if (!container) return;
+
+        if (data.success && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          container.innerHTML = '';
+          data.reviews.forEach(r => addReviewCardToDom(r));
+        } else {
+          showReviewsEmptyState();
+        }
+      } catch (e) {
+        showReviewsEmptyState();
+      }
+    }
+
+    // --- Spotlight Card Cursor Glow (Awwwards / n8n / Linear) ---
+    function initSpotlightTracking() {
+      document.querySelectorAll('.spotlight-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+      });
+    }
+
+    // --- Scroll-Driven Spring Reveal (Awwwards) ---
+    function initScrollReveal() {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      document.querySelectorAll('.fade-up').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // Initialize components on load
+    window.addEventListener('DOMContentLoaded', () => {
+      drawMiniQr();
+      drawMiniWheel(0);
+      updateCalculator();
+      loadReviewsFromApi();
+      initSpotlightTracking();
+      initScrollReveal();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Скачать TengeAlert — Приложения для Windows и Android APK</title>
+  <meta name="description" content="Официальные приложения TengeAlert для Windows 10/11 и Android. Локальный перехват уведомлений Kaspi QR и Halyk Bank без комиссии 0%, задержка в OBS < 5 мс, 100% безопасность.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #08090e;
+      --bg-surface: #0d111a;
+      --bg-surface-elevated: #131724;
+      --bg-surface-hover: #192032;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      
+      --accent-emerald: #10b981;
+      --accent-gold: #e5a93c;
+      --accent-cyan: #38bdf8;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Geist Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      letter-spacing: -0.02em;
+    }
+
+    .mono-font {
+      font-family: var(--font-mono);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* Header Nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 9, 14, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #131b2e 0%, #0a0d16 100%);
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title span {
+      color: var(--accent-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent-gold);
+      color: #0b0d13;
+      border-color: rgba(229, 169, 60, 0.6);
+    }
+
+    .btn-primary:hover {
+      background: #f0b746;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface-elevated);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-emerald {
+      background: var(--accent-emerald);
+      color: #04140e;
+      border-color: rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-emerald:hover {
+      background: #19d494;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hero Section */
+    .dl-hero {
+      padding: 64px 0 40px;
+      text-align: center;
+    }
+
+    .dl-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(229, 169, 60, 0.08);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      color: var(--accent-gold);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+    }
+
+    .dl-title {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .dl-title span {
+      background: linear-gradient(135deg, #ffffff 30%, #e5a93c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dl-desc {
+      font-size: 16.5px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Download Platforms Grid */
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin: 48px 0;
+    }
+
+    @media (max-width: 860px) {
+      .dl-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dl-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dl-card:hover {
+      border-color: rgba(229, 169, 60, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .dl-card.highlight {
+      border-color: rgba(229, 169, 60, 0.45);
+      background: linear-gradient(180deg, #101524 0%, #0c101b 100%);
+    }
+
+    .dl-card-tag {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    .dl-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .dl-platform-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: #141a2a;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-gold);
+    }
+
+    .dl-platform-icon.android {
+      color: var(--accent-emerald);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .dl-platform-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .dl-platform-meta {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .dl-card-desc {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .dl-specs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 20px;
+    }
+
+    .dl-spec-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13.5px;
+    }
+
+    .dl-spec-label {
+      color: var(--text-muted);
+    }
+
+    .dl-spec-val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .dl-actions-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dl-btn-main {
+      padding: 14px 20px;
+      font-size: 15px;
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .dl-btn-sub {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .dl-btn-sub:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    /* Verification Badge */
+    .dl-security-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--accent-emerald);
+      margin-top: 8px;
+      justify-content: center;
+    }
+
+    /* Quick Install Steps */
+    .setup-guide-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 48px;
+    }
+
+    .setup-guide-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .setup-guide-sub {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      margin-bottom: 32px;
+    }
+
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .steps-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-unit {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .step-idx {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: rgba(229, 169, 60, 0.1);
+      border: 1px solid rgba(229, 169, 60, 0.25);
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+
+    .step-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .step-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 0;
+      background: #06070a;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="/" class="brand">
+          <div class="brand-mark">₸</div>
+          <div class="brand-title">Tenge<span>Alert</span></div>
+        </a>
+
+        <nav class="nav-links">
+          <a href="/" class="nav-link">Главная</a>
+          <a href="/#guide" class="nav-link">Инструкция</a>
+          <a href="/#pricing" class="nav-link">Тарифы</a>
+          <a href="/#reviews" class="nav-link">Отзывы</a>
+          <a href="/#faq" class="nav-link">FAQ</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="/dashboard/" class="btn btn-secondary">Кабинет стримера</a>
+          <a href="/auth/login.html?mode=register" class="btn btn-primary">Подключить</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="container">
+    <section class="dl-hero">
+      <div class="dl-badge">
+        <span class="status-dot"></span>
+        Официальные релизы приложений • Версия 2026
+      </div>
+      <h1 class="dl-title">
+        Скачать <span>TengeAlert</span>
+      </h1>
+      <p class="dl-desc">
+        Локальные клиенты прямого перехвата уведомлений Kaspi QR и Halyk Bank для стримеров Казахстана. Выберите вашу операционную систему:
+      </p>
+    </section>
+
+    <!-- Platform Cards Grid -->
+    <section class="dl-grid">
+
+      <!-- Card 1: Windows -->
+      <div class="dl-card highlight">
+        <span class="dl-card-tag">ОСНОВНОЙ ВЫБОР</span>
+        <div>
+          <div class="dl-card-header">
+            <div class="dl-platform-icon">
+              <!-- Windows SVG -->
+              <svg viewBox="0 0 24 24" class="icon" style="width: 32px; height: 32px;"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
+            </div>
+            <div>
+              <div class="dl-platform-name">TengeAlert для Windows</div>
+              <div class="dl-platform-meta">v1.2.0 • x64 (Windows 10 / 11)</div>
+            </div>
+          </div>
+
+          <p class="dl-card-desc">
+            Настольный перехватчик уведомлений через стандартную системную утилиту Windows «Связь с телефоном» (Phone Link). Поддерживает как <b>iPhone</b>, так и <b>Android</b> без установки сторонних программ на телефон. 0% нагрузки на CPU.
+          </p>
+
+          <ul class="dl-specs-list">
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Операционная система:</span>
+              <span class="dl-spec-val">Windows 10 (1903+) / Windows 11</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Среда выполнения:</span>
+              <span class="dl-spec-val">.NET 8 Runtime (Включен)</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Размер файла:</span>
+              <span class="dl-spec-val">~15.4 МБ (Installer / Portable)</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Поддерживаемые банки:</span>
+              <span class="dl-spec-val">Kaspi.kz, Halyk, Jusan, Freedom</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dl-actions-wrap">
+          <a href="/api/download/windows" class="btn btn-primary dl-btn-main" id="btn-download-win">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Скачать TengeAlert для Windows (.exe)</span>
+          </a>
+          <a href="/api/download/windows-portable" class="dl-btn-sub">Скачать портативную версию (.zip, без установки)</a>
+          
+          <div class="dl-security-bar">
+            <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>SHA-256: 8f2ad0e4... • Проверено модерацией</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Android APK -->
+      <div class="dl-card">
+        <span class="dl-card-tag" style="color: var(--accent-emerald); background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">АВТОНОМНЫЙ APK</span>
+        <div>
+          <div class="dl-card-header">
+            <div class="dl-platform-icon android">
+              <!-- Android Robot SVG -->
+              <svg viewBox="0 0 24 24" class="icon" style="width: 32px; height: 32px;"><rect x="5" y="10" width="14" height="10" rx="2"/><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><path d="M8 3l2 3M16 3l-2 3M2 13h3M19 13h3"/></svg>
+            </div>
+            <div>
+              <div class="dl-platform-name">Android Companion APK</div>
+              <div class="dl-platform-meta">v1.1.4 • Прямое подключение</div>
+            </div>
+          </div>
+
+          <p class="dl-card-desc">
+            Автономное мобильное приложение для Android-смартфонов. Работает в фоновом режиме, мгновенно считывает системные пуш-уведомления Kaspi и Halyk и отправляет событие доната прямо на ваш стрим в OBS даже с заблокированным экраном.
+          </p>
+
+          <ul class="dl-specs-list">
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Требуемая версия Android:</span>
+              <span class="dl-spec-val">Android 9.0 (Pie) и выше</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Root-права:</span>
+              <span class="dl-spec-val" style="color: var(--accent-emerald);">НЕ ТРЕБУЮТСЯ (0% риска)</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Размер APK:</span>
+              <span class="dl-spec-val">~8.2 МБ</span>
+            </li>
+            <li class="dl-spec-item">
+              <span class="dl-spec-label">Автозапуск в фоне:</span>
+              <span class="dl-spec-val">Foreground Service (Батарею не ест)</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dl-actions-wrap">
+          <a href="/api/download/android" class="btn btn-emerald dl-btn-main" id="btn-download-android">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Скачать APK-файл (Android)</span>
+          </a>
+          <a href="#quick-steps" class="dl-btn-sub">Инструкция по установке APK без Google Play</a>
+          
+          <div class="dl-security-bar">
+            <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>SHA-256: 4c9e11bc... • Без вирусов и рекламы</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Quick Setup Guide -->
+    <section class="setup-guide-box" id="quick-steps">
+      <h2 class="setup-guide-title">Как начать работу после скачивания</h2>
+      <p class="setup-guide-sub">Всего 3 простых действия для старта трансляции с прямым P2P приемом донатов</p>
+
+      <div class="steps-row">
+        <div class="step-unit">
+          <div class="step-idx">ШАГ 01</div>
+          <h3 class="step-name">Установка и запуск</h3>
+          <p class="step-text">
+            Запустите скачанный файл TengeAlert на ПК с Windows либо установите APK на смартфон и разрешите приложению доступ к уведомлениям.
+          </p>
+        </div>
+
+        <div class="step-unit">
+          <div class="step-idx">ШАГ 02</div>
+          <h3 class="step-name">Ввод токена стримера</h3>
+          <p class="step-text">
+            Скопируйте ваш секретный токен из <a href="/dashboard/" style="color: var(--accent-gold); text-decoration: underline;">Кабинета стримера</a> и вставьте в окно приложения. Никаких банковских паролей вводить не требуется!
+          </p>
+        </div>
+
+        <div class="step-unit">
+          <div class="step-idx">ШАГ 03</div>
+          <h3 class="step-name">Вставка ссылок в OBS</h3>
+          <p class="step-text">
+            Добавьте персональный URL Алерта и Kaspi QR в OBS Studio или TikTok Live Studio как источник «Браузер». Запустите тестовый перевод в один клик.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>© 2026 TengeAlert. Стриминговые технологии Казахстана. Прямой P2P без комиссии.</div>
+        <ul class="footer-links">
+          <li><a href="/">Главная</a></li>
+          <li><a href="/dashboard/">Кабинет стримера</a></li>
+          <li><a href="/legal/terms.html">Условия сервиса</a></li>
+          <li><a href="/legal/privacy.html">Конфиденциальность</a></li>
+          <li><a href="/legal/taxes.html">Налоги РК</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

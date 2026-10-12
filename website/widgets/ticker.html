@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Running Ticker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container: Clean Broadcast Lower-Third */
+    .ticker-bar {
+      width: 100%;
+      max-width: 1920px;
+      height: 44px;
+      background: rgba(10, 13, 19, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+    }
+
+    /* Left Branding Badge */
+    .ticker-lead-badge {
+      flex-shrink: 0;
+      height: 100%;
+      background: #161b26;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    .lead-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* =========================================
+       1. MARQUEE MODE (Continuous Horizontal Loop)
+       ========================================= */
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      position: absolute;
+      left: 120px;
+      right: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .marquee-inner {
+      display: flex;
+      align-items: center;
+      animation: tickerScroll 24s linear infinite;
+      will-change: transform;
+    }
+
+    .marquee-inner:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding-right: 24px;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+
+    .item-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+
+    .tag-last {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .tag-top {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.25);
+    }
+
+    .tag-goal {
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    .tag-today {
+      color: #a78bfa;
+      border-color: rgba(167, 139, 250, 0.25);
+    }
+
+    .item-highlight {
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .item-sender {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .item-msg {
+      color: #64748b;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-sep {
+      color: rgba(255, 255, 255, 0.12);
+      font-size: 13px;
+      margin: 0 4px;
+    }
+
+    /* Mini Progress bar inside ticker item */
+    .mini-bar {
+      width: 60px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* =========================================
+       2. FLIP CARD / ROTATOR MODE (?mode=flip)
+       ========================================= */
+    .flip-container {
+      display: none;
+      flex: 1;
+      height: 100%;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flip-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
+
+    .flip-card.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .flip-card.exit {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ticker-bar" id="ticker-root">
+    <!-- Lead Badge -->
+    <div class="ticker-lead-badge">
+      <span class="lead-dot"></span>
+      <span>LIVE</span>
+    </div>
+
+    <!-- 1. Marquee View (Default) -->
+    <div class="marquee-track" id="marquee-view">
+      <div class="marquee-inner" id="marquee-inner">
+        <div class="ticker-group" id="group-1"></div>
+        <div class="ticker-group" id="group-2"></div>
+      </div>
+    </div>
+
+    <!-- 2. Flip Card View (?mode=flip) -->
+    <div class="flip-container" id="flip-view">
+      <!-- Card 1: Last Donation -->
+      <div class="flip-card active" id="card-last">
+        <span class="item-tag tag-last">Последний</span>
+        <span class="item-sender" id="flip-last-sender">—</span>
+        <span class="item-highlight" id="flip-last-amount">0 ₸</span>
+        <span class="item-msg" id="flip-last-msg"></span>
+      </div>
+
+      <!-- Card 2: Top Donor -->
+      <div class="flip-card" id="card-top">
+        <span class="item-tag tag-top">Лидер</span>
+        <span class="item-sender" id="flip-top-sender">—</span>
+        <span class="item-highlight" id="flip-top-amount">0 ₸</span>
+      </div>
+
+      <!-- Card 3: Goal -->
+      <div class="flip-card" id="card-goal">
+        <span class="item-tag tag-goal">Цель</span>
+        <span class="item-sender" id="flip-goal-title">Сбор</span>
+        <span class="item-highlight" id="flip-goal-numbers">0 / 0 ₸</span>
+        <div class="mini-bar"><div class="mini-bar-fill" id="flip-goal-fill" style="width: 0%"></div></div>
+        <span style="font-size:12px; color:#94a3b8; font-family:'Geist Mono',monospace;" id="flip-goal-pct">0%</span>
+      </div>
+
+      <!-- Card 4: Today Total -->
+      <div class="flip-card" id="card-today">
+        <span class="item-tag tag-today">Сегодня</span>
+        <span class="item-highlight" id="flip-today-amount">0 ₸</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamerToken = urlParams.get('token') || '';
+    const mode = urlParams.get('mode') || 'marquee';
+    const speed = urlParams.get('speed') || 'normal';
+
+    const marqueeInner = document.getElementById('marquee-inner');
+    if (speed === 'slow') marqueeInner.style.animationDuration = '36s';
+    else if (speed === 'fast') marqueeInner.style.animationDuration = '16s';
+
+    if (mode === 'flip') {
+      document.getElementById('marquee-view').style.display = 'none';
+      document.getElementById('flip-view').style.display = 'flex';
+      startFlipRotation();
+    }
+
+    function formatNumber(num) {
+      return (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    let tickerData = {
+      last_donation: { sender: 'Данияр К.', amount: 2500, message: 'Тащи стрим' },
+      top_donor: { sender: 'Азамат Б.', amount: 20000 },
+      today_amount: 47500,
+      total_amount: 185000,
+      goal: { title: 'На микрофон', current: 47500, target: 500000, percent: 10 }
+    };
+
+    function buildTickerGroupHtml(data) {
+      const last = data.last_donation || { sender: '—', amount: 0, message: '' };
+      const top = data.top_donor || { sender: '—', amount: 0 };
+      const goal = data.goal || { title: 'Сбор', current: 0, target: 500000, percent: 0 };
+      const today = data.today_amount || 0;
+
+      return `
+        <!-- Item 1: Last Donation -->
+        <div class="ticker-item">
+          <span class="item-tag tag-last">Последний</span>
+          <span class="item-sender">${last.sender}</span>
+          <span class="item-highlight">${formatNumber(last.amount)} ₸</span>
+          ${last.message ? `<span class="item-msg">«${last.message}»</span>` : ''}
+        </div>
+        <span class="item-sep">|</span>
+
+        <!-- Item 2: Top Donor -->
+        <div class="ticker-item">
+          <span class="item-tag tag-top">Лидер</span>
+          <span class="item-sender">${top.sender}</span>
+          <span class="item-highlight">${formatNumber(top.amount)} ₸</span>
+        </div>
+        <span class="item-sep">|</span>
+
+        <!-- Item 3: Goal -->
+        <div class="ticker-item">
+          <span class="item-tag tag-goal">Цель</span>
+          <span class="item-sender">${goal.title || 'Сбор'}</span>
+          <span class="item-highlight">${formatNumber(goal.current)} / ${formatNumber(goal.target)} ₸</span>
+          <div class="mini-bar"><div class="mini-bar-fill" style="width: ${goal.percent || 0}%"></div></div>
+          <span style="font-size:11px; color:#94a3b8; font-family:'Geist Mono',monospace;">${goal.percent || 0}%</span>
+        </div>
+        <span class="item-sep">|</span>
+
+        <!-- Item 4: Today Total -->
+        <div class="ticker-item">
+          <span class="item-tag tag-today">Сегодня</span>
+          <span class="item-highlight">${formatNumber(today)} ₸</span>
+        </div>
+        <span class="item-sep">|</span>
+      `;
+    }
+
+    function renderMarquee(data) {
+      const html = buildTickerGroupHtml(data);
+      document.getElementById('group-1').innerHTML = html;
+      document.getElementById('group-2').innerHTML = html;
+    }
+
+    function renderFlip(data) {
+      const last = data.last_donation || { sender: '—', amount: 0, message: '' };
+      const top = data.top_donor || { sender: '—', amount: 0 };
+      const goal = data.goal || { title: 'Сбор', current: 0, target: 500000, percent: 0 };
+      const today = data.today_amount || 0;
+
+      document.getElementById('flip-last-sender').textContent = last.sender;
+      document.getElementById('flip-last-amount').textContent = `${formatNumber(last.amount)} ₸`;
+      document.getElementById('flip-last-msg').textContent = last.message ? `«${last.message}»` : '';
+
+      document.getElementById('flip-top-sender').textContent = top.sender;
+      document.getElementById('flip-top-amount').textContent = `${formatNumber(top.amount)} ₸`;
+
+      document.getElementById('flip-goal-title').textContent = goal.title || 'Сбор';
+      document.getElementById('flip-goal-numbers').textContent = `${formatNumber(goal.current)} / ${formatNumber(goal.target)} ₸`;
+      document.getElementById('flip-goal-fill').style.width = `${goal.percent || 0}%`;
+      document.getElementById('flip-goal-pct').textContent = `${goal.percent || 0}%`;
+
+      document.getElementById('flip-today-amount').textContent = `${formatNumber(today)} ₸`;
+    }
+
+    function updateTicker(data) {
+      tickerData = data;
+      if (mode === 'flip') {
+        renderFlip(tickerData);
+      } else {
+        renderMarquee(tickerData);
+      }
+    }
+
+    // Flip Rotation
+    let currentFlipIndex = 0;
+    const flipCards = ['card-last', 'card-top', 'card-goal', 'card-today'];
+    let flipTimer = null;
+
+    function nextFlipCard() {
+      const prevId = flipCards[currentFlipIndex];
+      const prevCard = document.getElementById(prevId);
+      if (prevCard) {
+        prevCard.classList.remove('active');
+        prevCard.classList.add('exit');
+        setTimeout(() => prevCard.classList.remove('exit'), 400);
+      }
+
+      currentFlipIndex = (currentFlipIndex + 1) % flipCards.length;
+      const nextId = flipCards[currentFlipIndex];
+      const nextCard = document.getElementById(nextId);
+      if (nextCard) {
+        nextCard.classList.add('active');
+      }
+    }
+
+    function startFlipRotation() {
+      if (flipTimer) clearInterval(flipTimer);
+      flipTimer = setInterval(nextFlipCard, 5000);
+    }
+
+    function fetchTicker() {
+      fetch(`/api/widgets/ticker${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.success) {
+            updateTicker(d);
+          }
+        })
+        .catch(() => updateTicker(tickerData));
+    }
+
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const eventSource = new EventSource(sseUrl);
+
+    eventSource.addEventListener('ticker_update', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data) updateTicker(data);
+      } catch (err) {}
+    });
+
+    eventSource.addEventListener('donation', () => {
+      fetchTicker();
+    });
+
+    fetchTicker();
+    updateTicker(tickerData);
+  </script>
+</body>
+</html>

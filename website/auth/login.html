@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход в Студию — TengeAlert ₸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #06090e;
+      --bg-surface: #0c1017;
+      --bg-surface-elevated: #121824;
+      --border-subtle: #1c2638;
+      --border-focus: #00f5a0;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-emerald: #00f5a0;
+      --accent-emerald-glow: rgba(0, 245, 160, 0.25);
+      --error-red: #ef4444;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow background */
+    .bg-aura {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 245, 160, 0.08) 0%, rgba(14, 165, 233, 0.04) 40%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* Brand Header */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #00f5a0, #00d284);
+      color: #051510;
+      font-weight: 800;
+      font-size: 26px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      margin-bottom: 16px;
+      text-decoration: none;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Auth Card */
+    .auth-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .auth-tab.active {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Social Buttons */
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .social-btn:hover {
+      background: #182234;
+      border-color: #2b3952;
+      transform: translateY(-1px);
+    }
+
+    .social-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    .divider span {
+      padding: 0 12px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9px;
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(0, 245, 160, 0.15);
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 18px 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .checkbox-group input {
+      margin-top: 2px;
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+    }
+
+    .checkbox-group a {
+      color: var(--accent-emerald);
+      text-decoration: underline;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--accent-emerald);
+      color: #051510;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px var(--accent-emerald-glow);
+    }
+
+    .btn-submit:hover {
+      background: #00ffaa;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 245, 160, 0.35);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(0, 245, 160, 0.12);
+      border: 1px solid rgba(0, 245, 160, 0.3);
+      color: #00f5a0;
+    }
+
+    /* Footer */
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-aura"></div>
+
+  <div class="auth-container">
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <a href="/" class="logo-badge">₸</a>
+      <h1 class="brand-title" id="page-title">Студия TengeAlert</h1>
+      <p class="brand-subtitle" id="page-subtitle">Вход в личный кабинет стримера</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card">
+      
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tab-login" onclick="switchMode('login')">Вход</button>
+        <button type="button" class="auth-tab" id="tab-register" onclick="switchMode('register')">Регистрация</button>
+      </div>
+
+      <!-- Alert Banner -->
+      <div id="alert-banner" class="alert-banner alert-error"></div>
+
+      <!-- Social Logins (Google & Apple) -->
+      <div class="social-buttons">
+        <button type="button" class="social-btn" onclick="loginWithGoogle()">
+          <!-- Google Official SVG -->
+          <svg class="social-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          Продолжить с Google
+        </button>
+
+        <button type="button" class="social-btn" onclick="loginWithApple()">
+          <!-- Apple Official SVG -->
+          <svg class="social-icon" viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.85c.66-.82 1.12-1.95.99-3.09-1 .04-2.16.66-2.85 1.47-.6.69-1.13 1.83-.98 2.94 1.11.09 2.19-.52 2.84-1.32"/>
+          </svg>
+          Войти через Apple ID
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>или через email</span>
+      </div>
+
+      <!-- Main Form -->
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+
+        <div class="form-group" id="group-name" style="display: none;">
+          <label class="form-label" for="input-name">Имя стримера / Название канала</label>
+          <input type="text" id="input-name" class="form-input" placeholder="Например: AssetGaming">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-email">Электронная почта (Email)</label>
+          <input type="email" id="input-email" class="form-input" placeholder="streamer@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-password">Пароль</label>
+          <input type="password" id="input-password" class="form-input" placeholder="Минимум 8 символов" required minlength="8">
+        </div>
+
+        <div class="checkbox-group" id="group-terms" style="display: none;">
+          <input type="checkbox" id="check-terms">
+          <label for="check-terms">
+            Я принимаю <a href="/legal/TERMS_OF_SERVICE.md" target="_blank">Условия использования</a> и <a href="/legal/PRIVACY_POLICY.md" target="_blank">Политику конфиденциальности</a> TengeAlert.
+          </label>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-submit">
+          Войти в студию
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Security & Hosting Notice -->
+    <div class="auth-footer">
+      <div>Данные размещаются на защищенных серверах в РК согласно Закону № 94-V</div>
+      <div style="margin-top: 4px;">Инфраструктура оптимизирована для хостинга PS.kz (Plesk)</div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'login';
+
+    function switchMode(mode) {
+      currentMode = mode;
+      hideAlert();
+
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const groupName = document.getElementById('group-name');
+      const groupTerms = document.getElementById('group-terms');
+      const btnSubmit = document.getElementById('btn-submit');
+      const pageTitle = document.getElementById('page-title');
+      const pageSubtitle = document.getElementById('page-subtitle');
+
+      if (mode === 'register') {
+        tabLogin.classList.remove('active');
+        tabRegister.classList.add('active');
+        groupName.style.display = 'block';
+        groupTerms.style.display = 'flex';
+        btnSubmit.textContent = 'Создать аккаунт стримера';
+        pageTitle.textContent = 'Регистрация стримера';
+        pageSubtitle.textContent = 'Создайте личный кабинет за 30 секунд';
+      } else {
+        tabRegister.classList.remove('active');
+        tabLogin.classList.add('active');
+        groupName.style.display = 'none';
+        groupTerms.style.display = 'none';
+        btnSubmit.textContent = 'Войти в студию';
+        pageTitle.textContent = 'Студия TengeAlert';
+        pageSubtitle.textContent = 'Вход в личный кабинет стримера';
+      }
+    }
+
+    function showAlert(msg, isError = true) {
+      const banner = document.getElementById('alert-banner');
+      banner.textContent = msg;
+      banner.className = 'alert-banner ' + (isError ? 'alert-error' : 'alert-success');
+      banner.style.display = 'block';
+    }
+
+    function hideAlert() {
+      document.getElementById('alert-banner').style.display = 'none';
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const email = document.getElementById('input-email').value.trim();
+      const password = document.getElementById('input-password').value;
+      const displayName = document.getElementById('input-name').value.trim();
+      const agreedToTerms = document.getElementById('check-terms').checked;
+      const submitBtn = document.getElementById('btn-submit');
+
+      if (currentMode === 'register' && !agreedToTerms) {
+        showAlert('Пожалуйста, подтвердите согласие с Условиями использования и Политикой конфиденциальности.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Обработка...';
+
+      try {
+        const endpoint = currentMode === 'register' ? '/api/auth/register' : '/api/auth/login';
+        const payload = currentMode === 'register' 
+          ? { email, password, displayName, agreedToTerms }
+          : { email, password };
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Ошибка авторизации');
+        }
+
+        // Save session token in localStorage & cookie
+        localStorage.setItem('tenge_session_token', data.sessionToken);
+        localStorage.setItem('tenge_user', JSON.stringify(data.user));
+        document.cookie = `tenge_session=${data.sessionToken}; path=/; max-age=604800; SameSite=Lax`;
+
+        showAlert(currentMode === 'register' ? 'Аккаунт успешно создан! Перенаправление...' : 'Вход выполнен! Перенаправление...', false);
+
+        setTimeout(() => {
+          window.location.href = '/dashboard/';
+        }, 600);
+
+      } catch (err) {
+        showAlert(err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = currentMode === 'register' ? 'Создать аккаунт стримера' : 'Войти в студию';
+      }
+    }
+
+    function loginWithGoogle() {
+      // Demo Social Flow with Google
+      const email = prompt('Введите ваш Google Email для входа через аккаунт Google:', 'streamer@gmail.com');
+      if (!email) return;
+      
+      fetch('/api/auth/social/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'google',
+          email: email,
+          displayName: email.split('@')[0],
+          providerId: 'goog_' + Math.random().toString(36).substring(7)
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.sessionToken) {
+          localStorage.setItem('tenge_session_token', data.sessionToken);
+          localStorage.setItem('tenge_user', JSON.stringify(data.user));
+          document.cookie = `tenge_session=${data.sessionToken}; path=/; max-age=604800; SameSite=Lax`;
+          window.location.href = '/dashboard/';
+        }
+      })
+      .catch(err => showAlert(err.message));
+    }
+
+    function loginWithApple() {
+      // Demo Social Flow with Apple ID
+      const email = prompt('Введите ваш Apple ID Email:', 'streamer@icloud.com');
+      if (!email) return;
+      
+      fetch('/api/auth/social/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'apple',
+          email: email,
+          displayName: email.split('@')[0],
+          providerId: 'apple_' + Math.random().toString(36).substring(7)
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.sessionToken) {
+          localStorage.setItem('tenge_session_token', data.sessionToken);
+          localStorage.setItem('tenge_user', JSON.stringify(data.user));
+          document.cookie = `tenge_session=${data.sessionToken}; path=/; max-age=604800; SameSite=Lax`;
+          window.location.href = '/dashboard/';
+        }
+      })
+      .catch(err => showAlert(err.message));
+    }
+
+    // Check if mode param in URL (e.g. ?mode=register)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register') {
+      switchMode('register');
+    }
+  </script>
+</body>
+</html>

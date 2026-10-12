@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — Design Concept Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Geist+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #050608;
+      color: #f1f5f9;
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    header {
+      padding: 32px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,12,18,0.7);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-lab {
+      background: rgba(0, 245, 160, 0.12);
+      border: 1px solid rgba(0, 245, 160, 0.3);
+      color: #00f5a0;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+    }
+
+    .concept-nav {
+      display: flex;
+      gap: 8px;
+      background: #0f1117;
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+    }
+
+    .nav-tab.active {
+      background: #1e2230;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 36px 24px;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 990px) {
+      .concept-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .concept-card {
+      display: none;
+    }
+    .concept-card.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-pane {
+      background: #0c0e14;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .palette-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .swatch {
+      flex: 1;
+      height: 48px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: flex-end;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+    }
+
+    .btn-test {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    /* PREVIEW STAGE */
+    .preview-stage {
+      background: #08090d;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 32px;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(15,23,42,0.4) 0%, rgba(5,6,8,0.95) 100%);
+      pointer-events: none;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 1. THEME: NEO-NOMAD (Midnight Steppe & Satin Gold) */
+    /* ------------------------------------------------------------------ */
+    .widget-nomad {
+      position: relative;
+      width: 420px;
+      background: linear-gradient(145deg, #090e1a 0%, #050811 100%);
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 30px rgba(34, 211, 238, 0.15);
+      font-family: 'Inter', sans-serif;
+    }
+    .nomad-ornament {
+      position: absolute;
+      top: -16px;
+      right: 24px;
+      background: linear-gradient(135deg, #e5a93c 0%, #b88220 100%);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(229, 169, 60, 0.4);
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: #060813;
+      font-size: 16px;
+    }
+    .nomad-badge {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #22d3ee;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .nomad-donor {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .nomad-amount {
+      font-family: 'Geist Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      color: #e5a93c;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px rgba(229, 169, 60, 0.3);
+    }
+    .nomad-amount span { color: #22d3ee; }
+    .nomad-message {
+      font-size: 13px;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.03);
+      border-left: 2px solid #e5a93c;
+      padding: 8px 12px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 2. THEME: ESPORTS HUD (Chakra Petch & Toxic Lime) */
+    /* ------------------------------------------------------------------ */
+    .widget-esports {
+      position: relative;
+      width: 440px;
+      background: #0d0f14;
+      border-left: 4px solid #d4ff00;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+      padding: 20px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 25px rgba(212, 255, 0, 0.15);
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .esports-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .esports-tag {
+      background: #d4ff00;
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .esports-telemetry {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .esports-donor {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .esports-amount {
+      font-size: 34px;
+      font-weight: 800;
+      color: #d4ff00;
+      letter-spacing: -0.01em;
+      margin: 4px 0 10px;
+      text-shadow: 0 0 25px rgba(212, 255, 0, 0.4);
+    }
+    .esports-msg {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #e2e8f0;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+      padding-top: 10px;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 3. THEME: INDUSTRIAL AUDIO (Teenage Engineering) */
+    /* ------------------------------------------------------------------ */
+    .widget-industrial {
+      width: 420px;
+      background: #18191c;
+      border: 1px solid #2e3038;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Space Mono', monospace;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .industrial-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #ff5722;
+      border-bottom: 1px solid #2e3038;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    .industrial-screen {
+      background: #0b0c0e;
+      border: 1px solid #262830;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .industrial-dot-amount {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ff5722;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 12px rgba(255, 87, 34, 0.5);
+    }
+    .industrial-donor {
+      font-size: 13px;
+      color: #d1d5db;
+      margin-bottom: 6px;
+    }
+    .industrial-msg {
+      font-size: 12px;
+      color: #9ca3af;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 4. THEME: LIQUID GLASS (VisionOS Luxury) */
+    /* ------------------------------------------------------------------ */
+    .widget-liquid {
+      width: 420px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.3);
+      position: relative;
+    }
+    .liquid-coin {
+      position: absolute;
+      top: -18px;
+      left: -14px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+      border: 2px solid rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .liquid-tag {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #00f5a0;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+    .liquid-donor {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .liquid-amount {
+      font-family: 'Outfit', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 12px;
+    }
+    .liquid-amount span { color: #00f5a0; }
+    .liquid-msg {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-area">
+        <h1 style="font-size: 20px; font-weight: 800;">Tenge<span style="color:#00f5a0;">Alert</span></h1>
+        <span class="badge-lab">DESIGN LAB &bull; 4 КОНЦЕПТА</span>
+      </div>
+
+      <div class="concept-nav">
+        <button class="nav-tab active" onclick="switchConcept('nomad')">1. Neo-Nomad</button>
+        <button class="nav-tab" onclick="switchConcept('esports')">2. Esports HUD</button>
+        <button class="nav-tab" onclick="switchConcept('industrial')">3. Industrial Audio</button>
+        <button class="nav-tab" onclick="switchConcept('liquid')">4. Liquid Glass</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- CONCEPT 1: NEO-NOMAD -->
+    <div class="concept-card active" id="card-nomad">
+      <div class="concept-grid">
+        <div class="info-pane">
+          <span class="tag-pill" style="background: rgba(229,169,60,0.15); color: #e5a93c;">Культурный нео-футуризм</span>
+          <h2 class="title" style="font-family: 'Syne', sans-serif;">Neo-Nomad / Midnight Steppe</h2>
+          <p class="desc">
+            Современная казахстанская технологическая идентичность без сувенирщины. Глубокий ночной ультрамарин степного неба, сатиновое матовое золото кочевников, ледяная бирюза Тянь-Шаня и геометрическая типографика.
+          </p>
+
+          <div class="palette-row">
+            <div class="swatch" style="background: #060813; color: #94a3b8;">#060813</div>
+            <div class="swatch" style="background: #e5a93c; color: #000;">#E5A93C</div>
+            <div class="swatch" style="background: #22d3ee; color: #000;">#22D3EE</div>
+            <div class="swatch" style="background: #131722; color: #fff;">#131722</div>
+          </div>
+
+          <button class="btn-test" style="background: #e5a93c; color: #060813;" onclick="simulateAlert('nomad')">
+            Симулировать донат в Neo-Nomad
+          </button>
+        </div>
+
+        <div class="preview-stage">
+          <div class="game-backdrop"></div>
+          <div class="widget-nomad" id="alert-nomad">
+            <div class="nomad-ornament">₸</div>
+            <div class="nomad-badge">TENGEALERT &bull; ТАБЫС</div>
+            <div class="nomad-donor">Азамат Б.</div>
+            <div class="nomad-amount">7 500 <span>₸</span></div>
+            <div class="nomad-message">Тащи турнир, Алматы с тобой! Алға!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 2: ESPORTS HUD -->
+    <div class="concept-card" id="card-esports">
+      <div class="concept-grid">
+        <div class="info-pane">
+          <span class="tag-pill" style="background: rgba(212,255,0,0.15); color: #d4ff00;">Киберспортивный турнир</span>
+          <h2 class="title" style="font-family: 'Chakra Petch', sans-serif;">Tier-1 Esports Broadcast HUD</h2>
+          <p class="desc">
+            Агрессивный стиль топовых чемпионатов (BLAST, Valorant Champions, The International). Скошенные срезы под 45 градусов, токсичный кислотный лайм, индикаторы телеметрии стрима и бегущие строки.
+          </p>
+
+          <div class="palette-row">
+            <div class="swatch" style="background: #0a0b0e; color: #94a3b8;">#0A0B0E</div>
+            <div class="swatch" style="background: #d4ff00; color: #000;">#D4FF00</div>
+            <div class="swatch" style="background: #ffffff; color: #000;">#FFFFFF</div>
+            <div class="swatch" style="background: #7c3aed; color: #fff;">#7C3AED</div>
+          </div>
+
+          <button class="btn-test" style="background: #d4ff00; color: #0a0b0e;" onclick="simulateAlert('esports')">
+            Симулировать донат в Esports HUD
+          </button>
+        </div>
+
+        <div class="preview-stage">
+          <div class="game-backdrop"></div>
+          <div class="widget-esports" id="alert-esports">
+            <div class="esports-top">
+              <span class="esports-tag">DONATION HIT</span>
+              <span class="esports-telemetry">LATENCY: 4.2ms &bull; 60 FPS</span>
+            </div>
+            <div class="esports-donor">CyberWarrior_99</div>
+            <div class="esports-amount">15 000 ₸</div>
+            <div class="esports-msg">РАЗДАВИ ИХ В КАТКЕ! ТОПОВЫЙ СНАЙПЕР!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 3: INDUSTRIAL AUDIO -->
+    <div class="concept-card" id="card-industrial">
+      <div class="concept-grid">
+        <div class="info-pane">
+          <span class="tag-pill" style="background: rgba(255,87,34,0.15); color: #ff5722;">Инженерный минимализм</span>
+          <h2 class="title" style="font-family: 'Space Mono', monospace;">Teenage Engineering Studio</h2>
+          <p class="desc">
+            Винтажно-футуристический тактильный дизайн культовой студийной аппаратуры. Матричные LED-дисплеи, тумблеры, моноширинные шрифты и сигнальный оранжевый цвет.
+          </p>
+
+          <div class="palette-row">
+            <div class="swatch" style="background: #18191c; color: #94a3b8;">#18191C</div>
+            <div class="swatch" style="background: #ff5722; color: #fff;">#FF5722</div>
+            <div class="swatch" style="background: #0b0c0e; color: #94a3b8;">#0B0C0E</div>
+            <div class="swatch" style="background: #e5e7eb; color: #000;">#E5E7EB</div>
+          </div>
+
+          <button class="btn-test" style="background: #ff5722; color: #ffffff;" onclick="simulateAlert('industrial')">
+            Симулировать донат в Industrial
+          </button>
+        </div>
+
+        <div class="preview-stage">
+          <div class="game-backdrop"></div>
+          <div class="widget-industrial" id="alert-industrial">
+            <div class="industrial-header">
+              <span>TENGEALERT // MOD-01</span>
+              <span>LIVE: 01:42:19</span>
+            </div>
+            <div class="industrial-screen">
+              <div class="industrial-dot-amount">5 000 KZT</div>
+            </div>
+            <div class="industrial-donor">SOURCE: Данияр К.</div>
+            <div class="industrial-msg">Отличный звук на стриме! Держи на кофе.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT 4: LIQUID GLASS -->
+    <div class="concept-card" id="card-liquid">
+      <div class="concept-grid">
+        <div class="info-pane">
+          <span class="tag-pill" style="background: rgba(0,245,160,0.15); color: #00f5a0;">VisionOS Luxury</span>
+          <h2 class="title" style="font-family: 'Outfit', sans-serif;">Dark Luxury &bull; Liquid Glass</h2>
+          <p class="desc">
+            Премиальный глубокий глянец в стиле Apple VisionOS. Жидкое преломляющее стекло, хроматические отблески по краям, парящая монета ₸ и чистый кристальный изумруд.
+          </p>
+
+          <div class="palette-row">
+            <div class="swatch" style="background: #030305; color: #94a3b8;">#030305</div>
+            <div class="swatch" style="background: #00f5a0; color: #000;">#00F5A0</div>
+            <div class="swatch" style="background: #cbd5e1; color: #000;">#CBD5E1</div>
+            <div class="swatch" style="background: rgba(255,255,255,0.08); color: #fff;">GLASS</div>
+          </div>
+
+          <button class="btn-test" style="background: #00f5a0; color: #030305;" onclick="simulateAlert('liquid')">
+            Симулировать донат в Liquid Glass
+          </button>
+        </div>
+
+        <div class="preview-stage">
+          <div class="game-backdrop"></div>
+          <div class="widget-liquid" id="alert-liquid">
+            <div class="liquid-coin">₸</div>
+            <div class="liquid-tag">TENGEALERT &bull; PREMIER</div>
+            <div class="liquid-donor">Аружан С.</div>
+            <div class="liquid-amount">10 000 <span>₸</span></div>
+            <div class="liquid-msg">Прекрасного стрима и побед в турнире!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchConcept(id) {
+      document.querySelectorAll('.concept-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+      const target = document.getElementById('card-' + id);
+      if (target) target.classList.add('active');
+
+      const tabs = Array.from(document.querySelectorAll('.nav-tab'));
+      const mapping = { 'nomad': 0, 'esports': 1, 'industrial': 2, 'liquid': 3 };
+      if (tabs[mapping[id]]) tabs[mapping[id]].classList.add('active');
+    }
+
+    // Web Audio Sound FX for each concept
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playConceptSound(type) {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+
+      if (type === 'nomad') {
+        // Deep resonant ethnic bell chime
+        [440, 659.25, 880, 1318.51].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.08);
+          g.gain.setValueAtTime(0, now + i * 0.08);
+          g.gain.linearRampToValueAtTime(0.25, now + i * 0.08 + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 1.2);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 1.3);
+        });
+      } else if (type === 'esports') {
+        // High impact sci-fi tournament bass drop
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.25);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } else if (type === 'industrial') {
+        // Tactile mechanical relay clicks
+        [800, 1200, 900].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(f, now + i * 0.05);
+          g.gain.setValueAtTime(0.15, now + i * 0.05);
+          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.04);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now + i * 0.05);
+          osc.stop(now + i * 0.05 + 0.05);
+        });
+      } else {
+        // Crystalline liquid shimmer
+        [587.33, 880, 1174.66, 1760].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + i * 0.06);
+          g.gain.setValueAtTime(0.2, now + i * 0.06);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.9);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(now + i * 0.06);
+          osc.stop(now + i * 0.06 + 1.0);
+        });
+      }
+    }
+
+    function simulateAlert(type) {
+      playConceptSound(type);
+      const el = document.getElementById('alert-' + type);
+      if (!el) return;
+
+      el.style.transform = 'scale(1.08)';
+      el.style.transition = 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      setTimeout(() => {
+        el.style.transform = 'scale(1)';
+      }, 200);
+    }
+  </script>
+</body>
+</html>

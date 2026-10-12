@@ -1,0 +1,13 @@
+<Application x:Class="TengeAlert.Windows.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="BgDark" Color="#0a0d14"/>
+        <SolidColorBrush x:Key="CardDark" Color="#101522"/>
+        <SolidColorBrush x:Key="BorderDark" Color="#1e2638"/>
+        <SolidColorBrush x:Key="AccentEmerald" Color="#00f5a0"/>
+        <SolidColorBrush x:Key="TextMuted" Color="#8a99ad"/>
+        <SolidColorBrush x:Key="TextLight" Color="#f8fafc"/>
+    </Application.Resources>
+</Application>

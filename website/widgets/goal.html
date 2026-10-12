@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Goal Bar Widget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Geist+Mono:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .goal-card {
+      width: 92%;
+      max-width: 660px;
+      padding: 24px 28px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      transition: all 0.35s ease;
+      position: relative;
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .goal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .goal-percent-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 999px;
+      padding: 3px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .goal-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 13px;
+      font-family: 'Geist Mono', monospace;
+      color: #94a3b8;
+    }
+
+    /* 1. NEO-NOMAD THEME */
+    body.theme-neo_nomad .goal-card,
+    body.theme-royal_gold .goal-card {
+      background: linear-gradient(145deg, #090e1a 0%, #050811 100%);
+      border: 1px solid rgba(229, 169, 60, 0.45);
+      box-shadow: 0 16px 45px rgba(0,0,0,0.85);
+    }
+    body.theme-neo_nomad .goal-title,
+    body.theme-royal_gold .goal-title {
+      font-family: 'Syne', sans-serif;
+      color: #f8fafc;
+    }
+    body.theme-neo_nomad .goal-percent-badge,
+    body.theme-royal_gold .goal-percent-badge {
+      background: rgba(229, 169, 60, 0.15);
+      border: 1px solid rgba(229, 169, 60, 0.35);
+      color: #e5a93c;
+    }
+    body.theme-neo_nomad .progress-fill,
+    body.theme-royal_gold .progress-fill {
+      background: linear-gradient(90deg, #e5a93c 0%, #22d3ee 100%);
+    }
+    body.theme-neo_nomad .val-current,
+    body.theme-royal_gold .val-current {
+      color: #e5a93c;
+      font-weight: 700;
+    }
+
+    /* 2. ESPORTS HUD THEME */
+    body.theme-esports_hud .goal-card {
+      background: #0d0f14;
+      border-left: 5px solid #d4ff00;
+      border-right: 1px solid rgba(255,255,255,0.12);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+      box-shadow: 0 16px 45px rgba(0,0,0,0.92);
+    }
+    body.theme-esports_hud .goal-title {
+      font-family: 'Chakra Petch', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    body.theme-esports_hud .goal-percent-badge {
+      background: #d4ff00;
+      color: #000;
+      border-radius: 2px;
+      font-weight: 800;
+    }
+    body.theme-esports_hud .progress-track {
+      border-radius: 2px;
+      background: #141720;
+      height: 20px;
+    }
+    body.theme-esports_hud .progress-fill {
+      border-radius: 2px;
+      background: linear-gradient(90deg, #d4ff00 0%, #a3e635 100%);
+    }
+    body.theme-esports_hud .val-current {
+      color: #d4ff00;
+      font-weight: 800;
+    }
+
+    /* 3. INDUSTRIAL AUDIO THEME */
+    body.theme-industrial .goal-card {
+      background: #18191c;
+      border: 1px solid #2e3038;
+      border-radius: 10px;
+      font-family: 'Space Mono', monospace;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.85);
+    }
+    body.theme-industrial .goal-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 15px;
+      color: #e5e7eb;
+      letter-spacing: 0.05em;
+    }
+    body.theme-industrial .goal-percent-badge {
+      background: rgba(255, 87, 34, 0.15);
+      border: 1px solid #ff5722;
+      color: #ff5722;
+      border-radius: 4px;
+    }
+    body.theme-industrial .progress-track {
+      border-radius: 4px;
+      background: #0b0c0e;
+      border: 1px solid #262830;
+      height: 22px;
+    }
+    body.theme-industrial .progress-fill {
+      border-radius: 2px;
+      background: #ff5722;
+    }
+    body.theme-industrial .val-current {
+      color: #ff5722;
+      font-weight: 700;
+    }
+
+    /* 4. LIQUID GLASS THEME */
+    body.theme-liquid_glass .goal-card,
+    body.theme-cyber_emerald .goal-card,
+    body.theme-minimal_glass .goal-card,
+    body.theme-qazaq_neon .goal-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.3);
+    }
+    body.theme-liquid_glass .goal-title,
+    body.theme-cyber_emerald .goal-title,
+    body.theme-minimal_glass .goal-title,
+    body.theme-qazaq_neon .goal-title {
+      font-family: 'Outfit', sans-serif;
+      color: #ffffff;
+    }
+    body.theme-liquid_glass .goal-percent-badge,
+    body.theme-cyber_emerald .goal-percent-badge,
+    body.theme-minimal_glass .goal-percent-badge,
+    body.theme-qazaq_neon .goal-percent-badge {
+      background: rgba(0, 245, 160, 0.15);
+      border: 1px solid rgba(0, 245, 160, 0.35);
+      color: #00f5a0;
+    }
+    body.theme-liquid_glass .progress-fill,
+    body.theme-cyber_emerald .progress-fill,
+    body.theme-minimal_glass .progress-fill,
+    body.theme-qazaq_neon .progress-fill {
+      background: linear-gradient(90deg, #00f5a0 0%, #00d9f5 100%);
+    }
+    body.theme-liquid_glass .val-current,
+    body.theme-cyber_emerald .val-current,
+    body.theme-minimal_glass .val-current,
+    body.theme-qazaq_neon .val-current {
+      color: #00f5a0;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="theme-neo_nomad">
+
+  <div class="goal-card">
+    <div class="goal-header">
+      <div class="goal-title">
+        <span id="goal-title-text">Цель сбора</span>
+      </div>
+      <div class="goal-percent-badge" id="goal-percent">0%</div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="goal-fill"></div>
+    </div>
+
+    <div class="goal-footer">
+      <div>Собрано: <span class="val-current" id="goal-current">0 ₸</span></div>
+      <div>Цель: <span id="goal-target">500 000 ₸</span></div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamerToken = urlParams.get('token') || '';
+    let currentTheme = urlParams.get('theme') || '';
+
+    function normalizeTheme(t) {
+      if (!t) return 'neo_nomad';
+      if (t === 'nomad' || t === 'royal_gold') return 'neo_nomad';
+      if (t === 'esports') return 'esports_hud';
+      if (t === 'audio') return 'industrial';
+      if (t === 'liquid' || t === 'cyber_emerald' || t === 'minimal_glass' || t === 'qazaq_neon') return 'liquid_glass';
+      return t;
+    }
+
+    function applyTheme(themeName) {
+      const normalized = normalizeTheme(themeName);
+      document.body.className = `theme-${normalized}`;
+      currentTheme = normalized;
+    }
+
+    if (currentTheme) {
+      applyTheme(currentTheme);
+    } else {
+      if (streamerToken) {
+        fetch(`/api/user/settings?token=${encodeURIComponent(streamerToken)}`)
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.settings && d.settings.theme) applyTheme(d.settings.theme);
+            else applyTheme('neo_nomad');
+          })
+          .catch(() => applyTheme('neo_nomad'));
+      } else {
+        applyTheme('neo_nomad');
+      }
+    }
+
+    function formatNumber(num) {
+      return (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function updateGoal(data) {
+      if (!data) return;
+      const title = data.title || 'На развитие стрима';
+      const current = parseInt(data.current, 10) || 0;
+      const target = parseInt(data.target, 10) || 500000;
+      const percent = Math.min(100, Math.round((current / (target || 1)) * 100));
+
+      document.getElementById('goal-title-text').textContent = title;
+      document.getElementById('goal-percent').textContent = `${percent}%`;
+      document.getElementById('goal-current').textContent = `${formatNumber(current)} ₸`;
+      document.getElementById('goal-target').textContent = `${formatNumber(target)} ₸`;
+      document.getElementById('goal-fill').style.width = `${percent}%`;
+    }
+
+    // Initial fetch
+    fetch(`/api/goal${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`)
+      .then(res => res.json())
+      .then(updateGoal)
+      .catch(err => console.error(err));
+
+    // Real-time SSE
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const es = new EventSource(sseUrl);
+
+    es.addEventListener('goal_update', (e) => {
+      try {
+        updateGoal(JSON.parse(e.data));
+      } catch (err) {}
+    });
+
+    es.addEventListener('theme_updated', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (!urlParams.get('theme') && data.theme) {
+          applyTheme(data.theme);
+        }
+      } catch (err) {}
+    });
+  </script>
+</body>
+</html>

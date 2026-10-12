@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Donation Battle Bar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700;800;900&family=Geist+Mono:wght@600;700;800&family=Inter:wght@500;600;700;800&family=Outfit:wght@700;800;900&family=Syne:wght@800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .battle-card {
+      width: 92%;
+      max-width: 680px;
+      padding: 18px 24px 16px;
+      border-radius: 20px;
+      background: linear-gradient(155deg, rgba(14, 18, 28, 0.94) 0%, rgba(7, 10, 16, 0.98) 100%);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 245, 160, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      cursor: pointer;
+    }
+
+    /* Header Title */
+    .battle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .battle-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .battle-tag {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+
+    .battle-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    .battle-vs-badge {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 900;
+      color: #fbbf24;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+    }
+
+    /* Teams Info Row */
+    .teams-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .team-box.side-a {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .team-box.side-b {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .team-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .side-a .team-name { color: var(--color-a, #00f5a0); text-shadow: 0 0 15px rgba(0, 245, 160, 0.4); }
+    .side-b .team-name { color: var(--color-b, #ff0055); text-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+
+    .team-score {
+      font-family: 'Geist Mono', monospace;
+      font-size: 14px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .team-percent {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0.85;
+    }
+
+    .side-a .team-percent { color: var(--color-a, #00f5a0); }
+    .side-b .team-percent { color: var(--color-b, #ff0055); }
+
+    /* Tug-of-War Track */
+    .battle-track {
+      width: 100%;
+      height: 22px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 999px;
+      padding: 3px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+      display: flex;
+    }
+
+    .track-segment-a {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #00d9f5 0%, var(--color-a, #00f5a0) 100%);
+      border-radius: 999px 0 0 999px;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .track-segment-b {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--color-b, #ff0055) 0%, #ff5500 100%);
+      border-radius: 0 999px 999px 0;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    /* Laser Divider Beam */
+    .laser-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      border-radius: 999px;
+      transform: translateX(-50%);
+      z-index: 10;
+      transition: left 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Hint Footer */
+    .battle-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .hint-keywords {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .kw-pill {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    /* Impact Float Badge */
+    .impact-badge {
+      position: absolute;
+      top: -14px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: #07090e;
+      opacity: 0;
+      transform: translateY(10px) scale(0.85);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .impact-badge.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .impact-badge.side-a {
+      left: 20px;
+      background: #00f5a0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .impact-badge.side-b {
+      right: 20px;
+      background: #ff0055;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="battle-card" id="battle-box" title="Нажмите для проверки анимации донат-битвы">
+
+    <!-- Top Impact Badge -->
+    <div class="impact-badge side-a" id="impact-a">+2 000 ₸ (Данияр К.)</div>
+    <div class="impact-badge side-b" id="impact-b">+2 000 ₸ (Азамат Б.)</div>
+
+    <!-- Header -->
+    <div class="battle-header">
+      <div class="battle-title-box">
+        <span class="battle-tag">ГОЛОСОВАНИЕ ДОНАТАМИ</span>
+        <span class="battle-title" id="battle-title">CS2 vs Valorant</span>
+      </div>
+      <div class="battle-vs-badge">VS</div>
+    </div>
+
+    <!-- Teams Info -->
+    <div class="teams-row">
+      <div class="team-box side-a">
+        <div class="team-name" id="name-a">CS2</div>
+        <div class="team-score" id="score-a">15 000 ₸</div>
+        <div class="team-percent" id="pct-a">55%</div>
+      </div>
+
+      <div class="team-box side-b">
+        <div class="team-name" id="name-b">Valorant</div>
+        <div class="team-score" id="score-b">12 500 ₸</div>
+        <div class="team-percent" id="pct-b">45%</div>
+      </div>
+    </div>
+
+    <!-- Tug-of-War Track -->
+    <div class="battle-track">
+      <div class="track-segment-a" id="seg-a" style="width: 55%;"></div>
+      <div class="track-segment-b" id="seg-b" style="width: 45%;"></div>
+      <div class="laser-divider" id="divider" style="left: 55%;"></div>
+    </div>
+
+    <!-- Footer Keywords -->
+    <div class="battle-footer">
+      <div class="hint-keywords">
+        <span>В тексте перевода Kaspi:</span>
+        <span class="kw-pill" id="kws-a">кс, cs</span>
+        <span>или</span>
+        <span class="kw-pill" id="kws-b">вал, val</span>
+      </div>
+      <div>
+        <span id="total-pool">Пул: 27 500 ₸</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamerToken = urlParams.get('token') || '';
+
+    let battleData = {
+      title: 'CS2 vs Valorant',
+      side_a: { name: 'CS2', color: '#00f5a0', keywords: ['cs', 'кс', 'cs2'], score: 15000 },
+      side_b: { name: 'Valorant', color: '#ff0055', keywords: ['val', 'вал', 'valorant'], score: 12500 }
+    };
+
+    function formatNumber(n) {
+      return (n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    // Audio Impact Sound (Web Audio)
+    let audioCtx = null;
+    function playImpactSound(isSideA) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(isSideA ? 440 : 330, now);
+        osc.frequency.exponentialRampToValueAtTime(isSideA ? 880 : 220, now + 0.18);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } catch (e) {}
+    }
+
+    function renderBattle(animateImpact = null, donor = null, amount = null) {
+      const a = battleData.side_a || { name: 'Сторона 1', color: '#00f5a0', score: 0 };
+      const b = battleData.side_b || { name: 'Сторона 2', color: '#ff0055', score: 0 };
+
+      document.getElementById('battle-title').textContent = battleData.title || 'Донат-битва';
+      document.getElementById('name-a').textContent = a.name;
+      document.getElementById('name-b').textContent = b.name;
+
+      document.getElementById('score-a').textContent = `${formatNumber(a.score)} ₸`;
+      document.getElementById('score-b').textContent = `${formatNumber(b.score)} ₸`;
+
+      document.getElementById('kws-a').textContent = (a.keywords || ['кс']).slice(0, 2).join(', ');
+      document.getElementById('kws-b').textContent = (b.keywords || ['вал']).slice(0, 2).join(', ');
+
+      const total = (a.score || 0) + (b.score || 0);
+      document.getElementById('total-pool').textContent = `Пул: ${formatNumber(total)} ₸`;
+
+      let pctA = 50;
+      let pctB = 50;
+      if (total > 0) {
+        pctA = Math.round((a.score / total) * 100);
+        // Clamp visually so neither side completely vanishes
+        pctA = Math.max(5, Math.min(95, pctA));
+        pctB = 100 - pctA;
+      }
+
+      document.getElementById('pct-a').textContent = `${pctA}%`;
+      document.getElementById('pct-b').textContent = `${pctB}%`;
+
+      document.getElementById('seg-a').style.width = `${pctA}%`;
+      document.getElementById('seg-b').style.width = `${pctB}%`;
+      document.getElementById('divider').style.left = `${pctA}%`;
+
+      // Set colors
+      if (a.color) document.documentElement.style.setProperty('--color-a', a.color);
+      if (b.color) document.documentElement.style.setProperty('--color-b', b.color);
+
+      // Impact pop
+      if (animateImpact === 'a') {
+        const badge = document.getElementById('impact-a');
+        badge.textContent = `+${formatNumber(amount || 1000)} ₸ (${donor || 'Зритель'})`;
+        badge.classList.add('show');
+        playImpactSound(true);
+        setTimeout(() => badge.classList.remove('show'), 3500);
+      } else if (animateImpact === 'b') {
+        const badge = document.getElementById('impact-b');
+        badge.textContent = `+${formatNumber(amount || 1000)} ₸ (${donor || 'Зритель'})`;
+        badge.classList.add('show');
+        playImpactSound(false);
+        setTimeout(() => badge.classList.remove('show'), 3500);
+      }
+    }
+
+    // Fetch streamer battle data
+    function fetchBattle() {
+      fetch(`/api/widgets/battle${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.battle) {
+            battleData = d.battle;
+            renderBattle();
+          }
+        })
+        .catch(() => renderBattle());
+    }
+
+    // Connect to Server SSE
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const eventSource = new EventSource(sseUrl);
+
+    eventSource.addEventListener('battle_update', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.battle) battleData = data.battle;
+        renderBattle(data.matchedSide, data.donation?.sender, data.donation?.amount);
+      } catch (err) {}
+    });
+
+    // Test on click (alternates vote A and B)
+    let testToggle = true;
+    document.getElementById('battle-box').addEventListener('click', () => {
+      if (testToggle) {
+        battleData.side_a.score += 2500;
+        renderBattle('a', 'Данияр К.', 2500);
+      } else {
+        battleData.side_b.score += 3000;
+        renderBattle('b', 'Азамат Б.', 3000);
+      }
+      testToggle = !testToggle;
+    });
+
+    // Initialize
+    fetchBattle();
+    renderBattle();
+  </script>
+</body>
+</html>

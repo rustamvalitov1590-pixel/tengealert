@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TengeAlert — OBS Top Donors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600;700&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container: Clean Matte Broadcast Card */
+    .top-widget-container {
+      width: 95%;
+      max-width: 580px;
+      padding: 20px 24px 16px;
+      border-radius: 16px;
+      background: rgba(13, 16, 23, 0.94);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      cursor: pointer;
+    }
+
+    /* Header */
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+
+    .top-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trophy-svg {
+      width: 18px;
+      height: 18px;
+      stroke: #e5a93c;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .top-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #f1f5f9;
+    }
+
+    .period-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* =========================================
+       PODIUM LAYOUT (Clean Broadcast Leaderboard)
+       ========================================= */
+    .podium-wrap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      height: 230px;
+      padding-top: 8px;
+    }
+
+    .podium-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      position: relative;
+    }
+
+    .donor-info-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+      width: 100%;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .avatar-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      background: #1e2433;
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .rank-1 .avatar-wrap {
+      width: 54px;
+      height: 54px;
+      font-size: 18px;
+      background: #252016;
+      color: #e5a93c;
+      border: 1px solid rgba(229, 169, 60, 0.6);
+    }
+
+    .rank-2 .avatar-wrap {
+      background: #1e2430;
+      color: #cbd5e1;
+      border: 1px solid rgba(203, 213, 225, 0.4);
+    }
+
+    .rank-3 .avatar-wrap {
+      background: #231b17;
+      color: #fb923c;
+      border: 1px solid rgba(251, 146, 60, 0.4);
+    }
+
+    .donor-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f5f9;
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-1 .donor-name {
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    .donor-amount {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .rank-1 .donor-amount {
+      font-size: 15px;
+      color: #e5a93c;
+    }
+
+    /* Pedestal block */
+    .pedestal-block {
+      width: 100%;
+      border-radius: 8px 8px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 10px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: none;
+      transition: height 0.4s ease;
+    }
+
+    .pedestal-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .rank-1 .pedestal-block {
+      height: 110px;
+      background: rgba(229, 169, 60, 0.06);
+      border-color: rgba(229, 169, 60, 0.3);
+    }
+
+    .rank-1 .pedestal-block::before {
+      background: #e5a93c;
+    }
+
+    .rank-2 .pedestal-block {
+      height: 85px;
+      background: rgba(203, 213, 225, 0.04);
+      border-color: rgba(203, 213, 225, 0.2);
+    }
+
+    .rank-2 .pedestal-block::before {
+      background: #94a3b8;
+    }
+
+    .rank-3 .pedestal-block {
+      height: 65px;
+      background: rgba(251, 146, 60, 0.04);
+      border-color: rgba(251, 146, 60, 0.2);
+    }
+
+    .rank-3 .pedestal-block::before {
+      background: #b45309;
+    }
+
+    .pedestal-number {
+      font-family: 'Geist Mono', monospace;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      color: #64748b;
+    }
+
+    .rank-1 .pedestal-number {
+      color: #e5a93c;
+    }
+
+    .rank-2 .pedestal-number {
+      color: #cbd5e1;
+    }
+
+    .rank-3 .pedestal-number {
+      color: #b45309;
+    }
+
+    .pedestal-sub {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    /* =========================================
+       LIST LAYOUT (?layout=list)
+       ========================================= */
+    .list-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .list-item.rank-1 {
+      background: rgba(229, 169, 60, 0.05);
+      border-color: rgba(229, 169, 60, 0.25);
+    }
+
+    .list-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .list-rank-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #94a3b8;
+    }
+
+    .rank-1 .list-rank-badge {
+      background: #e5a93c;
+      color: #0b0d13;
+    }
+
+    .list-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .list-count {
+      font-size: 11px;
+      color: #64748b;
+      margin-left: 6px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .list-amount {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .rank-1 .list-amount {
+      color: #e5a93c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-widget-container" id="widget-box">
+    <!-- Header -->
+    <div class="top-header">
+      <div class="top-title-box">
+        <svg class="trophy-svg" viewBox="0 0 24 24">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+          <path d="M4 22h16"/>
+          <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/>
+          <path d="M6 2h12v7a6 6 0 0 1-12 0V2z"/>
+        </svg>
+        <span class="top-title">Топ донатеров</span>
+      </div>
+      <div class="period-badge" id="period-tag">За всё время</div>
+    </div>
+
+    <!-- Podium Layout -->
+    <div class="podium-wrap" id="podium-view">
+      <!-- 2nd Place (Left) -->
+      <div class="podium-col rank-2" id="col-rank-2">
+        <div class="donor-info-card">
+          <div class="avatar-wrap" id="avatar-2">02</div>
+          <div class="donor-name" id="name-2">—</div>
+          <div class="donor-amount" id="amount-2">0 ₸</div>
+        </div>
+        <div class="pedestal-block">
+          <div class="pedestal-number">02</div>
+          <div class="pedestal-sub">МЕСТО</div>
+        </div>
+      </div>
+
+      <!-- 1st Place (Center) -->
+      <div class="podium-col rank-1" id="col-rank-1">
+        <div class="donor-info-card">
+          <div class="avatar-wrap" id="avatar-1">01</div>
+          <div class="donor-name" id="name-1">—</div>
+          <div class="donor-amount" id="amount-1">0 ₸</div>
+        </div>
+        <div class="pedestal-block">
+          <div class="pedestal-number">01</div>
+          <div class="pedestal-sub">ЛИДЕР</div>
+        </div>
+      </div>
+
+      <!-- 3rd Place (Right) -->
+      <div class="podium-col rank-3" id="col-rank-3">
+        <div class="donor-info-card">
+          <div class="avatar-wrap" id="avatar-3">03</div>
+          <div class="donor-name" id="name-3">—</div>
+          <div class="donor-amount" id="amount-3">0 ₸</div>
+        </div>
+        <div class="pedestal-block">
+          <div class="pedestal-number">03</div>
+          <div class="pedestal-sub">МЕСТО</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List Layout -->
+    <div class="list-wrap" id="list-view"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamerToken = urlParams.get('token') || '';
+    const layoutMode = urlParams.get('layout') || 'podium';
+    const period = urlParams.get('period') || 'all';
+    const limit = parseInt(urlParams.get('limit'), 10) || (layoutMode === 'list' ? 5 : 3);
+
+    const periodNames = {
+      'today': 'Сегодня',
+      'week': 'За 7 дней',
+      'month': 'За месяц',
+      'all': 'За всё время'
+    };
+    document.getElementById('period-tag').textContent = periodNames[period] || 'За всё время';
+
+    if (layoutMode === 'list') {
+      document.getElementById('podium-view').style.display = 'none';
+      document.getElementById('list-view').style.display = 'flex';
+    }
+
+    function formatNumber(num) {
+      return (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function getInitials(name) {
+      if (!name) return '—';
+      const clean = name.replace(/[^\p{L}\p{N}\s-]/gu, '').trim();
+      const parts = clean.split(/\s+/).filter(Boolean);
+      if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return clean.slice(0, 2).toUpperCase() || '—';
+    }
+
+    let currentDonors = [];
+
+    function renderPodium(donors) {
+      const p1 = donors[0];
+      const p2 = donors[1];
+      const p3 = donors[2];
+
+      // Rank 1
+      if (p1) {
+        document.getElementById('avatar-1').textContent = getInitials(p1.sender);
+        document.getElementById('name-1').textContent = p1.sender;
+        document.getElementById('amount-1').textContent = `${formatNumber(p1.amount)} ₸`;
+      } else {
+        document.getElementById('avatar-1').textContent = '01';
+        document.getElementById('name-1').textContent = 'Ожидание';
+        document.getElementById('amount-1').textContent = '0 ₸';
+      }
+
+      // Rank 2
+      if (p2) {
+        document.getElementById('avatar-2').textContent = getInitials(p2.sender);
+        document.getElementById('name-2').textContent = p2.sender;
+        document.getElementById('amount-2').textContent = `${formatNumber(p2.amount)} ₸`;
+      } else {
+        document.getElementById('avatar-2').textContent = '02';
+        document.getElementById('name-2').textContent = 'Ожидание';
+        document.getElementById('amount-2').textContent = '0 ₸';
+      }
+
+      // Rank 3
+      if (p3) {
+        document.getElementById('avatar-3').textContent = getInitials(p3.sender);
+        document.getElementById('name-3').textContent = p3.sender;
+        document.getElementById('amount-3').textContent = `${formatNumber(p3.amount)} ₸`;
+      } else {
+        document.getElementById('avatar-3').textContent = '03';
+        document.getElementById('name-3').textContent = 'Ожидание';
+        document.getElementById('amount-3').textContent = '0 ₸';
+      }
+    }
+
+    function renderList(donors) {
+      const container = document.getElementById('list-view');
+      container.innerHTML = '';
+
+      if (!donors || donors.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#64748b; padding:16px; font-size:12px;">Нет данных о донатах</div>';
+        return;
+      }
+
+      donors.slice(0, limit).forEach((d, idx) => {
+        const rank = idx + 1;
+        const item = document.createElement('div');
+        item.className = `list-item rank-${rank}`;
+        item.innerHTML = `
+          <div class="list-left">
+            <div class="list-rank-badge">0${rank}</div>
+            <div>
+              <span class="list-name">${d.sender}</span>
+              ${d.count > 1 ? `<span class="list-count">${d.count} перев.</span>` : ''}
+            </div>
+          </div>
+          <div class="list-amount">${formatNumber(d.amount)} ₸</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateTopDonors(donors) {
+      currentDonors = donors || [];
+      if (layoutMode === 'list') {
+        renderList(currentDonors);
+      } else {
+        renderPodium(currentDonors);
+      }
+    }
+
+    function fetchTopDonors() {
+      const q = new URLSearchParams();
+      if (streamerToken) q.set('token', streamerToken);
+      q.set('period', period);
+      q.set('limit', limit);
+
+      fetch(`/api/donations/top?${q.toString()}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.top_donors) {
+            updateTopDonors(d.top_donors);
+          }
+        })
+        .catch(() => {
+          updateTopDonors([
+            { rank: 1, sender: 'Азамат Б.', amount: 20000, count: 2 },
+            { rank: 2, sender: 'Данияр К.', amount: 12500, count: 3 },
+            { rank: 3, sender: 'Аружан С.', amount: 7777, count: 1 }
+          ]);
+        });
+    }
+
+    // SSE Connection
+    const sseUrl = `/api/events${streamerToken ? '?token=' + encodeURIComponent(streamerToken) : ''}`;
+    const eventSource = new EventSource(sseUrl);
+
+    eventSource.addEventListener('top_update', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.top_donors) {
+          updateTopDonors(data.top_donors);
+        }
+      } catch (err) {}
+    });
+
+    fetchTopDonors();
+  </script>
+</body>
+</html>
