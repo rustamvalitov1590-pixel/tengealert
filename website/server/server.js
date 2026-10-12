@@ -1284,16 +1284,16 @@ async function handleRequest(req, res) {
     const target = pathname.replace('/api/download/', '').toLowerCase();
     let fileName = 'TengeAlert-Setup.exe';
     let mime = 'application/octet-stream';
-    let localPath = path.join(REPO_ROOT, 'apps', 'windows', 'reference', 'legacy_sample.exe');
+    let localPath = path.join(REPO_ROOT, 'dist', 'TengeAlert-Setup.exe');
 
     if (target === 'android' || target === 'apk') {
       fileName = 'TengeAlert-Companion-v1.1.4.apk';
       mime = 'application/vnd.android.package-archive';
-      localPath = path.join(REPO_ROOT, 'apps', 'android', 'reference', 'legacy_sample.apk');
+      localPath = path.join(REPO_ROOT, 'apps', 'android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk');
     } else if (target === 'windows-portable' || target === 'zip') {
       fileName = 'TengeAlert-Portable-v1.2.0.exe';
       mime = 'application/octet-stream';
-      localPath = path.join(REPO_ROOT, 'apps', 'windows', 'reference', 'legacy_sample.exe');
+      localPath = path.join(REPO_ROOT, 'apps', 'windows', 'bin', 'Release', 'TengeAlert.exe');
     }
 
     if (fs.existsSync(localPath)) {

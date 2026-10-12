@@ -1,6 +1,7 @@
-# Large binary releases (GitHub limits single files to 100MB)
-apps/windows/reference/legacy_sample.exe
+# Reference sample binaries (decompiled research samples)
+**/reference/
 *.exe
+*.apk
 
 # Temporary files & caches
 node_modules/
