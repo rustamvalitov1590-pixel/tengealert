@@ -36,3 +36,6 @@ website/server/secret_token.txt
 **/build/
 **/bin/
 **/obj/
+
+local.properties
+**/local.properties
