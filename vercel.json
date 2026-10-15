@@ -3,7 +3,7 @@
   "name": "tengealert",
   "functions": {
     "api/index.js": {
-      "includeFiles": "website/**,specs/**,legal/**",
+      "includeFiles": "website/**,specs/**,legal/**,dist/**",
       "maxDuration": 30
     }
   },

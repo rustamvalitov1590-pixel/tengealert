@@ -3,6 +3,14 @@
 *.exe
 *.apk
 
+# Allow compiled standalone distribution binaries (< 1 MB)
+!dist/*.exe
+!dist/*.apk
+!dist/*.zip
+!website/downloads/*.exe
+!website/downloads/*.zip
+!website/downloads/*.apk
+
 # Temporary files & caches
 node_modules/
 .vercel/

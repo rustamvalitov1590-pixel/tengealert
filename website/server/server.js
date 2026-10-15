@@ -1293,41 +1293,69 @@ async function handleRequest(req, res) {
     const target = pathname.replace('/api/download/', '').toLowerCase();
     let fileName = 'TengeAlert-Setup.exe';
     let mime = 'application/octet-stream';
-    let localPath = path.join(REPO_ROOT, 'dist', 'TengeAlert-Setup.exe');
 
     if (target === 'android' || target === 'apk') {
       fileName = 'TengeAlert-Companion-v1.1.4.apk';
       mime = 'application/vnd.android.package-archive';
-      localPath = path.join(REPO_ROOT, 'apps', 'android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk');
     } else if (target === 'windows-portable' || target === 'zip') {
-      fileName = 'TengeAlert-Portable-v1.2.0.exe';
-      mime = 'application/octet-stream';
-      localPath = path.join(REPO_ROOT, 'apps', 'windows', 'bin', 'Release', 'TengeAlert.exe');
+      fileName = 'TengeAlert-Portable.zip';
+      mime = 'application/zip';
     }
 
-    if (fs.existsSync(localPath)) {
+    const candidatePaths = [
+      path.join(ROOT_DIR, 'downloads', fileName),
+      path.join(REPO_ROOT, 'dist', fileName),
+      path.join(process.cwd(), 'website', 'downloads', fileName),
+      path.join(process.cwd(), 'dist', fileName),
+      path.join(__dirname, '..', 'downloads', fileName),
+      path.join(__dirname, '..', '..', 'dist', fileName)
+    ];
+
+    if (fileName === 'TengeAlert-Portable.zip') {
+      candidatePaths.push(
+        path.join(ROOT_DIR, 'downloads', 'TengeAlert.exe'),
+        path.join(REPO_ROOT, 'dist', 'TengeAlert.exe')
+      );
+    }
+
+    let foundPath = null;
+    for (const p of candidatePaths) {
       try {
-        const stat = fs.statSync(localPath);
+        if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+          foundPath = p;
+          break;
+        }
+      } catch (e) {}
+    }
+
+    if (foundPath) {
+      try {
+        const fileBuf = fs.readFileSync(foundPath);
         res.writeHead(200, {
           'Content-Type': mime,
-          'Content-Length': stat.size,
-          'Content-Disposition': `attachment; filename="${fileName}"`,
+          'Content-Length': fileBuf.length,
+          'Content-Disposition': `attachment; filename="${path.basename(foundPath)}"`,
           'Cache-Control': 'public, max-age=86400'
         });
-        fs.createReadStream(localPath).pipe(res);
+        res.end(fileBuf);
         return;
       } catch (err) {
-        console.error('[DOWNLOAD] Error streaming binary:', err);
+        console.error('[DOWNLOAD] Error reading binary:', err);
       }
     }
 
-    // In serverless/cloud environments (e.g. Vercel) where large binaries are hosted on GitHub Releases:
-    const releaseFallbackUrl = target === 'android' || target === 'apk'
-      ? 'https://github.com/rustamvalitov1590-pixel/tengealert/releases/download/v1.0.0/TengeAlert-Companion-v1.1.4.apk'
-      : 'https://github.com/rustamvalitov1590-pixel/tengealert/releases/download/v1.0.0/TengeAlert-Setup.exe';
+    // Direct GitHub raw fallback from main branch (never returns 404 once pushed)
+    let fallbackUrl;
+    if (target === 'android' || target === 'apk') {
+      fallbackUrl = 'https://github.com/rustamvalitov1590-pixel/tengealert/raw/main/dist/TengeAlert-Companion-v1.1.4.apk';
+    } else if (target === 'windows-portable' || target === 'zip') {
+      fallbackUrl = 'https://github.com/rustamvalitov1590-pixel/tengealert/raw/main/dist/TengeAlert-Portable.zip';
+    } else {
+      fallbackUrl = 'https://github.com/rustamvalitov1590-pixel/tengealert/raw/main/dist/TengeAlert-Setup.exe';
+    }
 
     res.writeHead(302, {
-      'Location': releaseFallbackUrl
+      'Location': fallbackUrl
     });
     res.end();
     return;
@@ -1697,8 +1725,24 @@ async function handleRequest(req, res) {
       '.png': 'image/png',
       '.svg': 'image/svg+xml',
       '.md': 'text/markdown; charset=utf-8',
-      '.txt': 'text/plain; charset=utf-8'
+      '.txt': 'text/plain; charset=utf-8',
+      '.exe': 'application/octet-stream',
+      '.zip': 'application/zip',
+      '.apk': 'application/vnd.android.package-archive'
     };
+
+    if (ext === '.exe' || ext === '.zip' || ext === '.apk') {
+      const fileBuf = fs.readFileSync(filePath);
+      res.writeHead(200, {
+        'Content-Type': contentTypes[ext] || 'application/octet-stream',
+        'Content-Length': fileBuf.length,
+        'Content-Disposition': `attachment; filename="${path.basename(filePath)}"`,
+        'Cache-Control': 'public, max-age=86400'
+      });
+      res.end(fileBuf);
+      return;
+    }
+
     res.writeHead(200, { 'Content-Type': contentTypes[ext] || 'application/octet-stream' });
     fs.createReadStream(filePath).pipe(res);
   } else {
