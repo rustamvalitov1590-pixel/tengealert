@@ -564,6 +564,38 @@
       display: none;
     }
 
+    /* Mobile Widget Dropdown Selector (Replaces horizontal scroll on mobile) */
+    .widget-mobile-select-wrap {
+      display: none;
+      padding: 10px 14px;
+      background: #090c13;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .widget-mobile-select {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e5a93c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    @media (max-width: 680px) {
+      .widget-tabs-nav { display: none !important; }
+      .widget-mobile-select-wrap { display: block; }
+    }
+
     .w-tab-btn {
       padding: 6px 12px;
       border-radius: 6px;
@@ -1414,6 +1446,70 @@
       color: #94a3b8;
     }
 
+    /* Mobile Comparative Stacked Cards (Replaces wide horizontal scroll table) */
+    .mobile-comp-cards {
+      display: none;
+    }
+
+    @media (max-width: 680px) {
+      .table-container {
+        display: none !important;
+      }
+      .mobile-comp-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .m-comp-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .m-comp-param {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        font-family: var(--font-display);
+      }
+      .m-comp-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 8px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        gap: 8px;
+      }
+      .m-comp-row.brand {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+      .m-comp-row.brand .m-comp-val {
+        color: var(--accent-emerald);
+        font-weight: 700;
+      }
+      .m-comp-row.alt {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-subtle);
+      }
+      .m-comp-row.alt .m-comp-val {
+        color: #94a3b8;
+      }
+      .m-comp-name {
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .m-comp-val {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        text-align: right;
+      }
+    }
+
     /* ========================================================
        6. PRICING TIERS (VISUALLY DELINEATED & CLEARLY SEPARATED)
        ======================================================== */
@@ -1871,6 +1967,23 @@
       display: none;
     }
 
+    @media (max-width: 640px) {
+      .video-chapters-bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        overflow-x: visible;
+        padding: 10px;
+      }
+      .chapter-pill {
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 11.5px;
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
     .chapter-pill {
       display: inline-flex;
       align-items: center;
@@ -1995,6 +2108,38 @@
       background: #090c14;
       border-bottom: 1px solid var(--border-subtle);
       overflow-x: auto;
+    }
+
+    /* Mobile Platform Dropdown Selector (Replaces horizontal scroll on mobile) */
+    .platform-mobile-select-wrap {
+      display: none;
+      padding: 12px 14px;
+      background: #090c14;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .platform-mobile-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e5a93c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    @media (max-width: 768px) {
+      .platform-tabs-nav { display: none !important; }
+      .platform-mobile-select-wrap { display: block; }
     }
 
     .platform-tab-btn {
@@ -2708,6 +2853,18 @@
           <div class="mono-font" style="font-size: 11px; color: var(--text-muted);">1920 × 1080 CANVAS</div>
         </div>
 
+        <!-- Mobile Dropdown Selector (Replaces horizontal scroll on mobile) -->
+        <div class="widget-mobile-select-wrap">
+          <select id="widget-mobile-select" class="widget-mobile-select" onchange="switchPlaygroundTab(this.value, null)" aria-label="Выберите виджет OBS">
+            <option value="alert">Alert Box (Оповещение)</option>
+            <option value="qr">Kaspi QR (Наэкранный код)</option>
+            <option value="top">Топ донатеров (Подиум)</option>
+            <option value="battle">Голосование / Донат-битва</option>
+            <option value="wheel">Рулетка челленджей</option>
+            <option value="ticker">Бегущая строка</option>
+          </select>
+        </div>
+
         <!-- Tab Selector for All 6 Widgets -->
         <div class="widget-tabs-nav">
           <button class="w-tab-btn active" onclick="switchPlaygroundTab('alert', this)">
@@ -3121,6 +3278,15 @@
 
         <!-- Detailed Platform Setup Accordion Tabs -->
         <div class="platform-tabs-box">
+          <!-- Mobile Platform Dropdown Selector (Replaces horizontal scroll on mobile) -->
+          <div class="platform-mobile-select-wrap">
+            <select id="platform-mobile-select" class="platform-mobile-select" onchange="switchPlatformTab(this.value, null)" aria-label="Выберите платформу подключения">
+              <option value="win-phone">💻 Windows 10/11 + Phone Link (iOS / Android)</option>
+              <option value="android-direct">📱 Android Companion APK (Автономное подключение)</option>
+              <option value="obs-setup">🎥 Настройка OBS Studio и TikTok Live Studio</option>
+            </select>
+          </div>
+
           <div class="platform-tabs-nav">
             <button class="platform-tab-btn active" onclick="switchPlatformTab('win-phone', this)">
               <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
@@ -3421,6 +3587,121 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Comparative Stacked Cards (Replaces horizontal scroll table on mobile) -->
+      <div class="mobile-comp-cards">
+        <div class="m-comp-card">
+          <div class="m-comp-param">Комиссия сервиса с доната</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">0% (Прямой P2P)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">10% – 14% (Шлюзы + вывод)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">0%</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Куда приходят деньги</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">Сразу на карту Kaspi / Halyk</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">Баланс сервиса (холд до 3 дн)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">На карту Kaspi</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Задержка вывода в OBS</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">&lt; 5 мс (Мгновенно)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">1 500 – 4 000 мс</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">Нет вывода на экран</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Интерактивные виджеты</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">6 виджетов (QR, Рулетка...)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">Базовый алерт и цель</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">Отсутствуют</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Озвучка казахского языка</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">Нативная (ә, ғ, қ, ң, ө, ұ...)</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">Только русский / ломаная</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">Отсутствует</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Встроенная рулетка челленджей</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">Включена с автоспуском</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">Требует сторонних сайтов</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">Отсутствует</span>
+          </div>
+        </div>
+
+        <div class="m-comp-card">
+          <div class="m-comp-param">Безопасность банковских данных</div>
+          <div class="m-comp-row brand">
+            <span class="m-comp-name">TengeAlert</span>
+            <span class="m-comp-val">Локальный системный перехват</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">DonationAlerts</span>
+            <span class="m-comp-val">Ввод банковских реквизитов</span>
+          </div>
+          <div class="m-comp-row alt">
+            <span class="m-comp-name">Ручной Kaspi</span>
+            <span class="m-comp-val">Локально</span>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -3847,7 +4128,17 @@
     function switchPlaygroundTab(tabId, btn) {
       activeTab = tabId;
       document.querySelectorAll('.w-tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matchingBtn = document.querySelector(`.w-tab-btn[onclick*="'${tabId}'"]`);
+        if (matchingBtn) matchingBtn.classList.add('active');
+      }
+
+      const mobileSelect = document.getElementById('widget-mobile-select');
+      if (mobileSelect && mobileSelect.value !== tabId) {
+        mobileSelect.value = tabId;
+      }
 
       Object.keys(widgetViews).forEach(k => {
         if (widgetViews[k]) widgetViews[k].classList.remove('active');
@@ -4195,7 +4486,14 @@
     function switchPlatformTab(tabId, btn) {
       document.querySelectorAll('.platform-tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.platform-tab-content').forEach(c => c.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matchingBtn = document.querySelector(`.platform-tab-btn[onclick*="'${tabId}'"]`);
+        if (matchingBtn) matchingBtn.classList.add('active');
+      }
+      const select = document.getElementById('platform-mobile-select');
+      if (select && select.value !== tabId) select.value = tabId;
       const target = document.getElementById('tab-' + tabId);
       if (target) target.classList.add('active');
     }

@@ -1221,23 +1221,151 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Mobile Section Navigation Dropdown */
+    .mobile-section-nav-wrap {
+      display: none;
+      margin-bottom: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .mobile-section-nav-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mobile-section-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-gold);
+      font-family: var(--font-mono);
+    }
+
+    .mobile-section-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e5a93c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    .mobile-section-select:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .mobile-period-select {
+      display: none;
+    }
+
+    /* Universal Overflow Safeguards */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .link-url, .token-quick-box, #public-donate-url, #secret-token-box, .pay-ref-code {
+      word-break: break-all;
+      overflow-wrap: break-word;
+      min-width: 0;
+      max-width: 100%;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
+      .app-header { padding: 0 16px; }
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
       .workspace-grid { grid-template-columns: 1fr; }
       .goals-grid { grid-template-columns: 1fr; }
       .theme-grid { grid-template-columns: repeat(2, 1fr); }
+      #gateway-status-text { display: none; }
+      #header-companion-text { display: none; }
     }
 
     @media (max-width: 768px) {
       .app-sidebar { display: none; }
+      .mobile-section-nav-wrap { display: block; }
       .mobile-bottom-nav { display: flex; }
-      .app-content { padding: 18px 16px calc(var(--bottom-nav-height) + 24px) 16px; }
+      .app-content { padding: 16px 14px calc(var(--bottom-nav-height) + 24px) 14px; }
       .metrics-grid { grid-template-columns: 1fr; gap: 10px; }
       .form-row { grid-template-columns: 1fr; }
-      .link-row { flex-direction: column; align-items: flex-start; }
+      .link-row { flex-direction: column; align-items: flex-start; gap: 8px; }
       .link-actions { width: 100%; justify-content: flex-end; }
       .sub-grid { grid-template-columns: 1fr; }
+
+      /* Responsive Header Controls */
+      .app-header {
+        padding: 0 12px;
+        height: 58px;
+      }
+      .brand-title {
+        font-size: 16px;
+      }
+      .header-actions {
+        gap: 6px;
+      }
+      #btn-header-download { display: none; }
+      #btn-quick-test span { display: none; }
+      #btn-quick-test { padding: 6px 10px; }
+      .user-pill span { display: none; }
+      .sub-pill-status .sub-pill-counter { display: none; }
+      .sub-pill { padding: 4px 8px; }
+      .sub-pill-action { display: none !important; }
+
+      /* Dropdown Period Selectors on Mobile */
+      .filter-chips { display: none !important; }
+      .mobile-period-select {
+        display: block !important;
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      .filter-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+      }
+      .filter-bar > div:last-child {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      #filter-bank-select, #history-search-input {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* Modal Scrolling on Mobile */
+      .modal-overlay {
+        padding: 12px 8px;
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      .modal-card {
+        padding: 18px 14px;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
       
       .donations-table, .donations-table tbody, .donations-table tr, .donations-table td {
         display: block;
@@ -1255,6 +1383,14 @@
         border-bottom: none;
         padding: 4px 0;
       }
+    }
+
+    @media (max-width: 480px) {
+      .app-header { padding: 0 8px; }
+      .brand-title { display: none; }
+      .brand { gap: 0; }
+      .tab-title { font-size: 22px; }
+      .theme-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1373,6 +1509,25 @@
 
     <!-- Main Content Area -->
     <main class="app-content">
+
+      <!-- Mobile Section Navigation Dropdown (Replaces horizontal scroll on mobile) -->
+      <div class="mobile-section-nav-wrap">
+        <div class="mobile-section-nav-inner">
+          <div class="mobile-section-label">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <span>Раздел панели стримера:</span>
+          </div>
+          <select id="mobile-tab-selector" class="mobile-section-select" onchange="switchTab(this.value)" aria-label="Выберите раздел панели стримера">
+            <option value="tab-dashboard">📊 Сводка стрима</option>
+            <option value="tab-analytics">📈 Финансовая аналитика</option>
+            <option value="tab-goals">🎯 Цели сбора средств</option>
+            <option value="tab-widgets">🎛️ Виджеты для OBS Studio</option>
+            <option value="tab-history">📜 История донатов</option>
+            <option value="tab-tts">🎙️ Озвучка и Спам (TTS)</option>
+            <option value="tab-requisites">💳 Реквизиты и Страница</option>
+          </select>
+        </div>
+      </div>
 
       <!-- ============================================== -->
       <!-- TAB 1: ДАШБОРД / СВОДКА                         -->
@@ -1635,6 +1790,11 @@
             <h1 class="tab-title">Финансовая аналитика</h1>
             <p class="tab-subtitle">Интерактивный анализ поступлений, средний чек и активность зрителей</p>
           </div>
+          <select id="analytics-period-select" class="select-field mobile-period-select" onchange="switchAnalyticsPeriod(this.value, null)" aria-label="Период аналитики">
+            <option value="7d">Период: 7 дней</option>
+            <option value="14d">Период: 14 дней</option>
+            <option value="30d">Период: 30 дней</option>
+          </select>
           <div class="filter-chips">
             <span class="chip active" id="chip-an-7d" onclick="switchAnalyticsPeriod('7d', this)">7 дней</span>
             <span class="chip" id="chip-an-14d" onclick="switchAnalyticsPeriod('14d', this)">14 дней</span>
@@ -1972,11 +2132,17 @@
 
         <!-- Filter Controls -->
         <div class="filter-bar">
+          <select id="history-period-select" class="select-field mobile-period-select" onchange="setHistoryPeriod(this.value, null)" aria-label="Период истории донатов">
+            <option value="all">Период: Все время</option>
+            <option value="today">Период: Сегодня</option>
+            <option value="week">Период: 7 дней</option>
+            <option value="month">Период: 30 дней</option>
+          </select>
           <div class="filter-chips">
-            <span class="chip active" onclick="setHistoryPeriod('all', this)">Все время</span>
-            <span class="chip" onclick="setHistoryPeriod('today', this)">Сегодня</span>
-            <span class="chip" onclick="setHistoryPeriod('week', this)">7 дней</span>
-            <span class="chip" onclick="setHistoryPeriod('month', this)">30 дней</span>
+            <span class="chip active" data-period="all" onclick="setHistoryPeriod('all', this)">Все время</span>
+            <span class="chip" data-period="today" onclick="setHistoryPeriod('today', this)">Сегодня</span>
+            <span class="chip" data-period="week" onclick="setHistoryPeriod('week', this)">7 дней</span>
+            <span class="chip" data-period="month" onclick="setHistoryPeriod('month', this)">30 дней</span>
           </div>
 
           <div style="display: flex; gap: 10px; flex: 1; justify-content: flex-end; min-width: 280px;">
@@ -2491,6 +2657,11 @@
       const mobileNav = document.getElementById('m-nav-' + tabId);
       if (mobileNav) mobileNav.classList.add('active');
 
+      const mobileSelect = document.getElementById('mobile-tab-selector');
+      if (mobileSelect && mobileSelect.value !== tabId) {
+        mobileSelect.value = tabId;
+      }
+
       if (tabId === 'tab-analytics') {
         loadAnalytics(currentAnalyticsPeriod);
       } else if (tabId === 'tab-goals') {
@@ -2537,7 +2708,16 @@
       document.querySelectorAll('.filter-chips .chip').forEach(c => {
         if (c.id && c.id.startsWith('chip-an-')) c.classList.remove('active');
       });
-      if (el) el.classList.add('active');
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const matchingChip = document.getElementById('chip-an-' + period);
+        if (matchingChip) matchingChip.classList.add('active');
+      }
+      const mobileSelect = document.getElementById('analytics-period-select');
+      if (mobileSelect && mobileSelect.value !== period) {
+        mobileSelect.value = period;
+      }
       loadAnalytics(period);
     }
 
@@ -3310,10 +3490,19 @@
     // Donations History Tab Logic
     function setHistoryPeriod(period, el) {
       currentHistoryPeriod = period;
-      document.querySelectorAll('.filter-chips .chip').forEach(c => {
-        if (!c.id || !c.id.startsWith('chip-an-')) c.classList.remove('active');
+      document.querySelectorAll('#tab-history .filter-chips .chip').forEach(c => {
+        c.classList.remove('active');
       });
-      if (el) el.classList.add('active');
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const matchingChip = document.querySelector(`#tab-history .filter-chips .chip[data-period="${period}"]`);
+        if (matchingChip) matchingChip.classList.add('active');
+      }
+      const mobileSelect = document.getElementById('history-period-select');
+      if (mobileSelect && mobileSelect.value !== period) {
+        mobileSelect.value = period;
+      }
       currentHistoryPage = 1;
       loadDonationHistory();
     }
